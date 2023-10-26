@@ -25,6 +25,7 @@ const style = {
   bottom: `flex flex-col items-center gap-2`,
   count: `text-center p-2`,
   deleteAllButton: `flex border p-4 bg-pink`,
+  info: `mt-5`,
   link: `text-pink bg-dogwood font-bold`,
 };
 
@@ -72,16 +73,18 @@ function App() {
 
   // delete all
   const deleteAll = async () => {
-    if (window.confirm("haluatko tyhjentää listan?")) {
-      /*
+    if (
+      window.confirm(
+        "❗ poistettuja ostoksia ei voi palauttaa, tyhjennetäänkö lista?"
+      )
+    ) {
       const q = query(collection(db, "items"));
       const unsub = onSnapshot(q, (QuerySnapshot) => {
         QuerySnapshot.forEach((doc) => {
-          console.log(doc.data());
-          await deleteDoc(doc(db, "items", doc));
+          deleteTodo(doc.id);
+          window.location.reload();
         });
       });
-      */
     } else {
     }
   };
@@ -116,12 +119,14 @@ function App() {
         </ul>
         <div class={style.bottom}>
           {items.length < 1 ? null : (
-            <p className={style.count}>{`${items.length} ostosta`}</p>
+            <>
+              <p className={style.count}>{`${items.length} ostosta`}</p>
+              <button className={style.deleteAllButton} onClick={deleteAll}>
+                <p className={style.plus}>❌ </p> tyhjennä lista
+              </button>
+            </>
           )}
-          <button className={style.deleteAllButton} onClick={deleteAll}>
-            <p className={style.plus}>❌ </p> poista kaikki
-          </button>
-          <p>
+          <p className={style.info}>
             by{" "}
             <a className={style.link} href="https://github.com/ofisch">
               onni
