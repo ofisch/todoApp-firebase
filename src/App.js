@@ -15,75 +15,97 @@ import {
 } from "firebase/firestore";
 
 const style = {
-  bg: `h-screen w-screen bg-gradient-to-r from-[#2F80ED] to-[#1CB5E0]`,
-  container: `bg-slate-100 max-w-[500px] w-full m-auto rounded-md shadow-xl p-4`,
-  heading: `text-3xl font-bold text-center text-gray-800 p-2`,
+  bg: `h-screen w-screen bg-jade font-quicksand`,
+  container: `max-w-[500px] w-full m-auto rounded-md p-4`,
+  heading: `text-3xl flex font-bold text-black py-2`,
   form: `flex justify-between`,
   input: `border p-2 w-full text-xl`,
-  button: `border p-4 ml-2 bg-purple-500 text-slate-100`,
+  button: `border p-4 ml-2 bg-pink text-slate-100`,
+  plus: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
+  bottom: `flex flex-col items-center gap-2`,
   count: `text-center p-2`,
+  deleteAllButton: `flex border p-4 bg-pink`,
+  link: `text-pink bg-dogwood font-bold`,
 };
 
 function App() {
-  const [todos, setTodos] = useState([]);
+  const [items, setItems] = useState([]);
   const [input, setInput] = useState("");
 
-  // create todo
+  // create item
   const createTodo = async (e) => {
     e.preventDefault(e);
     if (input === "") {
       alert("Please enter  a valid todo");
       return;
     }
-    await addDoc(collection(db, "todos"), {
+    await addDoc(collection(db, "items"), {
       text: input,
       completed: false,
     });
     setInput("");
   };
 
-  // read todo from Firebase
+  // read items from Firebase
   useEffect(() => {
-    const q = query(collection(db, "todos"));
+    const q = query(collection(db, "items"));
     const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
-      let todosArr = [];
+      let itemsArr = [];
       QuerySnapshot.forEach((doc) => {
-        todosArr.push({ ...doc.data(), id: doc.id });
+        itemsArr.push({ ...doc.data(), id: doc.id });
       });
-      setTodos(todosArr);
+      setItems(itemsArr);
     });
     return () => unsubscribe();
   }, []);
   // update todo in Firebase
   const toggleComplete = async (todo) => {
-    await updateDoc(doc(db, "todos", todo.id), {
+    await updateDoc(doc(db, "items", todo.id), {
       completed: !todo.completed,
     });
   };
 
   // delete todo
   const deleteTodo = async (id) => {
-    await deleteDoc(doc(db, "todos", id));
+    await deleteDoc(doc(db, "items", id));
+  };
+
+  // delete all
+  const deleteAll = async () => {
+    if (window.confirm("haluatko tyhjentää listan?")) {
+      /*
+      const q = query(collection(db, "items"));
+      const unsub = onSnapshot(q, (QuerySnapshot) => {
+        QuerySnapshot.forEach((doc) => {
+          console.log(doc.data());
+          await deleteDoc(doc(db, "items", doc));
+        });
+      });
+      */
+    } else {
+    }
   };
 
   return (
     <div className={style.bg}>
       <div className={style.container}>
-        <h1 className={style.heading}>Todo app</h1>
+        <h1 className={style.heading}>
+          <p className={style.plus}>🍉</p>ostoslista
+        </h1>
         <form onSubmit={createTodo} className={style.form}>
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className={style.input}
             type="text"
-            placeholder="Add Todo"
+            placeholder="lisää ostos"
           ></input>
           <button className={style.button}>
-            <AiOutlinePlus size={30}></AiOutlinePlus>
+            <p className={style.plus}>➕</p>
           </button>
         </form>
         <ul>
-          {todos.map((todo, index) => (
+          {items.map((todo, index) => (
             <Todo
               key={index}
               todo={todo}
@@ -92,9 +114,20 @@ function App() {
             />
           ))}
         </ul>
-        {todos.length < 1 ? null : (
-          <p className={style.count}>{`You have ${todos.length} todos`}</p>
-        )}
+        <div class={style.bottom}>
+          {items.length < 1 ? null : (
+            <p className={style.count}>{`${items.length} ostosta`}</p>
+          )}
+          <button className={style.deleteAllButton} onClick={deleteAll}>
+            <p className={style.plus}>❌ </p> poista kaikki
+          </button>
+          <p>
+            by{" "}
+            <a className={style.link} href="https://github.com/ofisch">
+              onni
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
