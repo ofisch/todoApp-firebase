@@ -1,3 +1,5 @@
+import { loginStyle } from "../styles/loginStyle";
+
 export const RegisterForm = (props) => {
   // Access the parameters using props
   const {
@@ -11,23 +13,34 @@ export const RegisterForm = (props) => {
 
   return (
     <div>
-      <h2>Register</h2>
-      <label>Email:</label>
+      <h2 className={loginStyle.heading}>
+        <span className={loginStyle.icon}>🔐</span>Rekisteröidy
+      </h2>
+      <label>Sähköposti:</label>
       <input
+        className={loginStyle.input}
         type="email"
         value={registerEmail}
         onChange={(e) => setRegisterEmail(e.target.value)}
       />
-      <label>Password:</label>
+      <label>Salasana:</label>
       <input
+        className={loginStyle.input}
         type="password"
         value={registerPassword}
         onChange={(e) => setRegisterPassword(e.target.value)}
       />
-      <button onClick={register}>Register</button>
-      <p>
-        Already have an account?{" "}
-        <span onClick={() => setRegisterMode(false)}>Login here</span>.
+      <button className={loginStyle.button} onClick={register}>
+        <p className="font-bold">Rekisteröidy</p>
+      </button>
+      <p className="text-center mt-4">
+        Oletko jo rekisteröitynyt?{" "}
+        <span
+          className={loginStyle.link}
+          onClick={() => setRegisterMode(false)}
+        >
+          Kirjaudu sisään
+        </span>
       </p>
     </div>
   );
