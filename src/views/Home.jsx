@@ -1,5 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export const Home = () => {
-  return <div>Moikka home</div>;
+  const user = useAuth();
+
+  return (
+    <div>
+      {user ? (
+        <p>Welcome, {user.email}!</p>
+      ) : (
+        <p>Please sign in to access the content.</p>
+      )}
+    </div>
+  );
 };

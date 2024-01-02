@@ -9,6 +9,7 @@ import { auth } from "../firebase";
 import { RegisterForm } from "../components/RegisterForm";
 import { LoginForm } from "../components/LoginForm";
 import { loginStyle } from "../styles/loginStyle";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const [registerMode, setRegisterMode] = useState(false);
@@ -19,6 +20,8 @@ export const Login = () => {
   const [loginPassword, setLoginPassword] = useState("");
 
   const [user, setUser] = useState({});
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
@@ -42,7 +45,7 @@ export const Login = () => {
   const login = async () => {
     try {
       await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      alert("User logged in successfully");
+      navigate("/home");
     } catch (error) {
       console.log(error);
     }
@@ -69,14 +72,16 @@ export const Login = () => {
             setRegisterMode={setRegisterMode}
           />
         ) : (
-          <LoginForm
-            login={login}
-            loginEmail={loginEmail}
-            loginPassword={loginPassword}
-            setLoginEmail={setLoginEmail}
-            setLoginPassword={setLoginPassword}
-            setRegisterMode={setRegisterMode}
-          />
+          <>
+            <LoginForm
+              login={login}
+              loginEmail={loginEmail}
+              loginPassword={loginPassword}
+              setLoginEmail={setLoginEmail}
+              setLoginPassword={setLoginPassword}
+              setRegisterMode={setRegisterMode}
+            />
+          </>
         )}
       </div>
     </>
