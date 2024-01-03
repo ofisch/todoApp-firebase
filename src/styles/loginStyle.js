@@ -1,7 +1,8 @@
 export const loginStyle = {
   bg: `w-screen font-quicksand`,
   container: `font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col items-center`,
-  heading: `text-3xl flex font-bold text-black py-2`,
+  bigHeader: "text-4xl font-bold mb-4 text-black",
+  heading: `text-2xl flex font-bold text-black py-2`,
   form: `flex justify-between`,
   input: `border p-2 my-1 w-full text-xl`,
   button: `border p-4 mt-4 bg-pink text-black w-full`,

@@ -1,7 +1,8 @@
 export const homeStyle = {
   bg: `w-screen font-quicksand`,
-  container: `font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col items-center`,
-  header: "flex gap-4 w-full justify-between items-center",
+  container: `font-quicksand bg-jade max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col items-center`,
+  header:
+    "flex gap-4 w-full sticky top-0 bg-white justify-between items-center z-50",
   heading: `text-3xl flex font-bold text-black py-2`,
   headerButtons: "flex gap-4",
   main: `flex flex-col items-center w-full`,

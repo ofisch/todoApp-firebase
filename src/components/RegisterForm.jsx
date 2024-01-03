@@ -15,6 +15,9 @@ export const RegisterForm = (props) => {
 
   return (
     <div>
+      <h1 className={loginStyle.bigHeader}>
+        <span className={loginStyle.icon}>🍉</span>KauppaKamu
+      </h1>
       <h2 className={loginStyle.heading}>
         <span className={loginStyle.icon}>🔐</span>Rekisteröidy
       </h2>

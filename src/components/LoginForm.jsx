@@ -1,3 +1,4 @@
+import { homeStyle } from "../styles/homeStyle";
 import { loginStyle } from "../styles/loginStyle";
 
 export const LoginForm = (props) => {
@@ -12,6 +13,9 @@ export const LoginForm = (props) => {
 
   return (
     <div>
+      <h1 className={loginStyle.bigHeader}>
+        <span className={loginStyle.icon}>🍉</span>KauppaKamu
+      </h1>
       <h2 className={loginStyle.heading}>
         <span className={loginStyle.icon}>🔑</span>Kirjaudu
       </h2>
