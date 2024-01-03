@@ -15,7 +15,7 @@ export const LoginForm = (props) => {
       <h2 className={loginStyle.heading}>
         <span className={loginStyle.icon}>🔑</span>Kirjaudu
       </h2>
-      <label>Sähköposti:</label>
+      <label>Sähköposti tai käyttäjänimi:</label>
       <input
         className={loginStyle.input}
         placeholder="syötä sähköposti"
@@ -23,6 +23,7 @@ export const LoginForm = (props) => {
         value={loginEmail}
         onChange={(e) => setLoginEmail(e.target.value)}
       />
+
       <label>Salasana:</label>
       <input
         className={loginStyle.input}

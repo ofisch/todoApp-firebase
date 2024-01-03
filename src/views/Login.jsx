@@ -5,16 +5,19 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { auth } from "../firebase";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import { RegisterForm } from "../components/RegisterForm";
 import { LoginForm } from "../components/LoginForm";
 import { loginStyle } from "../styles/loginStyle";
 import { useNavigate } from "react-router-dom";
+import { isEmail } from "../utils/utils";
 
 export const Login = () => {
   const [registerMode, setRegisterMode] = useState(false);
 
   const [registerEmail, setRegisterEmail] = useState("");
+  const [registerNick, setRegisterNick] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -29,6 +32,15 @@ export const Login = () => {
     });
   });
 
+  const addUserToDB = async (userEmail, userNick) => {
+    const usersCollectionRef = collection(db, "users");
+
+    const newUserDoc = await addDoc(usersCollectionRef, {
+      email: userEmail,
+      nickname: userNick,
+    });
+  };
+
   const register = async () => {
     try {
       await createUserWithEmailAndPassword(
@@ -36,7 +48,7 @@ export const Login = () => {
         registerEmail,
         registerPassword
       );
-      alert("User created successfully");
+      addUserToDB(registerEmail, registerNick);
     } catch (error) {
       console.log(error);
     }
@@ -44,16 +56,24 @@ export const Login = () => {
 
   const login = async () => {
     try {
-      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      navigate("/home");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+      if (isEmail(loginEmail)) {
+        await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      } else {
+        const usersCollection = collection(db, "users");
+        const nicknameQuery = query(
+          usersCollection,
+          where("nickname", "==", loginEmail)
+        );
+        const querySnapshot = await getDocs(nicknameQuery);
 
-  const logout = async () => {
-    try {
-      await signOut(auth);
+        if (!querySnapshot.empty) {
+          const userDoc = querySnapshot.docs[0];
+          const userEmail = userDoc.data().email;
+          await signInWithEmailAndPassword(auth, userEmail, loginPassword);
+        }
+      }
+
+      navigate("/home");
     } catch (error) {
       console.log(error);
     }
@@ -66,8 +86,10 @@ export const Login = () => {
           <RegisterForm
             register={register}
             registerEmail={registerEmail}
+            registerNick={registerNick}
             registerPassword={registerPassword}
             setRegisterEmail={setRegisterEmail}
+            setRegisterNick={setRegisterNick}
             setRegisterPassword={setRegisterPassword}
             setRegisterMode={setRegisterMode}
           />

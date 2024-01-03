@@ -4,8 +4,10 @@ export const RegisterForm = (props) => {
   // Access the parameters using props
   const {
     registerEmail,
+    registerNick,
     registerPassword,
     setRegisterEmail,
+    setRegisterNick,
     setRegisterPassword,
     register,
     setRegisterMode,
@@ -19,13 +21,23 @@ export const RegisterForm = (props) => {
       <label>Sähköposti:</label>
       <input
         className={loginStyle.input}
+        placeholder="syötä sähköposti"
         type="email"
         value={registerEmail}
         onChange={(e) => setRegisterEmail(e.target.value)}
       />
+      <label>Käyttäjänimi:</label>
+      <input
+        className={loginStyle.input}
+        placeholder="syötä käyttäjänimi"
+        type="text"
+        value={registerNick}
+        onChange={(e) => setRegisterNick(e.target.value)}
+      />
       <label>Salasana:</label>
       <input
         className={loginStyle.input}
+        placeholder="syötä salasana"
         type="password"
         value={registerPassword}
         onChange={(e) => setRegisterPassword(e.target.value)}
