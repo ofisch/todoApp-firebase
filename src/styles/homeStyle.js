@@ -1,9 +1,11 @@
 export const homeStyle = {
   bg: `w-screen font-quicksand`,
   container: `font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col items-center`,
-  header: "grid grid-cols-2 gap-4 w-full justify-between items-center",
+  header: "flex gap-4 w-full justify-between items-center",
   heading: `text-3xl flex font-bold text-black py-2`,
   headerButtons: "flex gap-4",
+  main: `flex flex-col items-center w-full`,
+  lists: `w-full`,
   form: `flex justify-between`,
   input: `border p-2 my-1 w-full text-xl`,
   button: `border p-4 mt-4 bg-pink text-black w-full`,

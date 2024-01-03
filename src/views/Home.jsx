@@ -16,6 +16,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { List } from "./List";
+import { ListElement } from "../components/ListElement";
 
 export const Home = () => {
   const user = useAuth();
@@ -25,6 +27,7 @@ export const Home = () => {
   // headerissa kans logout ja vaik profiili-info (ehk nappi?)
 
   const [items, setItems] = useState([]);
+  const [lists, setLists] = useState([]);
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
 
@@ -68,6 +71,21 @@ export const Home = () => {
     }
   };
 
+  const searchListsByIds = async (listIds) => {
+    try {
+      const q = query(collection(db, "lists"), where("id", "in", listIds));
+      const querySnapshot = await getDocs(q);
+
+      const listsData = querySnapshot.docs.map((doc) => doc.data());
+
+      console.log("listsData: ", listsData);
+      setLists(listsData);
+    } catch (error) {
+      console.log("Error: ", error);
+      return null;
+    }
+  };
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setUserId(user.uid);
@@ -86,10 +104,14 @@ export const Home = () => {
     }
   }, [userId]);
 
+  useEffect(() => {
+    searchListsByIds(items);
+  }, [items]);
+
   return (
     <div className={homeStyle.container}>
       <header className={homeStyle.header}>
-        <h1 className={homeStyle.heading}>{email}</h1>
+        <h1 className={homeStyle.heading}>listat</h1>
         <div className={homeStyle.headerButtons}>
           <button>
             <p
@@ -104,10 +126,10 @@ export const Home = () => {
           </button>
         </div>
       </header>
-      <main>
-        <ul>
-          {items.map((item) => (
-            <li>{item}</li>
+      <main className={homeStyle.main}>
+        <ul className={homeStyle.lists}>
+          {lists.map((list) => (
+            <ListElement name={list.name} />
           ))}
         </ul>
       </main>
