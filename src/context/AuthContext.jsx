@@ -7,12 +7,16 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+    auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
-    });
 
-    // Cleanup the subscription on component unmount
-    return () => unsubscribe();
+      // Reauthenticate the user on each page load
+      if (currentUser) {
+        currentUser.getIdToken().then((token) => {
+          // Use the token as needed (e.g., send it to the server for authentication)
+        });
+      }
+    });
   }, []);
 
   return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;

@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
   signInWithEmailAndPassword,
-  signOut,
 } from "firebase/auth";
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase";
@@ -22,20 +20,13 @@ export const Login = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  const [user, setUser] = useState({});
-
   const navigate = useNavigate();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-  });
 
   const addUserToDB = async (userEmail, userNick) => {
     const usersCollectionRef = collection(db, "users");
 
     const newUserDoc = await addDoc(usersCollectionRef, {
+      id: auth.currentUser.uid,
       email: userEmail,
       nickname: userNick,
     });
@@ -72,7 +63,7 @@ export const Login = () => {
           await signInWithEmailAndPassword(auth, userEmail, loginPassword);
         }
       }
-
+      console.log("jee");
       navigate("/home");
     } catch (error) {
       console.log(error);

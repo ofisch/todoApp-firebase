@@ -1,10 +1,13 @@
-export const loginStyle = {
+export const homeStyle = {
   bg: `w-screen font-quicksand`,
   container: `font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col items-center`,
+  header: "grid grid-cols-2 gap-4 w-full justify-between items-center",
   heading: `text-3xl flex font-bold text-black py-2`,
+  headerButtons: "flex gap-4",
   form: `flex justify-between`,
   input: `border p-2 my-1 w-full text-xl`,
   button: `border p-4 mt-4 bg-pink text-black w-full`,
+  plusButton: `border p-4 bg-pink text-black`,
   icon: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
   bottom: `flex flex-col items-center gap-2`,
   count: `text-center p-2`,
