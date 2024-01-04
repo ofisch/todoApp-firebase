@@ -1,4 +1,4 @@
-export const loginStyle = {
+export const newListStyle = {
   bg: `w-screen font-quicksand`,
   container: `font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col items-center`,
   bigHeader: "text-4xl flex font-bold mb-4 text-black",

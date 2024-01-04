@@ -18,6 +18,8 @@ import {
 } from "firebase/firestore";
 import { List } from "./List";
 import { ListElement } from "../components/ListElement";
+import { HomeHeader } from "../components/HomeHeader";
+import { NewList } from "../components/NewList";
 
 export const Home = () => {
   const user = useAuth();
@@ -31,12 +33,19 @@ export const Home = () => {
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
 
+  const [newListMenu, setNewListMenu] = useState(false);
+
   // jos listat on käyttäjällä tallessa ("lists")
   // voidaan hakea ne lists-collectionista id:n perusteella
 
   // haetaan eka käyttäjän listat (id),
   // tallennetaan ne ja haetaan firestoresta niillä id:eillä oikeet listat
   // ja luetellaan ul:ään
+
+  const toggleNewListMenu = () => {
+    console.log("newListMenu: ", newListMenu);
+    setNewListMenu(!newListMenu);
+  };
 
   const searchListsForUser = async (userId) => {
     if (!userId) alert("No user id");
@@ -86,17 +95,21 @@ export const Home = () => {
     }
   };
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setUserId(user.uid);
-      setEmail(user.email);
-      console.log("id: ", userId);
-      console.log("nick: ", user.nickname);
-    } else {
-      // User is signed out
-      // ...
-    }
-  });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+        setEmail(user.email);
+        console.log("id: ", user.uid);
+        console.log("nick: ", user.nickname);
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -110,26 +123,16 @@ export const Home = () => {
 
   return (
     <div className={homeStyle.container}>
-      <header className={homeStyle.header}>
-        <h1 className={homeStyle.heading}>listat</h1>
-        <div className={homeStyle.headerButtons}>
-          <button>
-            <p
-              className={homeStyle.icon}
-              onClick={(() => logout, () => navigate("/"))}
-            >
-              👤
-            </p>
-          </button>
-          <button className={homeStyle.plusButton}>
-            <p className={homeStyle.icon}>➕</p>
-          </button>
-        </div>
-      </header>
+      <HomeHeader
+        newListMenu={newListMenu}
+        setNewListMenu={setNewListMenu}
+        toggleNewListMenu={toggleNewListMenu}
+      ></HomeHeader>
+      {newListMenu && <NewList></NewList>}
       <main className={homeStyle.main}>
         <ul className={homeStyle.lists}>
           {lists.map((list) => (
-            <ListElement name={list.name} />
+            <ListElement key={list.id} name={list.name} />
           ))}
         </ul>
       </main>
