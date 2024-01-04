@@ -3,7 +3,15 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { RegisterForm } from "../components/RegisterForm";
 import { LoginForm } from "../components/LoginForm";
@@ -25,8 +33,9 @@ export const Login = () => {
   const addUserToDB = async (userEmail, userNick) => {
     const usersCollectionRef = collection(db, "users");
 
-    const newUserDoc = await addDoc(usersCollectionRef, {
-      id: auth.currentUser.uid,
+    const newUserDocRef = doc(usersCollectionRef, auth.currentUser.uid);
+
+    await setDoc(newUserDocRef, {
       email: userEmail,
       nickname: userNick,
     });

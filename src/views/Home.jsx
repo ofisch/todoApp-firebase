@@ -9,11 +9,13 @@ import { useNavigate } from "react-router-dom";
 import { homeStyle } from "../styles/homeStyle";
 import {
   QuerySnapshot,
+  addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
   query,
+  setDoc,
   where,
 } from "firebase/firestore";
 import { List } from "./List";
@@ -32,6 +34,7 @@ export const Home = () => {
   const [lists, setLists] = useState([]);
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
+  const [nickname, setNickname] = useState("");
 
   const [newListMenu, setNewListMenu] = useState(false);
 
@@ -95,13 +98,39 @@ export const Home = () => {
     }
   };
 
+  const getCurrentUserNickname = async () => {
+    try {
+      const user = auth.currentUser;
+
+      if (!user) {
+        console.log("No user");
+        return null;
+      }
+
+      console.log("user's id: ", user.uid);
+      const userDocRef = doc(db, "users", user.uid);
+
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        return userData.nickname;
+      } else {
+        console.log("No such document!");
+        return null;
+      }
+    } catch (error) {
+      console.log("Error getting document:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserId(user.uid);
         setEmail(user.email);
-        console.log("id: ", user.uid);
-        console.log("nick: ", user.nickname);
+        setNickname(getCurrentUserNickname().then((nickname) => nickname));
       } else {
         // User is signed out
         // ...
@@ -112,6 +141,37 @@ export const Home = () => {
       unsubscribe();
     };
   }, []);
+
+  const addNewList = async (name) => {
+    try {
+      const newListRef = collection(db, "lists");
+      const newListDocRef = await addDoc(newListRef, {
+        name: name,
+        id: newListRef.id,
+        owner: userId,
+      });
+
+      // Wait for the nickname before proceeding
+      const userNickname = await getCurrentUserNickname();
+
+      // subcollection for list items
+      const itemsCollectionRef = collection(newListDocRef, "items");
+      await addDoc(itemsCollectionRef, { text: "testi", completed: false });
+
+      // subcollection for list members
+      const membersCollectionRef = collection(newListDocRef, "members");
+      const newMemberDocRef = doc(membersCollectionRef, auth.currentUser.uid);
+
+      await setDoc(newMemberDocRef, {
+        email: email,
+        nickname: userNickname,
+      });
+
+      console.log("New list added");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (userId) {
@@ -130,7 +190,7 @@ export const Home = () => {
         setNewListMenu={setNewListMenu}
         toggleNewListMenu={toggleNewListMenu}
       ></HomeHeader>
-      {newListMenu && <NewList></NewList>}
+      {newListMenu && <NewList addNewList={addNewList}></NewList>}
       <main className={homeStyle.main}>
         <ul className={homeStyle.lists}>
           {lists.map((list) => (

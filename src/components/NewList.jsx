@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { newListStyle } from "../styles/newListStyle";
 import EmojiPicker from "./EmojiPicker";
 
-export const NewList = () => {
+export const NewList = (props) => {
+  const { addNewList } = props;
+
   const [emojiInTitle, setEmojiInTitle] = useState("");
   const [name, setName] = useState("");
 
@@ -59,7 +61,10 @@ export const NewList = () => {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <button className={newListStyle.button}>
+          <button
+            onClick={() => addNewList(emojiInTitle + name)}
+            className={newListStyle.button}
+          >
             <p className="font-bold">Luo</p>
           </button>
         </>
