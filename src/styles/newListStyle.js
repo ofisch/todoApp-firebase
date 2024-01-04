@@ -11,5 +11,5 @@ export const newListStyle = {
   count: `text-center p-2`,
   deleteAllButton: `flex border p-4 bg-pink`,
   info: `mt-5`,
-  link: `text-pink bg-dogwood font-bold cursor-pointer`,
+  link: `text-pink font-bold cursor-pointer`,
 };
