@@ -16,6 +16,7 @@ import {
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { List } from "./List";
@@ -55,7 +56,7 @@ export const Home = () => {
     try {
       const usersCollectionRef = collection(db, "users");
 
-      const q = query(usersCollectionRef, where("id", "==", userId));
+      const q = query(usersCollectionRef, userId);
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.size === 1) {
@@ -85,7 +86,7 @@ export const Home = () => {
 
   const searchListsByIds = async (listIds) => {
     try {
-      const q = query(collection(db, "lists"), where("id", "in", listIds));
+      const q = query(collection(db, "lists"), listIds);
       const querySnapshot = await getDocs(q);
 
       const listsData = querySnapshot.docs.map((doc) => doc.data());
@@ -147,12 +148,13 @@ export const Home = () => {
       const newListRef = collection(db, "lists");
       const newListDocRef = await addDoc(newListRef, {
         name: name,
-        id: newListRef.id,
         owner: userId,
       });
 
       // Wait for the nickname before proceeding
       const userNickname = await getCurrentUserNickname();
+
+      await updateDoc(newListDocRef, { id: newListDocRef.id });
 
       // subcollection for list items
       const itemsCollectionRef = collection(newListDocRef, "items");
@@ -166,6 +168,29 @@ export const Home = () => {
         email: email,
         nickname: userNickname,
       });
+
+      // add list to user's lists
+      const userDocRef = doc(db, "users", userId);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        // if user doesn't have lists yet, create an empty array
+        if (!("lists" in userData)) {
+          const userLists = [newListDocRef.id];
+          await setDoc(userDocRef, { userLists }, { merge: true });
+
+          searchListsByIds(userLists);
+        } else {
+          const userLists = userData.lists;
+          userLists.push(newListDocRef.id);
+          await updateDoc(userDocRef, { lists: userLists }, { merge: true });
+
+          searchListsByIds(userLists);
+        }
+      } else {
+        console.log("No such document!");
+      }
 
       console.log("New list added");
     } catch (error) {
@@ -193,9 +218,18 @@ export const Home = () => {
       {newListMenu && <NewList addNewList={addNewList}></NewList>}
       <main className={homeStyle.main}>
         <ul className={homeStyle.lists}>
-          {lists.map((list) => (
-            <ListElement key={list.id} name={list.name} />
-          ))}
+          {lists.length > 0 ? (
+            lists.map((list) => (
+              <ListElement key={list.id} name={list.name} id={list.id} />
+            ))
+          ) : (
+            <p>
+              Ei listoja -{" "}
+              <button onClick={toggleNewListMenu} className={homeStyle.link}>
+                lisää uusi
+              </button>{" "}
+            </p>
+          )}
         </ul>
       </main>
     </div>
