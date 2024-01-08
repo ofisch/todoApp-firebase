@@ -47,7 +47,6 @@ export const Home = () => {
   // ja luetellaan ul:ään
 
   const toggleNewListMenu = () => {
-    console.log("newListMenu: ", newListMenu);
     setNewListMenu(!newListMenu);
   };
 
@@ -64,7 +63,7 @@ export const Home = () => {
 
         if (userData && "lists" in userData) {
           const userLists = userData.lists;
-          console.log("lists: ", userLists);
+
           return userLists;
         }
       }
@@ -76,9 +75,8 @@ export const Home = () => {
   const handleSearchListsForUser = async () => {
     try {
       const userLists = await searchListsForUser(userId);
-      console.log(userLists);
+
       setItems(userLists);
-      console.log("items: ", items);
     } catch (error) {
       console.log(error);
     }
@@ -91,7 +89,6 @@ export const Home = () => {
 
       const listsData = querySnapshot.docs.map((doc) => doc.data());
 
-      console.log("listsData: ", listsData);
       setLists(listsData);
     } catch (error) {
       console.log("Error: ", error);
@@ -108,7 +105,6 @@ export const Home = () => {
         return null;
       }
 
-      console.log("user's id: ", user.uid);
       const userDocRef = doc(db, "users", user.uid);
 
       const userDocSnapshot = await getDoc(userDocRef);

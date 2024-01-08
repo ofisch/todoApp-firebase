@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { db } from "../firebase";
 import { MembersModal } from "./MembersModal";
 
@@ -16,6 +16,22 @@ const style = {
 export const ListElement = ({ name, id }) => {
   const [showMembers, setShowMembers] = useState(false);
   const [members, setMembers] = useState([]);
+  const [ownerId, setOwnerId] = useState("");
+
+  const getListOwnerNickname = async () => {
+    try {
+      const listDocRef = doc(db, "lists", id);
+      const listDocSnapshot = await getDoc(listDocRef);
+
+      if (listDocSnapshot.exists()) {
+        const listData = listDocSnapshot.data();
+        console.log("listData", listData);
+        setOwnerId(listData.owner);
+      }
+    } catch (error) {
+      console.error("Error getting list owner:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -31,6 +47,7 @@ export const ListElement = ({ name, id }) => {
 
     if (showMembers) {
       fetchMembers();
+      getListOwnerNickname();
     }
   }, [showMembers, id]);
 
@@ -46,7 +63,7 @@ export const ListElement = ({ name, id }) => {
       <button onClick={toggleShowMembers}>
         <p className={style.members}>👤</p>
       </button>
-      {showMembers && <MembersModal members={members} />}
+      {showMembers && <MembersModal members={members} ownerId={ownerId} />}
     </li>
   );
 };
