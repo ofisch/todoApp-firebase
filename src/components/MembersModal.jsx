@@ -14,8 +14,6 @@ export const MembersModal = ({ members, ownerId }) => {
       if (userDocSnapshot.exists()) {
         const ownerData = userDocSnapshot.data();
         setOwnerNickname(ownerData.nickname);
-      } else {
-        console.log("User not found");
       }
     } catch (error) {
       console.log("Error: ", error);
@@ -33,7 +31,7 @@ export const MembersModal = ({ members, ownerId }) => {
 
   useEffect(() => {
     getOwnerNickname();
-  }, [ownerNickname]);
+  }, [ownerId]);
 
   useEffect(() => {
     sortMembers();
