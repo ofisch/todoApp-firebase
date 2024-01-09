@@ -180,10 +180,14 @@ export const ListView = () => {
             />
           ))}
         </ul>
-        <div class={listStyle.bottom}>
+        <div className={listStyle.bottom}>
           {items.length < 1 ? null : (
             <>
-              <p className={listStyle.count}>{`${items.length} ostosta`}</p>
+              <p className={listStyle.count}>
+                {items.length > 1
+                  ? `${items.length} listausta`
+                  : `${items.length} listaus`}
+              </p>
               <button className={listStyle.deleteAllButton} onClick={deleteAll}>
                 <p className={listStyle.plus}>❌ </p> tyhjennä lista
               </button>
