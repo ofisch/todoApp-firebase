@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { MembersModal } from "./MembersModal";
 import { useNavigate } from "react-router-dom";
@@ -8,13 +15,13 @@ const style = {
   li: `flex justify-between border bg-dogwood p-4 my-2`,
   liComplete: `flex justify-between border bg-blue p-4 my-2`,
   row: `flex`,
-  text: `ml-2 cursor-pointer`,
+  text: `cursor-pointer`,
   textComplete: `ml-2 cursor-pointer line-through`,
   button: `cursor-pointer flex items-center`,
   members: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
 };
 
-export const ListElement = ({ name, id }) => {
+export const ListElement = ({ icon, name, id }) => {
   const [showMembers, setShowMembers] = useState(false);
   const [members, setMembers] = useState([]);
   const [ownerId, setOwnerId] = useState("");
@@ -32,6 +39,22 @@ export const ListElement = ({ name, id }) => {
       }
     } catch (error) {
       console.error("Error getting list owner:", error);
+    }
+  };
+
+  const deleteList = async () => {
+    try {
+      if (
+        window.confirm(
+          "❗ Poistettua listaa ei voi palauttaa, poistetaanko lista?"
+        )
+      ) {
+        const listDocRef = doc(db, "lists", id);
+        await deleteDoc(listDocRef);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error deleting list:", error);
     }
   };
 
@@ -84,13 +107,18 @@ export const ListElement = ({ name, id }) => {
   }, []);
 
   return (
-    <li onClick={handleClickList} className={style.li} ref={listElementRef}>
-      <div className={style.row}>
-        <p className={style.text}>{name}</p>
+    <li className={style.li} ref={listElementRef}>
+      <div onClick={handleClickList} className={style.row}>
+        <p className={style.text}>{icon + name}</p>
       </div>
-      <button onClick={toggleShowMembers}>
-        <p className={style.members}>👤</p>
-      </button>
+      <div>
+        <button onClick={toggleShowMembers}>
+          <p className={style.members}>👥</p>
+        </button>
+        <button onClick={deleteList}>
+          <p className={style.members}>🗑️</p>
+        </button>
+      </div>
       {showMembers && <MembersModal members={members} ownerId={ownerId} />}
     </li>
   );

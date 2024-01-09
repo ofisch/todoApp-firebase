@@ -49,6 +49,7 @@ export const Login = () => {
         registerPassword
       );
       addUserToDB(registerEmail, registerNick);
+      navigate("/home");
     } catch (error) {
       console.log(error);
     }
@@ -72,7 +73,7 @@ export const Login = () => {
           await signInWithEmailAndPassword(auth, userEmail, loginPassword);
         }
       }
-      console.log("jee");
+
       navigate("/home");
     } catch (error) {
       console.log(error);

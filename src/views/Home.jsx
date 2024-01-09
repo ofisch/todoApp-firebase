@@ -50,49 +50,46 @@ export const Home = () => {
     setNewListMenu(!newListMenu);
   };
 
-  const searchListsForUser = async (userId) => {
-    if (!userId) alert("No user id");
+  // TODO: haetaan vain listat, joissa käyttäjä on jäsenenä
+
+  const fetchUserLists = async () => {
     try {
-      const usersCollectionRef = collection(db, "users");
+      const user = auth.currentUser;
 
-      const q = query(usersCollectionRef, userId);
-      const querySnapshot = await getDocs(q);
+      console.log("user:", user.uid);
 
-      if (querySnapshot.size === 1) {
-        const userData = querySnapshot.docs[0].data();
+      if (!user) {
+        console.log("No user");
+        return;
+      }
+
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
 
         if (userData && "lists" in userData) {
           const userLists = userData.lists;
 
-          return userLists;
+          // Fetch lists data
+          const listsQuery = query(
+            collection(db, "lists"),
+            where("id", "in", userLists)
+          );
+          const listsSnapshot = await getDocs(listsQuery);
+
+          const listsData = listsSnapshot.docs.map((listDoc) => ({
+            id: listDoc.id,
+            ...listDoc.data(),
+          }));
+
+          // Set lists to items state
+          setItems(listsData);
         }
       }
     } catch (error) {
-      console.log("Error getting document:", error);
-    }
-  };
-
-  const handleSearchListsForUser = async () => {
-    try {
-      const userLists = await searchListsForUser(userId);
-
-      setItems(userLists);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const searchListsByIds = async (listIds) => {
-    try {
-      const q = query(collection(db, "lists"), listIds);
-      const querySnapshot = await getDocs(q);
-
-      const listsData = querySnapshot.docs.map((doc) => doc.data());
-
-      setLists(listsData);
-    } catch (error) {
-      console.log("Error: ", error);
-      return null;
+      console.log("Error fetching user lists:", error);
     }
   };
 
@@ -101,7 +98,7 @@ export const Home = () => {
       const user = auth.currentUser;
 
       if (!user) {
-        console.log("No user");
+        alert("No user");
         return null;
       }
 
@@ -128,6 +125,7 @@ export const Home = () => {
         setUserId(user.uid);
         setEmail(user.email);
         setNickname(getCurrentUserNickname().then((nickname) => nickname));
+        fetchUserLists();
       } else {
         // User is signed out
         // ...
@@ -139,10 +137,11 @@ export const Home = () => {
     };
   }, []);
 
-  const addNewList = async (name) => {
+  const addNewList = async (icon, name) => {
     try {
       const newListRef = collection(db, "lists");
       const newListDocRef = await addDoc(newListRef, {
+        icon: icon,
         name: name,
         owner: userId,
       });
@@ -153,8 +152,8 @@ export const Home = () => {
       await updateDoc(newListDocRef, { id: newListDocRef.id });
 
       // subcollection for list items
-      const itemsCollectionRef = collection(newListDocRef, "items");
-      await addDoc(itemsCollectionRef, { text: "testi", completed: false });
+      //const itemsCollectionRef = collection(newListDocRef, "items");
+      //await addDoc(itemsCollectionRef, { text: "testi", completed: false });
 
       // subcollection for list members
       const membersCollectionRef = collection(newListDocRef, "members");
@@ -173,22 +172,20 @@ export const Home = () => {
         const userData = userDocSnapshot.data();
         // if user doesn't have lists yet, create an empty array
         if (!("lists" in userData)) {
-          const userLists = [newListDocRef.id];
-          await setDoc(userDocRef, { userLists }, { merge: true });
-
-          searchListsByIds(userLists);
+          const lists = [newListDocRef.id];
+          await setDoc(userDocRef, { lists }, { merge: true });
         } else {
-          const userLists = userData.lists;
-          userLists.push(newListDocRef.id);
-          await updateDoc(userDocRef, { lists: userLists }, { merge: true });
-
-          searchListsByIds(userLists);
+          const lists = userData.lists;
+          lists.push(newListDocRef.id);
+          await updateDoc(userDocRef, { lists: lists }, { merge: true });
         }
       } else {
         console.log("No such document!");
       }
 
-      console.log("New list added");
+      alert("✅ Uusi lista lisätty!");
+      toggleNewListMenu();
+      fetchUserLists();
     } catch (error) {
       console.log(error);
     }
@@ -216,16 +213,6 @@ export const Home = () => {
     };
   }, [newListMenu]);
 
-  useEffect(() => {
-    if (userId) {
-      handleSearchListsForUser();
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    searchListsByIds(items);
-  }, [items]);
-
   return (
     <div className={homeStyle.container} ref={homeContainer}>
       <HomeHeader
@@ -236,9 +223,14 @@ export const Home = () => {
       {newListMenu && <NewList addNewList={addNewList}></NewList>}
       <main className={homeStyle.main}>
         <ul className={homeStyle.lists}>
-          {lists.length > 0 ? (
-            lists.map((list) => (
-              <ListElement key={list.id} name={list.name} id={list.id} />
+          {items.length > 0 ? (
+            items.map((list) => (
+              <ListElement
+                key={list.id}
+                icon={list.icon}
+                name={list.name}
+                id={list.id}
+              />
             ))
           ) : (
             <p>

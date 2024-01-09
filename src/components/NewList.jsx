@@ -63,7 +63,7 @@ export const NewList = (props) => {
             />
           </div>
           <button
-            onClick={() => addNewList(emojiInTitle + name)}
+            onClick={() => addNewList(emojiInTitle, name)}
             className={newListStyle.button}
           >
             <p className="font-bold">Luo</p>

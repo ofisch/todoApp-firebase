@@ -10,16 +10,49 @@ import {
   where,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 import { listStyle } from "../styles/listStyle";
 import Todo from "../components/Todo";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export const ListView = () => {
   const [items, setItems] = useState([]);
   const [input, setInput] = useState("");
+  const [listInfo, setListInfo] = useState({});
 
   const { id } = useParams();
+
+  const navigate = useNavigate();
+
+  // TODO: hae listan nimi ja ikoni bäkkäristä
+  // ja tulosta otsikkoon
+
+  // tarkistetaan käyttäjän sessio, jotta url-osoitteen kautta ei pääse katsomaan listaa
+  const checkUserSession = async () => {
+    const user = auth.currentUser;
+    try {
+      if (!user) {
+        navigate("/home");
+        return;
+      }
+    } catch (error) {
+      console.error("Error checking user membership:", error);
+    }
+  };
+
+  const getListInfo = async () => {
+    try {
+      const listDocRef = doc(db, "lists", id);
+      const listDocSnapshot = await getDoc(listDocRef);
+
+      if (listDocSnapshot.exists()) {
+        setListInfo(listDocSnapshot.data());
+      }
+    } catch (error) {
+      console.error("Error getting list info:", error);
+    }
+  };
 
   // haetaan itemit listan id:n perusteella
   const fetchItems = () => {
@@ -44,6 +77,8 @@ export const ListView = () => {
   };
 
   useEffect(() => {
+    checkUserSession();
+    getListInfo();
     const unsubscribe = fetchItems(); // kutsutaan funktiota itemien hakemiseen
 
     return () => {
@@ -105,12 +140,13 @@ export const ListView = () => {
   const deleteAll = async () => {
     if (
       window.confirm(
-        "❗ poistettuja ostoksia ei voi palauttaa, tyhjennetäänkö lista?"
+        "❗ Poistettuja listauksia ei voi palauttaa, tyhjennetäänkö lista?"
       )
     ) {
-      const listDocRef = doc(db, "lists", id);
-      await updateDoc(listDocRef, {
-        items: [],
+      const itemsCollectionRef = collection(db, "lists", id, "items");
+      const itemsSnapshot = await getDocs(itemsCollectionRef);
+      itemsSnapshot.forEach((item) => {
+        deleteTodo(item.id);
       });
     }
   };
@@ -119,7 +155,8 @@ export const ListView = () => {
     <div className={listStyle.bg}>
       <div className={listStyle.container}>
         <h1 className={listStyle.heading}>
-          <p className={listStyle.plus}>🍉</p>ostoslista id: {id}
+          <p className={listStyle.plus}>{listInfo.icon}</p>
+          {listInfo.name}
         </h1>
         <form onSubmit={createTodo} className={listStyle.form}>
           <input
@@ -127,7 +164,7 @@ export const ListView = () => {
             onChange={(e) => setInput(e.target.value)}
             className={listStyle.input}
             type="text"
-            placeholder="lisää ostos"
+            placeholder="lisää listaus"
           ></input>
           <button className={listStyle.button}>
             <p className={listStyle.plus}>➕</p>

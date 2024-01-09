@@ -1,4 +1,4 @@
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 
@@ -8,12 +8,15 @@ export const MembersModal = ({ members, ownerId }) => {
 
   const getOwnerNickname = async () => {
     try {
-      const q = query(collection(db, "users"), ownerId);
-      const querySnapshot = await getDocs(q);
+      const userDocRef = doc(db, "users", ownerId);
+      const userDocSnapshot = await getDoc(userDocRef);
 
-      const ownerData = querySnapshot.docs.map((doc) => doc.data());
-
-      setOwnerNickname(ownerData[0].nickname);
+      if (userDocSnapshot.exists()) {
+        const ownerData = userDocSnapshot.data();
+        setOwnerNickname(ownerData.nickname);
+      } else {
+        console.log("User not found");
+      }
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -44,10 +47,7 @@ export const MembersModal = ({ members, ownerId }) => {
         </div>
         <ul>
           {sortedMembers.map((member, index) => (
-            <li
-              className={index % 2 === 0 ? "bg-slate-300 w-fit" : "w-fit"}
-              key={member.email}
-            >
+            <li className={"w-fit"} key={member.email}>
               {member.nickname === ownerNickname ? (
                 <span>👑{member.nickname}</span>
               ) : (
