@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { db } from "../firebase";
 import { MembersModal } from "./MembersModal";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   li: `flex justify-between border bg-dogwood p-4 my-2`,
@@ -18,6 +19,8 @@ export const ListElement = ({ name, id }) => {
   const [members, setMembers] = useState([]);
   const [ownerId, setOwnerId] = useState("");
 
+  const navigate = useNavigate();
+
   const getListOwnerNickname = async () => {
     try {
       const listDocRef = doc(db, "lists", id);
@@ -25,7 +28,6 @@ export const ListElement = ({ name, id }) => {
 
       if (listDocSnapshot.exists()) {
         const listData = listDocSnapshot.data();
-        console.log("listData", listData);
         setOwnerId(listData.owner);
       }
     } catch (error) {
@@ -55,8 +57,34 @@ export const ListElement = ({ name, id }) => {
     setShowMembers(!showMembers);
   };
 
+  const handleClickList = () => {
+    navigate(`/listView/${id}`);
+  };
+
+  const listElementRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutsideModal = (event) => {
+      if (
+        listElementRef.current &&
+        !listElementRef.current.contains(event.target)
+      ) {
+        // Click outside the modal, close it
+        setShowMembers(false);
+      }
+    };
+
+    // Add global click event listener
+    document.addEventListener("mousedown", handleClickOutsideModal);
+
+    return () => {
+      // Cleanup the event listener when the component unmounts
+      document.removeEventListener("mousedown", handleClickOutsideModal);
+    };
+  }, []);
+
   return (
-    <li className={style.li}>
+    <li onClick={handleClickList} className={style.li} ref={listElementRef}>
       <div className={style.row}>
         <p className={style.text}>{name}</p>
       </div>

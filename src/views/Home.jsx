@@ -194,6 +194,28 @@ export const Home = () => {
     }
   };
 
+  const homeContainer = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutsideMenu = (event) => {
+      if (
+        homeContainer.current &&
+        !homeContainer.current.contains(event.target)
+      ) {
+        // Click outside the menu, close it
+        setNewListMenu(false);
+      }
+    };
+
+    // Add global click event listener
+    document.addEventListener("mousedown", handleClickOutsideMenu);
+
+    return () => {
+      // Cleanup the event listener when the component unmounts
+      document.removeEventListener("mousedown", handleClickOutsideMenu);
+    };
+  }, [newListMenu]);
+
   useEffect(() => {
     if (userId) {
       handleSearchListsForUser();
@@ -205,7 +227,7 @@ export const Home = () => {
   }, [items]);
 
   return (
-    <div className={homeStyle.container}>
+    <div className={homeStyle.container} ref={homeContainer}>
       <HomeHeader
         newListMenu={newListMenu}
         setNewListMenu={setNewListMenu}

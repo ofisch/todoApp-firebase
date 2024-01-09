@@ -10,6 +10,7 @@ export const NewList = (props) => {
 
   const [userName, setUserName] = useState("");
   // identityNumber on ERI kuin listan id firestoressa.
+  // ei ehkä ookkaa ? katotaa en oo iha varma
   const [listIdentityNumber, setListIdentityNumber] = useState("");
 
   // false = create new list

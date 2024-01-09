@@ -5,6 +5,7 @@ import { Login } from "./views/Login";
 import { List } from "./views/List";
 import { Home } from "./views/Home";
 import { AuthProvider } from "./context/AuthContext";
+import { ListView } from "./views/ListView";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/list" element={<List />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/listView/:id" element={<ListView />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
