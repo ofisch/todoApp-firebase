@@ -10,7 +10,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { auth, db } from "../firebase";
 import { listStyle } from "../styles/listStyle";
 import Todo from "../components/Todo";
@@ -195,9 +195,31 @@ export const ListView = () => {
     setShowMembers(!showMembers);
   };
 
+  const listElementRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutsideModal = (event) => {
+      if (
+        listElementRef.current &&
+        !listElementRef.current.contains(event.target)
+      ) {
+        // Click outside the modal, close it
+        setShowMembers(false);
+      }
+    };
+
+    // Add global click event listener
+    document.addEventListener("mousedown", handleClickOutsideModal);
+
+    return () => {
+      // Cleanup the event listener when the component unmounts
+      document.removeEventListener("mousedown", handleClickOutsideModal);
+    };
+  }, []);
+
   return (
     <div className={listStyle.bg}>
-      <div className={listStyle.container}>
+      <div className={listStyle.container} ref={listElementRef}>
         <div className="flex  justify-between">
           <h1 className={listStyle.heading}>
             <p className={listStyle.plus}>{listInfo.icon}</p>
