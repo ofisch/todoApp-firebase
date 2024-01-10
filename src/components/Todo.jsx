@@ -2,7 +2,7 @@ import React from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 const style = {
-  li: `flex justify-between border bg-dogwood p-4 my-2`,
+  li: `flex justify-between border w-full bg-dogwood p-4 my-2`,
   liComplete: `flex justify-between border bg-blue p-4 my-2`,
   row: `flex`,
   text: `ml-2 cursor-pointer`,
