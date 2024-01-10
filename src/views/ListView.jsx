@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   onSnapshot,
+  query,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -15,6 +16,7 @@ import { listStyle } from "../styles/listStyle";
 import Todo from "../components/Todo";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { MembersModal } from "../components/MembersModal";
 
 export const ListView = () => {
   const [items, setItems] = useState([]);
@@ -91,7 +93,7 @@ export const ListView = () => {
   const createTodo = async (e) => {
     e.preventDefault();
     if (input === "") {
-      alert("Please enter a valid todo");
+      alert("Tyhjä listaus");
       return;
     }
 
@@ -151,13 +153,60 @@ export const ListView = () => {
     }
   };
 
+  // jäsenten näyttäminen
+
+  const [members, setMembers] = useState([]);
+  const [showMembers, setShowMembers] = useState(false);
+  const [ownerId, setOwnerId] = useState("");
+
+  const getListOwnerNickname = async () => {
+    try {
+      const listDocRef = doc(db, "lists", id);
+      const listDocSnapshot = await getDoc(listDocRef);
+
+      if (listDocSnapshot.exists()) {
+        const listData = listDocSnapshot.data();
+        setOwnerId(listData.owner);
+      }
+    } catch (error) {
+      console.error("Error getting list owner:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      const membersArray = [];
+      const membersSnapshot = await getDocs(
+        query(collection(db, "lists", id, "members"))
+      );
+      membersSnapshot.forEach((member) => {
+        membersArray.push(member.data());
+      });
+      setMembers(membersArray);
+    };
+
+    if (showMembers) {
+      fetchMembers();
+      getListOwnerNickname();
+    }
+  }, [showMembers, id]);
+
+  const toggleShowMembers = () => {
+    setShowMembers(!showMembers);
+  };
+
   return (
     <div className={listStyle.bg}>
       <div className={listStyle.container}>
-        <h1 className={listStyle.heading}>
-          <p className={listStyle.plus}>{listInfo.icon}</p>
-          {listInfo.name}
-        </h1>
+        <div className="flex  justify-between">
+          <h1 className={listStyle.heading}>
+            <p className={listStyle.plus}>{listInfo.icon}</p>
+            {listInfo.name}
+          </h1>
+          <button onClick={toggleShowMembers} className="mr-4 scale-125">
+            <p className={listStyle.plus}>👥</p>
+          </button>
+        </div>
         <form onSubmit={createTodo} className={listStyle.form}>
           <input
             value={input}
@@ -195,6 +244,7 @@ export const ListView = () => {
           )}
         </div>
       </div>
+      {showMembers && <MembersModal members={members} ownerId={ownerId} />}
     </div>
   );
 };

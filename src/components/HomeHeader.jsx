@@ -12,7 +12,7 @@ export const HomeHeader = (props) => {
     <header className={homeStyle.header}>
       <h1 className={homeStyle.heading}>listat</h1>
       <div className={homeStyle.headerButtons}>
-        <button>
+        <button className="scale-125">
           <p
             className={homeStyle.icon}
             onClick={() => {
