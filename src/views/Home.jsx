@@ -219,6 +219,7 @@ export const Home = () => {
         newListMenu={newListMenu}
         setNewListMenu={setNewListMenu}
         toggleNewListMenu={toggleNewListMenu}
+        userId={userId}
       ></HomeHeader>
       {newListMenu && <NewList addNewList={addNewList}></NewList>}
       <main className={homeStyle.main}>
