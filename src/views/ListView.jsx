@@ -17,6 +17,7 @@ import Todo from "../components/Todo";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { MembersModal } from "../components/MembersModal";
+import { InviteToListModal } from "../components/InviteToListModal";
 
 export const ListView = () => {
   const [items, setItems] = useState([]);
@@ -197,6 +198,12 @@ export const ListView = () => {
 
   const listElementRef = useRef(null);
 
+  const [showInviteToListModal, setShowInviteToListModal] = useState(false);
+
+  const toggleShowInviteToListModal = () => {
+    setShowInviteToListModal(!showInviteToListModal);
+  };
+
   useEffect(() => {
     const handleClickOutsideModal = (event) => {
       if (
@@ -205,6 +212,7 @@ export const ListView = () => {
       ) {
         // Click outside the modal, close it
         setShowMembers(false);
+        setShowInviteToListModal(false);
       }
     };
 
@@ -218,55 +226,61 @@ export const ListView = () => {
   }, []);
 
   return (
-    <div className={listStyle.bg}>
-      <div className={listStyle.container} ref={listElementRef}>
-        <div className="flex  justify-between">
-          <h1 className={listStyle.heading}>
-            <p className={listStyle.plus}>{listInfo.icon}</p>
-            {listInfo.name}
-          </h1>
-          <button onClick={toggleShowMembers} className="mr-4 scale-125">
+    <div className={listStyle.container} ref={listElementRef}>
+      <div className="flex  justify-between items-center">
+        <h1 className={listStyle.heading}>
+          <p className={listStyle.plus}>{listInfo.icon}</p>
+          {listInfo.name}
+        </h1>
+        <div className="">
+          <button onClick={toggleShowMembers} className="mr-4 scale-105">
             <p className={listStyle.plus}>👥</p>
           </button>
-        </div>
-        <form onSubmit={createTodo} className={listStyle.form}>
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className={listStyle.input}
-            type="text"
-            placeholder="lisää listaus"
-          ></input>
-          <button className={listStyle.button}>
-            <p className={listStyle.plus}>➕</p>
+          <button onClick={toggleShowInviteToListModal}>
+            <p className={listStyle.plus}>🔗</p>
           </button>
-        </form>
-        <ul>
-          {items.map((todo) => (
-            <Todo
-              key={todo.id}
-              todo={todo}
-              toggleComplete={() => toggleComplete(todo.id)}
-              deleteTodo={() => deleteTodo(todo.id)}
-            />
-          ))}
-        </ul>
-        <div className={listStyle.bottom}>
-          {items.length < 1 ? null : (
-            <>
-              <p className={listStyle.count}>
-                {items.length > 1
-                  ? `${items.length} listausta`
-                  : `${items.length} listaus`}
-              </p>
-              <button className={listStyle.deleteAllButton} onClick={deleteAll}>
-                <p className={listStyle.plus}>❌ </p> tyhjennä lista
-              </button>
-            </>
-          )}
         </div>
       </div>
+      <form onSubmit={createTodo} className={listStyle.form}>
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className={listStyle.input}
+          type="text"
+          placeholder="lisää listaus"
+        ></input>
+        <button className={listStyle.button}>
+          <p className={listStyle.plus}>➕</p>
+        </button>
+      </form>
+      <ul>
+        {items.map((todo) => (
+          <Todo
+            key={todo.id}
+            todo={todo}
+            toggleComplete={() => toggleComplete(todo.id)}
+            deleteTodo={() => deleteTodo(todo.id)}
+          />
+        ))}
+      </ul>
+      <div className={listStyle.bottom}>
+        {items.length < 1 ? null : (
+          <>
+            <p className={listStyle.count}>
+              {items.length > 1
+                ? `${items.length} listausta`
+                : `${items.length} listaus`}
+            </p>
+            <button className={listStyle.deleteAllButton} onClick={deleteAll}>
+              <p className={listStyle.plus}>❌ </p> tyhjennä lista
+            </button>
+          </>
+        )}
+      </div>
       {showMembers && <MembersModal members={members} ownerId={ownerId} />}
+      {showInviteToListModal && (
+        <InviteToListModal ownerId={ownerId} listInfo={listInfo} />
+      )}
     </div>
   );
 };
