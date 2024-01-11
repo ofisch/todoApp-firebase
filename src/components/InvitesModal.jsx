@@ -1,9 +1,47 @@
-import { collection, doc, getDoc, getDocs, query } from "@firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  query,
+  where,
+  setDoc,
+  addDoc,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 
 export const InvitesModal = ({ userId }) => {
   const [invites, setInvites] = useState([]);
+
+  const [listIdToJoin, setListIdToJoin] = useState("");
+
+  const getListIdToJoin = async (inviteId) => {
+    try {
+      const receivedInvitesDocRef = doc(
+        db,
+        "users",
+        userId,
+        "receivedInvites",
+        inviteId
+      );
+
+      const docSnapshot = await getDoc(receivedInvitesDocRef);
+
+      if (docSnapshot.exists()) {
+        // Access the "listId" field from the document data
+        return docSnapshot.data().listId;
+      } else {
+        console.log("No matching invite found");
+        return null;
+      }
+    } catch (error) {
+      console.log("Error getting invite:", error);
+      return null;
+    }
+  };
 
   const style = {
     bg: `w-screen font-quicksand`,
@@ -52,7 +90,114 @@ export const InvitesModal = ({ userId }) => {
     };
 
     getReceivedInvites();
-  }, [invites]);
+  }, []);
+
+  const getUserData = async () => {
+    try {
+      const userDocRef = doc(db, "users", userId);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        return userData;
+      } else {
+        console.log("No such document!");
+        return null;
+      }
+    } catch (error) {
+      console.log("Error getting document:", error);
+      return null;
+    }
+  };
+
+  const addNewMemberToList = async (inviteId) => {
+    try {
+      const listId = await getListIdToJoin(inviteId);
+
+      const listMembersCollectionRef = collection(
+        db,
+        "lists",
+        listId,
+        "members"
+      );
+      const listMembersQuerySnapshot = await getDocs(listMembersCollectionRef);
+
+      const existingMembers = listMembersQuerySnapshot.docs.map(
+        (doc) => doc.id
+      );
+
+      const userData = await getUserData();
+
+      console.log("userData: ", userData);
+
+      if (!existingMembers.includes(userId)) {
+        await setDoc(doc(listMembersCollectionRef, userId), {
+          email: userData.email,
+          nickname: userData.nickname,
+        });
+
+        console.log("New member added to list");
+      }
+    } catch (error) {
+      console.log("Error adding new member to list:", error);
+    }
+  };
+
+  const joinList = async (inviteId) => {
+    try {
+      const listId = await getListIdToJoin(inviteId);
+
+      const userDocRef = doc(db, "users", userId);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+
+        // Check if "lists" exists in userData and it's an array
+        if (userData?.lists && Array.isArray(userData.lists)) {
+          const userLists = userData.lists;
+
+          if (!userLists.includes(listId)) {
+            userLists.push(listId);
+
+            await updateDoc(userDocRef, {
+              lists: userLists,
+            });
+
+            console.log("List joined");
+
+            await addNewMemberToList(inviteId);
+
+            const receivedInvitesDocRef = doc(
+              db,
+              "users",
+              userId,
+              "receivedInvites",
+              inviteId
+            );
+
+            const invitesSnapshot = await getDoc(receivedInvitesDocRef);
+
+            console.log("data: ", invitesSnapshot.data());
+
+            if (invitesSnapshot.exists()) {
+              // poistetaan kutsu käyttäjän kutsut-kokoelmasta
+              await deleteDoc(receivedInvitesDocRef);
+              // lisätään käyttäjä jäseneksi listaan
+
+              // päivitetään käyttäjän kutsut sivulla
+              fetchReceivedInvites();
+              console.log("Invite deleted from receivedInvites");
+            } else {
+              console.log("No matching invite found");
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log("Error joining list:", error);
+    }
+  };
 
   return (
     <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
@@ -62,15 +207,34 @@ export const InvitesModal = ({ userId }) => {
         </div>
         <ul>
           {invites.map((invite) => (
-            <li className={"w-fit flex justify-around"} key={invite.id}>
-              <div className="flex flex-col bg-dogwood">
+            <li
+              className={"w-fit flex justify-around bg-dogwood"}
+              key={invite.id}
+            >
+              <div className="flex flex-col ">
+                <h3 className="font-bold">Liittymiskutsu</h3>
                 <p>
-                  kutsu liittyä listaan: <span>{invite.icon}</span>
+                  listaan <span>{invite.icon}</span>
                   <span className="font-bold">{invite.listName}</span>{" "}
                 </p>
-                <span>{"käyttäjältä: " + invite.sender}</span>
+                <p>
+                  käyttäjältä{" "}
+                  <span className="font-bold"> {invite.sender}</span>
+                </p>
               </div>
-              <button className={style.link}>Liity</button>
+              <div className="flex flex-col self-center ml-4 gap-2">
+                <button
+                  onClick={() => joinList(invite.id)}
+                  className={style.link}
+                >
+                  <span className={style.icon}>🔗</span> Liity
+                </button>
+
+                <button className={style.link}>
+                  {" "}
+                  <span className={style.icon}>❌</span>Hylkää
+                </button>
+              </div>
             </li>
           ))}
         </ul>

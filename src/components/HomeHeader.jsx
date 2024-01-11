@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { homeStyle } from "../styles/homeStyle";
 import { logout } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
@@ -15,8 +15,27 @@ export const HomeHeader = (props) => {
     setShowInvitesModal(!showInvitesModal);
   };
 
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutsideMenu = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        // Click outside the menu, close it
+        setShowInvitesModal(false);
+      }
+    };
+
+    // Add global click event listener
+    document.addEventListener("mousedown", handleClickOutsideMenu);
+
+    return () => {
+      // Cleanup the event listener when the component unmounts
+      document.removeEventListener("mousedown", handleClickOutsideMenu);
+    };
+  }, [showInvitesModal]);
+
   return (
-    <header className={homeStyle.header}>
+    <header className={homeStyle.header} ref={ref}>
       <h1 className={homeStyle.heading}>listat</h1>
       <div className={homeStyle.headerButtons}>
         <button className="scale-125">
