@@ -29,6 +29,9 @@ export const InviteToListModal = ({ ownerId, listInfo }) => {
 
   const [inviteeNickname, setInviteeNickname] = useState("");
 
+  // TODO: siirrä funktiot ListView.jsx:ään,
+  // jotta modal voidaan sulkea kun kutsu on lähetetty
+
   const getUserNicknameById = async (userId) => {
     try {
       const userDocRef = doc(db, "users", userId);
