@@ -233,6 +233,7 @@ export const Home = () => {
                 icon={list.icon}
                 name={list.name}
                 id={list.id}
+                fetchUserLists={fetchUserLists}
               />
             ))
           ) : (

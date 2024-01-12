@@ -21,7 +21,7 @@ const style = {
   members: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
 };
 
-export const ListElement = ({ icon, name, id }) => {
+export const ListElement = ({ icon, name, id, fetchUserLists }) => {
   const [showMembers, setShowMembers] = useState(false);
   const [members, setMembers] = useState([]);
   const [ownerId, setOwnerId] = useState("");
@@ -51,7 +51,7 @@ export const ListElement = ({ icon, name, id }) => {
       ) {
         const listDocRef = doc(db, "lists", id);
         await deleteDoc(listDocRef);
-        window.location.reload();
+        fetchUserLists();
       }
     } catch (error) {
       console.error("Error deleting list:", error);
@@ -106,6 +106,14 @@ export const ListElement = ({ icon, name, id }) => {
     };
   }, []);
 
+  /*
+  poistonappi, todnäk. ei käytössä, koska poistaminen
+  jossain muualla
+       <button onClick={deleteList}>
+          <p className={style.members}>🗑️</p>
+        </button>
+        */
+
   return (
     <li className={style.li} ref={listElementRef}>
       <div onClick={handleClickList} className={style.row}>
@@ -114,9 +122,6 @@ export const ListElement = ({ icon, name, id }) => {
       <div>
         <button onClick={toggleShowMembers}>
           <p className={style.members}>👥</p>
-        </button>
-        <button onClick={deleteList}>
-          <p className={style.members}>🗑️</p>
         </button>
       </div>
       {showMembers && <MembersModal members={members} ownerId={ownerId} />}
