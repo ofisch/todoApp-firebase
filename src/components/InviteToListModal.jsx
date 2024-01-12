@@ -10,7 +10,13 @@ import {
 import React, { useState } from "react";
 import { db } from "../firebase";
 
-export const InviteToListModal = ({ ownerId, listInfo }) => {
+export const InviteToListModal = ({
+  ownerId,
+  listInfo,
+  getUserNicknameById,
+  getUserIdByNickname,
+  toggleShowInviteToListModal,
+}) => {
   const style = {
     bg: `w-screen font-quicksand`,
     container: `font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col items-center`,
@@ -31,47 +37,6 @@ export const InviteToListModal = ({ ownerId, listInfo }) => {
 
   // TODO: siirrä funktiot ListView.jsx:ään,
   // jotta modal voidaan sulkea kun kutsu on lähetetty
-
-  const getUserNicknameById = async (userId) => {
-    try {
-      const userDocRef = doc(db, "users", userId);
-      const userDocSnapshot = await getDoc(userDocRef);
-
-      if (userDocSnapshot.exists()) {
-        const userData = userDocSnapshot.data();
-        return userData.nickname;
-      } else {
-        console.log("User not found");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error getting user nickname:", error);
-      return null;
-    }
-  };
-
-  const getUserIdByNickname = async (nickname) => {
-    try {
-      const usersCollectionRef = collection(db, "users");
-      const usersQuery = query(
-        usersCollectionRef,
-        where("nickname", "==", nickname)
-      );
-
-      const usersQuerySnapshot = await getDocs(usersQuery);
-
-      if (usersQuerySnapshot.empty) {
-        console.log("No matching users");
-        return null;
-      } else {
-        const userId = usersQuerySnapshot.docs[0].id;
-        return userId;
-      }
-    } catch (error) {
-      console.error("Error getting user id:", error);
-      return null;
-    }
-  };
 
   const sendInvite = async (nickname) => {
     try {
@@ -96,6 +61,7 @@ export const InviteToListModal = ({ ownerId, listInfo }) => {
         await addDoc(receivedInvitesCollectionRef, inviteData);
         alert(`✅ Käyttäjä ${nickname} kutsuttu listalle!`);
         setInviteeNickname("");
+        toggleShowInviteToListModal();
       }
     } catch (error) {
       console.error("Error sending invite:", error);

@@ -225,6 +225,49 @@ export const ListView = () => {
     };
   }, []);
 
+  // listView.jsx:ssä käytettävät funktiot
+
+  const getUserNicknameById = async (userId) => {
+    try {
+      const userDocRef = doc(db, "users", userId);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        return userData.nickname;
+      } else {
+        console.log("User not found");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting user nickname:", error);
+      return null;
+    }
+  };
+
+  const getUserIdByNickname = async (nickname) => {
+    try {
+      const usersCollectionRef = collection(db, "users");
+      const usersQuery = query(
+        usersCollectionRef,
+        where("nickname", "==", nickname)
+      );
+
+      const usersQuerySnapshot = await getDocs(usersQuery);
+
+      if (usersQuerySnapshot.empty) {
+        console.log("No matching users");
+        return null;
+      } else {
+        const userId = usersQuerySnapshot.docs[0].id;
+        return userId;
+      }
+    } catch (error) {
+      console.error("Error getting user id:", error);
+      return null;
+    }
+  };
+
   return (
     <div className={listStyle.container} ref={listElementRef}>
       <div className="flex  justify-between items-center">
@@ -279,7 +322,13 @@ export const ListView = () => {
       </div>
       {showMembers && <MembersModal members={members} ownerId={ownerId} />}
       {showInviteToListModal && (
-        <InviteToListModal ownerId={ownerId} listInfo={listInfo} />
+        <InviteToListModal
+          ownerId={ownerId}
+          listInfo={listInfo}
+          getUserNicknameById={getUserNicknameById}
+          getUserIdByNickname={getUserIdByNickname}
+          toggleShowInviteToListModal={toggleShowInviteToListModal}
+        />
       )}
     </div>
   );
