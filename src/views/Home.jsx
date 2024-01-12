@@ -14,6 +14,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
@@ -220,6 +221,7 @@ export const Home = () => {
         setNewListMenu={setNewListMenu}
         toggleNewListMenu={toggleNewListMenu}
         userId={userId}
+        fetchUserLists={fetchUserLists}
       ></HomeHeader>
       {newListMenu && <NewList addNewList={addNewList}></NewList>}
       <main className={homeStyle.main}>

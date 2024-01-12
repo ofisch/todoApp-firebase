@@ -13,7 +13,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 
-export const InvitesModal = ({ userId }) => {
+export const InvitesModal = ({
+  userId,
+  toggleInvitesModal,
+  fetchUserLists,
+}) => {
   const [invites, setInvites] = useState([]);
 
   const [listIdToJoin, setListIdToJoin] = useState("");
@@ -187,6 +191,9 @@ export const InvitesModal = ({ userId }) => {
 
               // päivitetään käyttäjän kutsut sivulla
               fetchReceivedInvites();
+              alert("✅ Listaan liitytty!");
+              fetchUserLists();
+              toggleInvitesModal();
               console.log("Invite deleted from receivedInvites");
             } else {
               console.log("No matching invite found");

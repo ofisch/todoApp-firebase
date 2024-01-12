@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { InvitesModal } from "./InvitesModal";
 
 export const HomeHeader = (props) => {
-  const { toggleNewListMenu, userId } = props;
+  const { toggleNewListMenu, userId, fetchUserLists } = props;
 
   const navigate = useNavigate();
 
@@ -54,7 +54,13 @@ export const HomeHeader = (props) => {
             🔔
           </p>
         </button>
-        {showInvitesModal && <InvitesModal userId={userId} />}
+        {showInvitesModal && (
+          <InvitesModal
+            userId={userId}
+            toggleInvitesModal={toggleInvitesModal}
+            fetchUserLists={fetchUserLists}
+          />
+        )}
         <button className={homeStyle.plusButton} onClick={toggleNewListMenu}>
           <p className={homeStyle.icon}>➕</p>
         </button>
