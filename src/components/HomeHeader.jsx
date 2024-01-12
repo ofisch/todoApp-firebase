@@ -34,6 +34,10 @@ export const HomeHeader = (props) => {
     };
   }, [showInvitesModal]);
 
+  const goTo = (path) => {
+    navigate(path);
+  };
+
   return (
     <header className={homeStyle.header} ref={ref}>
       <h1 className={homeStyle.heading}>listat</h1>
@@ -42,8 +46,7 @@ export const HomeHeader = (props) => {
           <p
             className={homeStyle.icon}
             onClick={() => {
-              logout();
-              navigate("/");
+              goTo(`/profile/${userId}`);
             }}
           >
             👤

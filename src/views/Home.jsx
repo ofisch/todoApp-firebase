@@ -3,7 +3,6 @@ import { useAuth } from "../context/AuthContext";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "../firebase";
 
-import { logout } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
 
 import { homeStyle } from "../styles/homeStyle";
@@ -130,6 +129,7 @@ export const Home = () => {
       } else {
         // User is signed out
         // ...
+        navigate("/login");
       }
     });
 
