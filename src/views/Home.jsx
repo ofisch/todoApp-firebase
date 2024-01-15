@@ -234,6 +234,7 @@ export const Home = () => {
                 name={list.name}
                 id={list.id}
                 fetchUserLists={fetchUserLists}
+                userId={userId}
               />
             ))
           ) : (

@@ -7,7 +7,7 @@ import {
   getDocs,
   query,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 import { MembersModal } from "./MembersModal";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ const style = {
   members: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
 };
 
-export const ListElement = ({ icon, name, id, fetchUserLists }) => {
+export const ListElement = ({ icon, name, id, fetchUserLists, userId }) => {
   const [showMembers, setShowMembers] = useState(false);
   const [members, setMembers] = useState([]);
   const [ownerId, setOwnerId] = useState("");
@@ -106,14 +106,6 @@ export const ListElement = ({ icon, name, id, fetchUserLists }) => {
     };
   }, []);
 
-  /*
-  poistonappi, todnäk. ei käytössä, koska poistaminen
-  jossain muualla
-       <button onClick={deleteList}>
-          <p className={style.members}>🗑️</p>
-        </button>
-        */
-
   return (
     <li className={style.li} ref={listElementRef}>
       <div onClick={handleClickList} className={style.row}>
@@ -123,6 +115,11 @@ export const ListElement = ({ icon, name, id, fetchUserLists }) => {
         <button onClick={toggleShowMembers}>
           <p className={style.members}>👥</p>
         </button>
+        {userId === ownerId && (
+          <button onClick={deleteList}>
+            <p className={style.members}>🗑️</p>
+          </button>
+        )}
       </div>
       {showMembers && <MembersModal members={members} ownerId={ownerId} />}
     </li>
