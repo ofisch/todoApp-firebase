@@ -49,7 +49,7 @@ export const InvitesModal = ({
 
   const style = {
     bg: `w-screen font-quicksand`,
-    container: `font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col items-center`,
+    container: `font-quicksand max-w-[500px] w-full h-full over m-auto rounded-md p-4 flex flex-col items-center`,
     bigHeader: "text-4xl flex font-bold mb-4 text-black",
     heading: `text-2xl flex font-bold text-black py-2`,
     form: `flex justify-between`,
@@ -242,7 +242,7 @@ export const InvitesModal = ({
   };
 
   return (
-    <div className="fixed top-1/2 lg:top-1/3 left-1/2 w-3/4 md:w-96 lg:w-fit transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
+    <div className="fixed top-1/2 lg:top-1/3 left-1/2 w-3/4 md:w-96 lg:w-fit h-2/4 overflow-scroll transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
       <>
         <div className="flex justify-between items-baseline">
           <h2 className="text-2xl font-bold mb-4 overflow-auto">kutsut</h2>
