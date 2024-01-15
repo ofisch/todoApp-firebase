@@ -206,6 +206,35 @@ export const InvitesModal = ({
     }
   };
 
+  const declineInvite = async (inviteId) => {
+    try {
+      const receivedInvitesDocRef = doc(
+        db,
+        "users",
+        userId,
+        "receivedInvites",
+        inviteId
+      );
+
+      const invitesSnapshot = await getDoc(receivedInvitesDocRef);
+
+      console.log("data: ", invitesSnapshot.data());
+
+      if (invitesSnapshot.exists()) {
+        // poistetaan kutsu käyttäjän kutsut-kokoelmasta
+        await deleteDoc(receivedInvitesDocRef);
+        // päivitetään käyttäjän kutsut sivulla
+        fetchReceivedInvites();
+        alert("❌ Kutsu hylätty!");
+        toggleInvitesModal();
+      } else {
+        console.log("No matching invite found");
+      }
+    } catch (error) {
+      console.log("Error declining invite:", error);
+    }
+  };
+
   return (
     <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
       <>
@@ -237,7 +266,10 @@ export const InvitesModal = ({
                   <span className={style.icon}>🔗</span> Liity
                 </button>
 
-                <button className={style.link}>
+                <button
+                  onClick={() => declineInvite(invite.id)}
+                  className={style.link}
+                >
                   {" "}
                   <span className={style.icon}>❌</span>Hylkää
                 </button>
