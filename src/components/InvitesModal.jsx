@@ -81,10 +81,13 @@ export const InvitesModal = ({
       const q = query(receivedInvitesCollectionRef);
       const querySnapshot = await getDocs(q);
 
-      const receivedInvitesData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const receivedInvitesData =
+        querySnapshot && querySnapshot.docs
+          ? querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+          : [];
 
       if (receivedInvitesData.length !== 0) {
         return receivedInvitesData;
@@ -135,9 +138,9 @@ export const InvitesModal = ({
       );
       const listMembersQuerySnapshot = await getDocs(listMembersCollectionRef);
 
-      const existingMembers = listMembersQuerySnapshot.docs.map(
-        (doc) => doc.id
-      );
+      const existingMembers = listMembersQuerySnapshot.docs
+        ? listMembersQuerySnapshot.docs.map((doc) => doc.id)
+        : [];
 
       const userData = await getUserData();
 
@@ -285,50 +288,51 @@ export const InvitesModal = ({
           <h2 className="text-2xl font-bold mb-4 overflow-auto">kutsut</h2>
         </div>
         <ul className="flex flex-col gap-4 ">
-          {invites.map((invite) => (
-            <li className={style.listItem} key={invite.id}>
-              <div className={style.listItemContent}>
-                <h3 className="text-xl font-bold">Liittymiskutsu</h3>
-                <p>
-                  <span
-                    className={`${style.dataLabel} ${style.dogwood} font-bold`}
+          {invites &&
+            invites.map((invite) => (
+              <li className={style.listItem} key={invite.id}>
+                <div className={style.listItemContent}>
+                  <h3 className="text-xl font-bold">Liittymiskutsu</h3>
+                  <p>
+                    <span
+                      className={`${style.dataLabel} ${style.dogwood} font-bold`}
+                    >
+                      listaan
+                    </span>{" "}
+                    <br />
+                    <span className="font-semibold flex">
+                      <span className={style.icon}>{invite.icon}</span>{" "}
+                      {invite.listName}
+                    </span>
+                  </p>
+                  <p>
+                    <span
+                      className={`${style.dataLabel} ${style.dogwood} font-bold`}
+                    >
+                      käyttäjältä
+                    </span>
+                    <br />
+                    <span className="font-semibold">{invite.sender}</span>
+                  </p>
+                </div>
+                <div className={style.joinDeclineButtons}>
+                  <button
+                    onClick={() => joinList(invite.id)}
+                    className={style.link}
                   >
-                    listaan
-                  </span>{" "}
-                  <br />
-                  <span className="font-semibold flex">
-                    <span className={style.icon}>{invite.icon}</span>{" "}
-                    {invite.listName}
-                  </span>
-                </p>
-                <p>
-                  <span
-                    className={`${style.dataLabel} ${style.dogwood} font-bold`}
-                  >
-                    käyttäjältä
-                  </span>
-                  <br />
-                  <span className="font-semibold">{invite.sender}</span>
-                </p>
-              </div>
-              <div className={style.joinDeclineButtons}>
-                <button
-                  onClick={() => joinList(invite.id)}
-                  className={style.link}
-                >
-                  <span className={style.icon}>🔗</span> Liity
-                </button>
+                    <span className={style.icon}>🔗</span> Liity
+                  </button>
 
-                <button
-                  onClick={() => declineInvite(invite.id)}
-                  className={style.link}
-                >
-                  {" "}
-                  <span className={style.icon}>❌</span>Hylkää
-                </button>
-              </div>
-            </li>
-          ))}
+                  <button
+                    onClick={() => declineInvite(invite.id)}
+                    className={style.link}
+                  >
+                    {" "}
+                    <span className={style.icon}>❌</span>Hylkää
+                  </button>
+                </div>
+              </li>
+            ))}
         </ul>
       </>
     </div>
