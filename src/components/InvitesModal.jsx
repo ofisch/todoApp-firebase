@@ -86,7 +86,10 @@ export const InvitesModal = ({
         ...doc.data(),
       }));
 
-      return receivedInvitesData;
+      if (receivedInvitesData.length !== 0) {
+        return receivedInvitesData;
+      } else {
+      }
     } catch (error) {
       console.log("Error fetching received invites:", error);
       return [];
@@ -160,12 +163,20 @@ export const InvitesModal = ({
       const userDocRef = doc(db, "users", userId);
       const userDocSnapshot = await getDoc(userDocRef);
 
+      console.log("listId: ", listId);
+
+      console.log("userId: ", userId);
+
       if (userDocSnapshot.exists()) {
         const userData = userDocSnapshot.data();
+
+        console.log("userData: ", userData);
 
         // Check if "lists" exists in userData and it's an array
         if (userData?.lists && Array.isArray(userData.lists)) {
           const userLists = userData.lists;
+
+          console.log("userLists: ", userLists);
 
           if (!userLists.includes(listId)) {
             userLists.push(listId);
@@ -205,6 +216,32 @@ export const InvitesModal = ({
               console.log("No matching invite found");
             }
           }
+        } else {
+          const newUserLists = [listId];
+
+          await updateDoc(userDocRef, {
+            lists: newUserLists,
+          });
+
+          console.log("List joined for the first time");
+
+          const receivedInvitesDocRef = doc(
+            db,
+            "users",
+            userId,
+            "receivedInvites",
+            inviteId
+          );
+
+          await deleteDoc(receivedInvitesDocRef);
+          // lisätään käyttäjä jäseneksi listaan
+
+          // päivitetään käyttäjän kutsut sivulla
+          fetchReceivedInvites();
+          alert("✅ Listaan liitytty!");
+          fetchUserLists();
+          toggleInvitesModal();
+          console.log("Invite deleted from receivedInvites");
         }
       }
     } catch (error) {

@@ -289,6 +289,7 @@ export const ListView = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className={listStyle.input}
+          spellCheck="false"
           type="text"
           placeholder="lisää listaus"
         ></input>
