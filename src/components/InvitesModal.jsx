@@ -57,10 +57,16 @@ export const InvitesModal = ({
     button: `border p-4 mt-4 bg-pink text-black w-full`,
     icon: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
     bottom: `flex flex-col items-center gap-2`,
+    dataLabel: "bg-white font-bold p-1 rounded-md inline-block",
     count: `text-center p-2`,
     deleteAllButton: `flex border p-4 bg-pink`,
     info: `mt-5`,
-    link: `text-pink font-bold cursor-pointer`,
+    link: `text-pink flex font-bold cursor-pointer`,
+    listItem: "grid grid-cols-2 gap-4 border bg-dogwood",
+    listItemContent: "flex flex-col gap-4 p-2",
+    joinDeclineButtons: "flex flex-col items-start self-center ml-4 gap-2",
+    joinDeclineButton:
+      "transition ease-in-out delay-70 hover:scale-110 duration-70",
   };
 
   const fetchReceivedInvites = async () => {
@@ -236,29 +242,39 @@ export const InvitesModal = ({
   };
 
   return (
-    <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
+    <div className="fixed top-1/2 lg:top-1/3 left-1/2 w-3/4 md:w-96 lg:w-fit transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
       <>
         <div className="flex justify-between items-baseline">
           <h2 className="text-2xl font-bold mb-4 overflow-auto">kutsut</h2>
         </div>
-        <ul>
+        <ul className="flex flex-col gap-4 ">
           {invites.map((invite) => (
-            <li
-              className={"w-fit flex justify-around bg-dogwood"}
-              key={invite.id}
-            >
-              <div className="flex flex-col ">
-                <h3 className="font-bold">Liittymiskutsu</h3>
+            <li className={style.listItem} key={invite.id}>
+              <div className={style.listItemContent}>
+                <h3 className="text-xl font-bold">Liittymiskutsu</h3>
                 <p>
-                  listaan <span>{invite.icon}</span>
-                  <span className="font-bold">{invite.listName}</span>{" "}
+                  <span
+                    className={`${style.dataLabel} ${style.dogwood} font-bold`}
+                  >
+                    listaan
+                  </span>{" "}
+                  <br />
+                  <span className="font-semibold flex">
+                    <span className={style.icon}>{invite.icon}</span>{" "}
+                    {invite.listName}
+                  </span>
                 </p>
                 <p>
-                  käyttäjältä{" "}
-                  <span className="font-bold"> {invite.sender}</span>
+                  <span
+                    className={`${style.dataLabel} ${style.dogwood} font-bold`}
+                  >
+                    käyttäjältä
+                  </span>
+                  <br />
+                  <span className="font-semibold">{invite.sender}</span>
                 </p>
               </div>
-              <div className="flex flex-col self-center ml-4 gap-2">
+              <div className={style.joinDeclineButtons}>
                 <button
                   onClick={() => joinList(invite.id)}
                   className={style.link}

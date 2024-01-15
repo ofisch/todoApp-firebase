@@ -49,7 +49,7 @@ export const Login = () => {
         registerPassword
       );
       addUserToDB(registerEmail, registerNick);
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

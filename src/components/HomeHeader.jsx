@@ -3,6 +3,8 @@ import { homeStyle } from "../styles/homeStyle";
 import { logout } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
 import { InvitesModal } from "./InvitesModal";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export const HomeHeader = (props) => {
   const { toggleNewListMenu, userId, fetchUserLists } = props;
