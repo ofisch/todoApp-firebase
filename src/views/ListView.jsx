@@ -28,6 +28,8 @@ export const ListView = () => {
 
   const navigate = useNavigate();
 
+  const user = auth.currentUser;
+
   // TODO: hae listan nimi ja ikoni bäkkäristä
   // ja tulosta otsikkoon
 
@@ -154,6 +156,53 @@ export const ListView = () => {
     }
   };
 
+  const deleteListFromAllUsers = async (id) => {
+    const usersCollectionRef = collection(db, "users");
+    const usersSnapshot = await getDocs(usersCollectionRef);
+
+    usersSnapshot.forEach(async (user) => {
+      const userDocRef = doc(db, "users", user.id);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+
+        // Check if the user has a "lists" field and if it contains the list to be deleted
+        if (userData.lists && userData.lists.includes(id)) {
+          // Remove the list from the "lists" field
+          const updatedLists = userData.lists.filter((listId) => listId !== id);
+
+          // Update the user document with the modified "lists" field
+          await updateDoc(userDocRef, { lists: updatedLists });
+        }
+      }
+    });
+  };
+
+  const deleteList = async () => {
+    const membersArray = [];
+    const membersSnapshot = await getDocs(
+      query(collection(db, "lists", id, "members"))
+    );
+    membersSnapshot.forEach((member) => {
+      membersArray.push(member.data());
+    });
+
+    if (
+      window.confirm(
+        `❗ Listalla on ${membersArray.length} jäsentä. Poistettua listaa ei voi palauttaa, poistetaanko lista?`
+      )
+    ) {
+      const listDocRef = doc(db, "lists", id);
+      // poistetaan lista jokaisen jäsenen listoista
+      deleteListFromAllUsers(id);
+      // poistetaan lista-doc
+      await deleteDoc(listDocRef);
+      alert("Lista poistettu");
+      navigate("/");
+    }
+  };
+
   // jäsenten näyttäminen
 
   const [members, setMembers] = useState([]);
@@ -174,18 +223,18 @@ export const ListView = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchMembers = async () => {
-      const membersArray = [];
-      const membersSnapshot = await getDocs(
-        query(collection(db, "lists", id, "members"))
-      );
-      membersSnapshot.forEach((member) => {
-        membersArray.push(member.data());
-      });
-      setMembers(membersArray);
-    };
+  const fetchMembers = async () => {
+    const membersArray = [];
+    const membersSnapshot = await getDocs(
+      query(collection(db, "lists", id, "members"))
+    );
+    membersSnapshot.forEach((member) => {
+      membersArray.push(member.data());
+    });
+    setMembers(membersArray);
+  };
 
+  useEffect(() => {
     if (showMembers) {
       fetchMembers();
       getListOwnerNickname();
@@ -268,6 +317,10 @@ export const ListView = () => {
     }
   };
 
+  useEffect(() => {
+    getListOwnerNickname();
+  }, []);
+
   return (
     <div className={listStyle.container} ref={listElementRef}>
       <div className="flex  justify-between items-center">
@@ -275,8 +328,8 @@ export const ListView = () => {
           <p className={listStyle.plus}>{listInfo.icon}</p>
           {listInfo.name}
         </h1>
-        <div className="">
-          <button onClick={toggleShowMembers} className="mr-4 scale-105">
+        <div className={listStyle.buttons}>
+          <button onClick={toggleShowMembers} className="">
             <p className={listStyle.plus}>👥</p>
           </button>
           <button onClick={toggleShowInviteToListModal}>
@@ -319,6 +372,12 @@ export const ListView = () => {
               <p className={listStyle.plus}>❌ </p> tyhjennä lista
             </button>
           </>
+        )}
+        {ownerId === user.uid && (
+          <button onClick={deleteList} className={listStyle.deleteListButton}>
+            <p className={listStyle.deleteListIcon}>🗑️ </p>{" "}
+            <span className={listStyle.link}> poista lista</span>
+          </button>
         )}
       </div>
       {showMembers && <MembersModal members={members} ownerId={ownerId} />}
