@@ -18,17 +18,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { MembersModal } from "../components/MembersModal";
 import { InviteToListModal } from "../components/InviteToListModal";
+import { onAuthStateChanged } from "firebase/auth";
 
 export const ListView = () => {
   const [items, setItems] = useState([]);
   const [input, setInput] = useState("");
   const [listInfo, setListInfo] = useState({});
 
+  const [userId, setUserId] = useState("");
+
   const { id } = useParams();
 
   const navigate = useNavigate();
-
-  const user = auth.currentUser;
 
   // TODO: hae listan nimi ja ikoni bäkkäristä
   // ja tulosta otsikkoon
@@ -38,9 +39,11 @@ export const ListView = () => {
     const user = auth.currentUser;
     try {
       if (!user) {
-        navigate("/home");
+        setUserId(null);
+
         return;
       }
+      setUserId(user.uid);
     } catch (error) {
       console.error("Error checking user membership:", error);
     }
@@ -321,6 +324,22 @@ export const ListView = () => {
     getListOwnerNickname();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        // User is signed out
+        // ...
+        navigate("/login");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <div className={listStyle.container} ref={listElementRef}>
       <div className="flex  justify-between items-center">
@@ -373,7 +392,12 @@ export const ListView = () => {
             </button>
           </>
         )}
-        {ownerId === user.uid && (
+        {ownerId === userId && items.length === 0 ? (
+          <button onClick={deleteList} className={"absolute bottom-9"}>
+            <p className={listStyle.deleteListIcon}>🗑️ </p>{" "}
+            <span className={listStyle.link}> poista lista</span>
+          </button>
+        ) : (
           <button onClick={deleteList} className={listStyle.deleteListButton}>
             <p className={listStyle.deleteListIcon}>🗑️ </p>{" "}
             <span className={listStyle.link}> poista lista</span>
