@@ -54,7 +54,7 @@ export const InvitesModal = ({
     heading: `text-2xl flex font-bold text-black py-2`,
     form: `flex justify-between`,
     input: `border p-2 my-1 w-full text-xl`,
-    button: `border p-4 mt-4 bg-pink text-black w-full`,
+    button: `border p-4 mt-4 bg-pink w-24 text-black w-full`,
     icon: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
     bottom: `flex flex-col items-center gap-2`,
     dataLabel: "bg-white font-bold p-1 rounded-md inline-block",
@@ -62,9 +62,9 @@ export const InvitesModal = ({
     deleteAllButton: `flex border p-4 bg-pink`,
     info: `mt-5`,
     link: `text-pink flex font-bold cursor-pointer`,
-    listItem: "grid grid-cols-2 gap-4 border bg-dogwood",
-    listItemContent: "flex flex-col gap-4 p-2",
-    joinDeclineButtons: "flex flex-col items-start self-center ml-4 gap-2",
+    listItem: "flex flex-col p-2 gap-4 border bg-dogwood",
+    listItemContent: "flex flex-col items-center gap-2 p-2",
+    joinDeclineButtons: "flex items-start self-center gap-2",
     joinDeclineButton:
       "transition ease-in-out delay-70 hover:scale-110 duration-70",
   };
@@ -292,43 +292,46 @@ export const InvitesModal = ({
             invites.map((invite) => (
               <li className={style.listItem} key={invite.id}>
                 <div className={style.listItemContent}>
-                  <h3 className="text-xl font-bold">Liittymiskutsu</h3>
-                  <p>
+                  <p className="text-center">
                     <span
-                      className={`${style.dataLabel} ${style.dogwood} font-bold`}
+                      className={`${style.dataLabel} ${style.dogwood} font-bold mb-2`}
+                    >
+                      kutsu käyttäjältä
+                    </span>
+                    <br />
+                    <span className="font-semibold text-xl">
+                      {invite.sender}
+                    </span>
+                  </p>
+                  <p className="text-center">
+                    <span
+                      className={`${style.dataLabel} ${style.dogwood} font-bold mb-2`}
                     >
                       listaan
                     </span>{" "}
                     <br />
-                    <span className="font-semibold flex">
+                    <span className="font-semibold text-xl flex">
                       <span className={style.icon}>{invite.icon}</span>{" "}
                       {invite.listName}
                     </span>
-                  </p>
-                  <p>
-                    <span
-                      className={`${style.dataLabel} ${style.dogwood} font-bold`}
-                    >
-                      käyttäjältä
-                    </span>
-                    <br />
-                    <span className="font-semibold">{invite.sender}</span>
                   </p>
                 </div>
                 <div className={style.joinDeclineButtons}>
                   <button
                     onClick={() => joinList(invite.id)}
-                    className={style.link}
+                    className={style.button}
                   >
                     <span className={style.icon}>🔗</span> Liity
                   </button>
 
                   <button
                     onClick={() => declineInvite(invite.id)}
-                    className={style.link}
+                    className={`${style.button}`}
                   >
                     {" "}
-                    <span className={style.icon}>❌</span>Hylkää
+                    <p className="">
+                      <span className={style.icon}>❌</span>Hylkää
+                    </p>
                   </button>
                 </div>
               </li>

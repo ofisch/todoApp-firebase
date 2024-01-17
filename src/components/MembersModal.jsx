@@ -1,6 +1,8 @@
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+
 import { db } from "../firebase";
+import { useLocation } from "react-router-dom";
 
 export const MembersModal = ({
   members,
@@ -13,12 +15,18 @@ export const MembersModal = ({
   const [sortedMembers, setSortedMembers] = useState([]);
   const [listLog, setListLog] = useState([]);
 
+  const location = useLocation();
+
   const style = {
     link: `text-pink font-bold`,
   };
 
   const getOwnerNickname = async () => {
     try {
+      if (!ownerId) {
+        // ownerId is undefined, handle it accordingly
+        return;
+      }
       const userDocRef = doc(db, "users", ownerId);
       const userDocSnapshot = await getDoc(userDocRef);
 
@@ -59,72 +67,105 @@ export const MembersModal = ({
       setListLog(log);
       // ...
     }
-    fetchData();
+
+    // jos ei olla etusivulla, ei haeta listalogia
+    if (location.pathname !== "/") {
+      console.log(window.location.pathname);
+      fetchData();
+    }
   }, []);
 
   return (
     <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 max-h-80 transform -translate-x-1/2 -translate-y-1/2 z-50 overflow-auto bg-white p-8 rounded-md shadow-md">
-      <>
-        {membersMode ? (
-          <>
-            <div className="flex justify-between items-baseline">
-              <h2 className="text-2xl font-bold mb-4 overflow-auto">Jäsenet</h2>
-              <button onClick={toggleMembersMode} className={style.link}>
-                Historia
-              </button>
-            </div>
-            <ul>
-              {sortedMembers.map((member, index) => (
-                <li
-                  className={`w-fit ${
-                    index % 2 === 0 ? "transparent" : "bg-gray-300"
-                  }`}
-                  key={member.email}
-                >
-                  {member.nickname === ownerNickname ? (
-                    <span>👑{member.nickname}</span>
-                  ) : (
-                    <span>{member.nickname}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <>
-            <div className="flex justify-between items-baseline">
-              <h2 className="text-2xl font-bold mb-4 overflow-auto">
-                Historia
-              </h2>
-              <button
-                onClick={() => {
-                  toggleMembersMode();
-                }}
-                className={style.link}
+      {location.pathname === "/" ? (
+        // Content when on the root path
+        <>
+          <div className="flex justify-between items-baseline">
+            <h2 className="text-2xl font-bold mb-4 overflow-auto">Jäsenet</h2>
+          </div>
+          <ul>
+            {sortedMembers.map((member, index) => (
+              <li
+                className={`w-fit ${
+                  index % 2 === 0 ? "transparent" : "bg-gray-300"
+                }`}
+                key={member.email}
               >
-                Jäsenet
-              </button>
-            </div>
-            {!listLog ? (
-              <p>Ei muokkaushistoriaa</p>
-            ) : (
-              <ul className="">
-                {listLog.map((log, index) => (
+                {member.nickname === ownerNickname ? (
+                  <span>👑{member.nickname}</span>
+                ) : (
+                  <span>{member.nickname}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        // Content when not on the root path
+        <>
+          {membersMode ? (
+            <>
+              <div className="flex justify-between items-baseline">
+                <h2 className="text-2xl font-bold mb-4 overflow-auto">
+                  Jäsenet
+                </h2>
+                <button onClick={toggleMembersMode} className={style.link}>
+                  Historia
+                </button>
+              </div>
+              <ul>
+                {sortedMembers.map((member, index) => (
                   <li
-                    className={
-                      "w-fit p-1 " +
-                      (index % 2 === 0 ? "transparent" : "bg-gray-300")
-                    }
-                    key={index}
+                    className={`w-fit ${
+                      index % 2 === 0 ? "transparent" : "bg-gray-300"
+                    }`}
+                    key={member.email}
                   >
-                    {log}
+                    {member.nickname === ownerNickname ? (
+                      <span>👑{member.nickname}</span>
+                    ) : (
+                      <span>{member.nickname}</span>
+                    )}
                   </li>
                 ))}
               </ul>
-            )}
-          </>
-        )}
-      </>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between items-baseline">
+                <h2 className="text-2xl font-bold mb-4 overflow-auto">
+                  Historia
+                </h2>
+                <button
+                  onClick={() => {
+                    toggleMembersMode();
+                  }}
+                  className={style.link}
+                >
+                  Jäsenet
+                </button>
+              </div>
+              {!listLog ? (
+                <p>Ei muokkaushistoriaa</p>
+              ) : (
+                <ul className="">
+                  {listLog.map((log, index) => (
+                    <li
+                      className={
+                        "w-fit p-1 " +
+                        (index % 2 === 0 ? "transparent" : "bg-gray-300")
+                      }
+                      key={index}
+                    >
+                      {log}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 };

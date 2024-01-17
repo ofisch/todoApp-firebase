@@ -230,17 +230,22 @@ export const ListView = () => {
       membersArray.push(member.data());
     });
 
-    if (
-      window.confirm(
-        `❗ Listalla on ${membersArray.length} jäsentä. Poistettua listaa ei voi palauttaa, poistetaanko lista?`
-      )
-    ) {
-      const listDocRef = doc(db, "lists", id);
-      // poistetaan lista jokaisen jäsenen listoista
-      deleteListFromAllUsers(id);
-      // poistetaan lista-doc
-      await deleteDoc(listDocRef);
-      navigate("/");
+    const nicknameInput = prompt("Syötä käyttäjätunnus jatkaaksesi");
+    if (nicknameInput === userNickname) {
+      if (
+        window.confirm(
+          `❗ Listalla on ${membersArray.length} jäsentä. Poistettua listaa ei voi palauttaa, poistetaanko lista?`
+        )
+      ) {
+        const listDocRef = doc(db, "lists", id);
+        // poistetaan lista jokaisen jäsenen listoista
+        deleteListFromAllUsers(id);
+        // poistetaan lista-doc
+        await deleteDoc(listDocRef);
+        navigate("/");
+      }
+    } else {
+      alert("❌ Käyttäjätunnuksen vahvistaminen epäonnistui");
     }
   };
 

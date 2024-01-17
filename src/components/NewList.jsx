@@ -8,6 +8,12 @@ export const NewList = (props) => {
   const [emojiInTitle, setEmojiInTitle] = useState("");
   const [name, setName] = useState("");
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      addNewList(emojiInTitle, name);
+    }
+  };
+
   return (
     <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
       <>
@@ -38,6 +44,7 @@ export const NewList = (props) => {
             placeholder="listan nimi"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
         </div>
         <button
