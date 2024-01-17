@@ -7,6 +7,7 @@ import {
   getDocs,
   onSnapshot,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -26,6 +27,7 @@ export const ListView = () => {
   const [listInfo, setListInfo] = useState({});
 
   const [userId, setUserId] = useState("");
+  const [userNickname, setUserNickname] = useState("");
 
   const { id } = useParams();
 
@@ -95,6 +97,30 @@ export const ListView = () => {
     };
   }, [id]);
 
+  const addToLog = async (message) => {
+    try {
+      const listDocRef = doc(db, "lists", id);
+
+      const listDocSnapshot = await getDoc(listDocRef);
+      if (listDocSnapshot.exists()) {
+        const currentLog = listDocSnapshot.data().log || [];
+
+        // Add the new message to the log array
+        const updatedLog = [...currentLog, message];
+
+        // Update the document with the new log array
+        await updateDoc(listDocRef, { log: updatedLog });
+        alert(message + " lisätty logiin");
+      } else {
+        await setDoc(listDocRef, { log: [message] });
+
+        console.log("List created with the first log message:", message);
+      }
+    } catch (error) {
+      console.error("Error adding to log:", error);
+    }
+  };
+
   // create item
   const createTodo = async (e) => {
     e.preventDefault();
@@ -111,6 +137,9 @@ export const ListView = () => {
       });
 
       setInput("");
+
+      // lisätään logiin tieto uudesta listauksesta
+      addToLog(userNickname + " lisäsi listauksen: " + input);
     } catch (error) {
       console.error("Error creating todo:", error);
     }
@@ -138,6 +167,11 @@ export const ListView = () => {
     try {
       const itemDocRef = doc(db, "lists", id, "items", todoId);
 
+      const itemDocSnapshot = await getDoc(itemDocRef);
+
+      const itemText = itemDocSnapshot.data().text;
+
+      addToLog(userNickname + " poisti listauksen " + itemText);
       // Delete the document in the subcollection
       await deleteDoc(itemDocRef);
     } catch (error) {
@@ -153,6 +187,10 @@ export const ListView = () => {
     ) {
       const itemsCollectionRef = collection(db, "lists", id, "items");
       const itemsSnapshot = await getDocs(itemsCollectionRef);
+
+      // lisätään logiin tieto tyhjennetystä listasta
+      addToLog(userNickname + " tyhjensi listan");
+
       itemsSnapshot.forEach((item) => {
         deleteTodo(item.id);
       });
@@ -325,9 +363,11 @@ export const ListView = () => {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserId(user.uid);
+        const nickname = await getUserNicknameById(user.uid);
+        setUserNickname(nickname);
       } else {
         // User is signed out
         // ...

@@ -115,11 +115,6 @@ export const ListElement = ({ icon, name, id, fetchUserLists, userId }) => {
         <button onClick={toggleShowMembers}>
           <p className={style.members}>👥</p>
         </button>
-        {userId === ownerId && (
-          <button onClick={deleteList}>
-            <p className={style.members}>🗑️</p>
-          </button>
-        )}
       </div>
       {showMembers && <MembersModal members={members} ownerId={ownerId} />}
     </li>
