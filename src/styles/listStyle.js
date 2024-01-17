@@ -5,7 +5,7 @@ export const listStyle = {
   form: `flex justify-between`,
   input: `border p-2 w-full text-xl`,
   button: `border p-4 ml-2 bg-pink text-slate-100`,
-  buttons: "scale-120 mr-4",
+  buttons: "flex gap-2 scale-120 ",
   plus: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
   bottom: `flex flex-col items-center gap-2`,
   count: `text-center p-2`,

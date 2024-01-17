@@ -110,7 +110,6 @@ export const ListView = () => {
 
         // Update the document with the new log array
         await updateDoc(listDocRef, { log: updatedLog });
-        alert(message + " lisätty logiin");
       } else {
         await setDoc(listDocRef, { log: [message] });
 
@@ -139,7 +138,7 @@ export const ListView = () => {
       setInput("");
 
       // lisätään logiin tieto uudesta listauksesta
-      addToLog(userNickname + " lisäsi listauksen: " + input);
+      addToLog("✅ " + userNickname + " lisäsi listauksen: " + input);
     } catch (error) {
       console.error("Error creating todo:", error);
     }
@@ -163,7 +162,7 @@ export const ListView = () => {
     }
   };
 
-  const deleteTodo = async (todoId) => {
+  const deleteTodo = async (todoId, isBulkDeletion = false) => {
     try {
       const itemDocRef = doc(db, "lists", id, "items", todoId);
 
@@ -171,7 +170,9 @@ export const ListView = () => {
 
       const itemText = itemDocSnapshot.data().text;
 
-      addToLog(userNickname + " poisti listauksen " + itemText);
+      if (!isBulkDeletion) {
+        addToLog("❌ " + userNickname + " poisti listauksen: " + itemText);
+      }
       // Delete the document in the subcollection
       await deleteDoc(itemDocRef);
     } catch (error) {
@@ -189,10 +190,10 @@ export const ListView = () => {
       const itemsSnapshot = await getDocs(itemsCollectionRef);
 
       // lisätään logiin tieto tyhjennetystä listasta
-      addToLog(userNickname + " tyhjensi listan");
+      addToLog("❗ " + userNickname + " tyhjensi listan");
 
       itemsSnapshot.forEach((item) => {
-        deleteTodo(item.id);
+        deleteTodo(item.id, true);
       });
     }
   };
@@ -239,7 +240,6 @@ export const ListView = () => {
       deleteListFromAllUsers(id);
       // poistetaan lista-doc
       await deleteDoc(listDocRef);
-      alert("Lista poistettu");
       navigate("/");
     }
   };
@@ -248,6 +248,7 @@ export const ListView = () => {
 
   const [members, setMembers] = useState([]);
   const [showMembers, setShowMembers] = useState(false);
+  const [membersMode, setMembersMode] = useState(true);
   const [ownerId, setOwnerId] = useState("");
 
   const getListOwnerNickname = async () => {
@@ -261,6 +262,20 @@ export const ListView = () => {
       }
     } catch (error) {
       console.error("Error getting list owner:", error);
+    }
+  };
+
+  const getListLog = async () => {
+    try {
+      const listDocRef = doc(db, "lists", id);
+      const listDocSnapshot = await getDoc(listDocRef);
+
+      if (listDocSnapshot.exists()) {
+        const listData = listDocSnapshot.data();
+        return listData.log;
+      }
+    } catch (error) {
+      console.error("Error getting list log:", error);
     }
   };
 
@@ -302,6 +317,7 @@ export const ListView = () => {
       ) {
         // Click outside the modal, close it
         setShowMembers(false);
+        setMembersMode(true);
         setShowInviteToListModal(false);
       }
     };
@@ -444,7 +460,15 @@ export const ListView = () => {
           </button>
         )}
       </div>
-      {showMembers && <MembersModal members={members} ownerId={ownerId} />}
+      {showMembers && (
+        <MembersModal
+          members={members}
+          ownerId={ownerId}
+          membersMode={membersMode}
+          setMembersMode={setMembersMode}
+          getListLog={getListLog}
+        />
+      )}
       {showInviteToListModal && (
         <InviteToListModal
           ownerId={ownerId}
