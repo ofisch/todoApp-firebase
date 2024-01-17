@@ -20,7 +20,7 @@ export const LoginForm = (props) => {
     <form onSubmit={handleFormSubmit}>
       <div>
         <h1 className={loginStyle.bigHeader}>
-          <span className={loginStyle.icon}>🍉</span>KauppaKamu
+          <span className={loginStyle.icon}>🍉</span>PuuhaPlanneri
         </h1>
         <h2 className={loginStyle.heading}>
           <span className={loginStyle.icon}>🔑</span>Kirjaudu

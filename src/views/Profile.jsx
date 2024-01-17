@@ -45,7 +45,7 @@ export const Profile = () => {
   };
 
   const goToLogin = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   const deleteAccount = async () => {

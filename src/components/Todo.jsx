@@ -8,6 +8,7 @@ const style = {
   text: `ml-2 cursor-pointer`,
   textComplete: `ml-2 cursor-pointer line-through`,
   button: `cursor-pointer flex items-center`,
+  check: "my-auto",
   garbage: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
 };
 
@@ -19,6 +20,7 @@ export const Todo = ({ todo, toggleComplete, deleteTodo }) => {
           onChange={() => toggleComplete(todo)}
           type="checkbox"
           checked={todo.completed ? "checked" : ""}
+          className={style.check}
         />
         <p
           onClick={() => toggleComplete(todo)}

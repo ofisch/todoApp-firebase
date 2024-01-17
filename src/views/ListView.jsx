@@ -106,10 +106,12 @@ export const ListView = () => {
         const currentLog = listDocSnapshot.data().log || [];
 
         // Add the new message to the log array
-        const updatedLog = [...currentLog, message];
+        const updatedLog = [message, ...currentLog];
+
+        const limitedLog = updatedLog.slice(0, 30);
 
         // Update the document with the new log array
-        await updateDoc(listDocRef, { log: updatedLog });
+        await updateDoc(listDocRef, { log: limitedLog });
       } else {
         await setDoc(listDocRef, { log: [message] });
 
@@ -279,8 +281,7 @@ export const ListView = () => {
         const listData = listDocSnapshot.data();
         const log = listData.log || [];
 
-        // Käännetään loki siten, että uusimmat viestit ovat ensimmäisinä
-        return log.reverse();
+        return log;
       }
     } catch (error) {
       console.error("Error getting list log:", error);
