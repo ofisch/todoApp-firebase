@@ -272,7 +272,10 @@ export const ListView = () => {
 
       if (listDocSnapshot.exists()) {
         const listData = listDocSnapshot.data();
-        return listData.log;
+        const log = listData.log || [];
+
+        // Käännetään loki siten, että uusimmat viestit ovat ensimmäisinä
+        return log.reverse();
       }
     } catch (error) {
       console.error("Error getting list log:", error);
@@ -448,14 +451,16 @@ export const ListView = () => {
             </button>
           </>
         )}
-        {ownerId === userId && items.length === 0 ? (
-          <button onClick={deleteList} className={"absolute bottom-9"}>
-            <p className={listStyle.deleteListIcon}>🗑️ </p>{" "}
-            <span className={listStyle.link}> poista lista</span>
-          </button>
-        ) : (
-          <button onClick={deleteList} className={listStyle.deleteListButton}>
-            <p className={listStyle.deleteListIcon}>🗑️ </p>{" "}
+        {ownerId === userId && (
+          <button
+            onClick={deleteList}
+            className={
+              items.length === 0
+                ? "absolute bottom-9"
+                : listStyle.deleteListButton
+            }
+          >
+            <p className={listStyle.deleteListIcon}>🗑️</p>
             <span className={listStyle.link}> poista lista</span>
           </button>
         )}

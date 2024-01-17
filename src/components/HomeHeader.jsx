@@ -43,7 +43,7 @@ export const HomeHeader = (props) => {
 
   return (
     <header className={homeStyle.header} ref={ref}>
-      <h1 className={homeStyle.heading}>listat</h1>
+      <h1 className={homeStyle.heading}>Listat</h1>
       <div className={homeStyle.headerButtons}>
         <button className="scale-125">
           <p

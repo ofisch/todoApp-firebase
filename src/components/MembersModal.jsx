@@ -1,7 +1,6 @@
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { listStyle } from "../styles/listStyle";
 
 export const MembersModal = ({
   members,
@@ -75,8 +74,13 @@ export const MembersModal = ({
               </button>
             </div>
             <ul>
-              {sortedMembers.map((member) => (
-                <li className={"w-fit"} key={member.email}>
+              {sortedMembers.map((member, index) => (
+                <li
+                  className={`w-fit ${
+                    index % 2 === 0 ? "transparent" : "bg-gray-300"
+                  }`}
+                  key={member.email}
+                >
                   {member.nickname === ownerNickname ? (
                     <span>👑{member.nickname}</span>
                   ) : (
@@ -92,7 +96,12 @@ export const MembersModal = ({
               <h2 className="text-2xl font-bold mb-4 overflow-auto">
                 Historia
               </h2>
-              <button onClick={toggleMembersMode} className={style.link}>
+              <button
+                onClick={() => {
+                  toggleMembersMode();
+                }}
+                className={style.link}
+              >
                 Jäsenet
               </button>
             </div>
@@ -104,9 +113,9 @@ export const MembersModal = ({
                   <li
                     className={
                       "w-fit p-1 " +
-                      (index % 2 === 0 ? "bg-gray-300" : "transparent")
+                      (index % 2 === 0 ? "transparent" : "bg-gray-300")
                     }
-                    key={log}
+                    key={index}
                   >
                     {log}
                   </li>

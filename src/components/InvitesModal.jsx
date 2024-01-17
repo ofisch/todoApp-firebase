@@ -282,13 +282,13 @@ export const InvitesModal = ({
   };
 
   return (
-    <div className="fixed top-1/2 lg:top-1/3 left-1/2 w-3/4 md:w-96 lg:w-fit h-2/4 overflow-scroll transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
+    <div className="fixed top-1/3 lg:top-1/3 left-1/2 w-3/4 md:w-96 lg:w-fit max-h-80 overflow-auto transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
       <>
         <div className="flex justify-between items-baseline">
-          <h2 className="text-2xl font-bold mb-4 overflow-auto">kutsut</h2>
+          <h2 className="text-2xl font-bold mb-4 overflow-auto">Kutsut</h2>
         </div>
         <ul className="flex flex-col gap-4 ">
-          {invites &&
+          {invites ? (
             invites.map((invite) => (
               <li className={style.listItem} key={invite.id}>
                 <div className={style.listItemContent}>
@@ -332,7 +332,10 @@ export const InvitesModal = ({
                   </button>
                 </div>
               </li>
-            ))}
+            ))
+          ) : (
+            <p>Ei kutsuja</p>
+          )}
         </ul>
       </>
     </div>
