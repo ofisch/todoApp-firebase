@@ -7,12 +7,14 @@ import { Home } from "./views/Home";
 import { AuthProvider } from "./context/AuthContext";
 import { ListView } from "./views/ListView";
 import { Profile } from "./views/Profile";
+import { Landing } from "./views/Landing";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/landing" element={<Landing />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/list" element={<List />} />
