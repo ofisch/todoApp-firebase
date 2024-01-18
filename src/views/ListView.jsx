@@ -1,5 +1,7 @@
 import {
+  FieldValue,
   addDoc,
+  arrayRemove,
   collection,
   deleteDoc,
   doc,
@@ -383,6 +385,35 @@ export const ListView = () => {
     }
   };
 
+  const leaveList = async (listId, userId) => {
+    try {
+      // Update the list's "members" collection
+      const listRef = doc(db, "lists", listId);
+
+      const membersCollectionRef = collection(listRef, "members");
+
+      // Delete the specific member document with the userId as the key
+      await deleteDoc(doc(membersCollectionRef, userId));
+
+      // Update the user's "lists" field
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.lists && userData.lists.includes(listId)) {
+          await updateDoc(userRef, {
+            lists: arrayRemove(listId),
+          });
+        }
+      }
+
+      alert("Poistuit listalta");
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  };
+
   useEffect(() => {
     getListOwnerNickname();
   }, []);
@@ -407,7 +438,7 @@ export const ListView = () => {
 
   return (
     <div className={listStyle.container} ref={listElementRef}>
-      <div className="flex  justify-between items-center">
+      <div className="flex  justify-between items-center sticky top-0 bg-jade z-50">
         <h1 className={listStyle.heading}>
           <p className={listStyle.plus}>{listInfo.icon}</p>
           {listInfo.name}
@@ -478,6 +509,9 @@ export const ListView = () => {
           membersMode={membersMode}
           setMembersMode={setMembersMode}
           getListLog={getListLog}
+          listId={id}
+          userId={userId}
+          leaveList={leaveList}
         />
       )}
       {showInviteToListModal && (

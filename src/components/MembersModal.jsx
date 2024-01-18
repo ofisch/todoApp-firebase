@@ -1,7 +1,15 @@
-import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
+import {
+  arrayRemove,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 import { useLocation } from "react-router-dom";
 
 export const MembersModal = ({
@@ -10,6 +18,9 @@ export const MembersModal = ({
   membersMode,
   setMembersMode,
   getListLog,
+  listId,
+  userId,
+  leaveList,
 }) => {
   const [ownerNickname, setOwnerNickname] = useState("");
   const [sortedMembers, setSortedMembers] = useState([]);
@@ -19,6 +30,7 @@ export const MembersModal = ({
 
   const style = {
     link: `text-pink font-bold`,
+    button: `bg-pink sticky bottom-0 mt-6 w-full text-white font-bold py-2 px-4 rounded-md`,
   };
 
   const getOwnerNickname = async () => {
@@ -109,26 +121,35 @@ export const MembersModal = ({
                 <h2 className="text-2xl font-bold mb-4 overflow-auto">
                   Jäsenet
                 </h2>
+
                 <button onClick={toggleMembersMode} className={style.link}>
                   Historia
                 </button>
               </div>
-              <ul>
-                {sortedMembers.map((member, index) => (
-                  <li
-                    className={`w-fit ${
-                      index % 2 === 0 ? "transparent" : "bg-gray-300"
-                    }`}
-                    key={member.email}
-                  >
-                    {member.nickname === ownerNickname ? (
-                      <span>👑{member.nickname}</span>
-                    ) : (
-                      <span>{member.nickname}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
+              <div>
+                <ul>
+                  {sortedMembers.map((member, index) => (
+                    <li
+                      className={`w-fit ${
+                        index % 2 === 0 ? "transparent" : "bg-gray-300"
+                      }`}
+                      key={member.email}
+                    >
+                      {member.nickname === ownerNickname ? (
+                        <span>👑{member.nickname}</span>
+                      ) : (
+                        <span>{member.nickname}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => leaveList(listId, userId)}
+                  className={style.button}
+                >
+                  poistu listasta
+                </button>
+              </div>
             </>
           ) : (
             <>
