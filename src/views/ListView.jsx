@@ -489,15 +489,8 @@ export const ListView = () => {
             </button>
           </>
         )}
-        {ownerId === userId && (
-          <button
-            onClick={deleteList}
-            className={
-              items.length === 0
-                ? "absolute bottom-9"
-                : listStyle.deleteListButton
-            }
-          >
+        {ownerId === userId && items.length === 0 && (
+          <button onClick={deleteList} className="absolute bottom-9">
             <p className={listStyle.deleteListIcon}>🗑️</p>
             <span className={listStyle.link}> poista lista</span>
           </button>

@@ -43,7 +43,9 @@ export const HomeHeader = (props) => {
 
   return (
     <header className={homeStyle.header} ref={ref}>
-      <h1 className={homeStyle.heading}>Listat</h1>
+      <h1 className={homeStyle.heading}>{`Listat - ${localStorage.getItem(
+        "nickname"
+      )}`}</h1>
       <div className={homeStyle.headerButtons}>
         <button className="scale-125">
           <p

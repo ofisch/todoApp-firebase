@@ -11,7 +11,7 @@ export const listStyle = {
   count: `text-center p-2`,
   deleteListIcon:
     "scale-130 transition ease-in-out delay-70 hover:scale-150 duration-70",
-  deleteListButton: "mt-5 p-4 ",
+  deleteListButton: "mt-72 p-4 ",
   deleteAllButton: `flex border p-4 bg-pink`,
   info: `mt-5`,
   link: `text-pink bg-dogwood font-bold`,

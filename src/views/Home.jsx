@@ -108,6 +108,7 @@ export const Home = () => {
 
       if (userDocSnapshot.exists()) {
         const userData = userDocSnapshot.data();
+        localStorage.setItem("nickname", userData.nickname);
         return userData.nickname;
       } else {
         console.log("No such document!");
@@ -221,6 +222,8 @@ export const Home = () => {
         setNewListMenu={setNewListMenu}
         toggleNewListMenu={toggleNewListMenu}
         userId={userId}
+        nickname={nickname}
+        getCurrentUserNickname={getCurrentUserNickname}
         fetchUserLists={fetchUserLists}
       ></HomeHeader>
       {newListMenu && <NewList addNewList={addNewList}></NewList>}
