@@ -143,12 +143,14 @@ export const MembersModal = ({
                     </li>
                   ))}
                 </ul>
-                <button
-                  onClick={() => leaveList(listId, userId)}
-                  className={style.button}
-                >
-                  poistu listasta
-                </button>
+                {ownerId !== auth.currentUser.uid && (
+                  <button
+                    onClick={() => leaveList(listId, userId)}
+                    className={style.button}
+                  >
+                    poistu listalta
+                  </button>
+                )}
               </div>
             </>
           ) : (

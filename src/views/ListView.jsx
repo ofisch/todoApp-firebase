@@ -409,6 +409,7 @@ export const ListView = () => {
       }
 
       alert("Poistuit listalta");
+      navigate("/");
     } catch (error) {
       console.error("Error: ", error);
     }
