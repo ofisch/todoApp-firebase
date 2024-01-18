@@ -35,9 +35,6 @@ export const ListView = () => {
 
   const navigate = useNavigate();
 
-  // TODO: hae listan nimi ja ikoni bäkkäristä
-  // ja tulosta otsikkoon
-
   // tarkistetaan käyttäjän sessio, jotta url-osoitteen kautta ei pääse katsomaan listaa
   const checkUserSession = async () => {
     const user = auth.currentUser;
