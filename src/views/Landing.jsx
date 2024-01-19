@@ -67,9 +67,10 @@ export const Landing = () => {
     startButton:
       "bg-pink text-white py-2 mt-4 px-4 rounded-full font-bold transition duration-300 hover:bg-pink-700",
     introduction:
-      "text-lg text-white text-center bg-darkblue tracking-wide rounded-md p-8 mx-auto",
+      "text-lg text-black text-center bg-dogwood tracking-wide rounded-md p-8 mx-auto",
+    introH3: "text-black mb-2",
     introHeader: "mb-8",
-    link: "text-pink bg-dogwood font-semibold",
+    link: "text-pink bg-dogwood font-bold",
     icon: "transition ease-in-out delay-70 hover:scale-130 duration-70",
     feature: "text-center py-8",
     featureContainer: "mx-auto",
@@ -121,8 +122,7 @@ export const Landing = () => {
   };
 
   return (
-    <div id="parallax-container" className={style.container}>
-      <div class="parallax-layer" id="layer1"></div>
+    <div className={style.container}>
       <header class={style.header}>
         <h1 class={style.headerText}>
           <span className={style.icon}>🍉</span> PuuhaPlanneri
@@ -133,9 +133,15 @@ export const Landing = () => {
         </p>
       </header>
 
-      <div className={style.introduction}>
+      <div id="parallax-container" className={style.introduction}>
+        <div class="parallax-layer" id="layer1">
+          📝
+        </div>
+        <div class="parallax-layer" id="layer2">
+          📌
+        </div>
         <div className={style.introHeader}>
-          <h3 className={style.h3}>
+          <h3 className={style.introH3}>
             PuuhaPlanneri on älykäs ja helppokäyttöinen tehtävälistasovellus,
             joka tekee arjen järjestämisestä leikkiä.
           </h3>
@@ -143,10 +149,10 @@ export const Landing = () => {
         <div></div>
 
         <p>
-          Käyttäjäystävällinen käyttöliittymä , tehokkaat ajanhallintatyökalut
-          ja mahdollisuus nauttia jokaisesta hetkestä suunnitelmien
-          toteuttamisen lomassa tekevät PuuhaPlannerista ihanteellisen kumppanin
-          tavoitteidesi saavuttamiseen hymyssä suin.
+          Käyttäjäystävällinen käyttöliittymä, tehokkaat ajanhallintatyökalut ja
+          mahdollisuus nauttia jokaisesta hetkestä suunnitelmien toteuttamisen
+          lomassa tekevät PuuhaPlannerista ihanteellisen kumppanin tavoitteidesi
+          saavuttamiseen hymyssä suin.
         </p>
       </div>
       <div className={style.starter}>
@@ -155,9 +161,11 @@ export const Landing = () => {
           <button onClick={() => navigate("/")} class={style.startButton}>
             Aloita
           </button>
-
+          <a href="#feature" className={style.link}>
+            lisätietoa
+          </a>
           <div class="w-6 pb-20 self-center transition duration-500 ease-in-out transform hover:-translate-y-1">
-            <a href="#feature" className="" id="down-button">
+            <a href="#feature" className={style.link} id="down-button">
               <svg
                 class="w-6 h-6  animate-bounce"
                 xmlns="http://www.w3.org/2000/svg"
