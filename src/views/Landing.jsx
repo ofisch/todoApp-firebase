@@ -63,7 +63,7 @@ export const Landing = () => {
     h3: "text-white mb-2",
     slogan: "text-center text-white text-3xl mt-4 font-bold",
     starter:
-      "text-center text-white py-2 px-4 my-8 rounded-full  transition duration-300 hover:bg-pink-700",
+      "text-center text-white py-2 px-4 mt-4 rounded-full  transition duration-300 hover:bg-pink-700",
     startButton:
       "bg-pink text-white py-2 mt-4 px-4 rounded-full font-bold transition duration-300 hover:bg-pink-700",
     introduction:
@@ -123,67 +123,69 @@ export const Landing = () => {
 
   return (
     <div className={style.container}>
-      <header class={style.header}>
-        <h1 class={style.headerText}>
-          <span className={style.icon}>🍉</span> PuuhaPlanneri
-        </h1>
-        <p className={style.slogan}>
-          Suunnittele huippuhetket ja tehokas tekeminen – kaikki yhdessä
-          paketissa!
-        </p>
-      </header>
+      <main className="h-screen">
+        <header class={style.header}>
+          <h1 class={style.headerText}>
+            <span className={style.icon}>🍉</span> PuuhaPlanneri
+          </h1>
+          <p className={style.slogan}>
+            Suunnittele huippuhetket ja tehokas tekeminen – kaikki yhdessä
+            paketissa!
+          </p>
+        </header>
 
-      <div id="parallax-container" className={style.introduction}>
-        <div class="parallax-layer" id="layer1">
-          📝
-        </div>
-        <div class="parallax-layer" id="layer2">
-          📌
-        </div>
-        <div className={style.introHeader}>
-          <h3 className={style.introH3}>
-            PuuhaPlanneri on älykäs ja helppokäyttöinen tehtävälistasovellus,
-            joka tekee arjen järjestämisestä leikkiä.
-          </h3>
-        </div>
-        <div></div>
+        <div id="parallax-container" className={style.introduction}>
+          <div class="parallax-layer" id="layer1">
+            📝
+          </div>
+          <div class="parallax-layer" id="layer2">
+            📌
+          </div>
+          <div className={style.introHeader}>
+            <h3 className={style.introH3}>
+              PuuhaPlanneri on älykäs ja helppokäyttöinen tehtävälistasovellus,
+              joka tekee arjen järjestämisestä leikkiä.
+            </h3>
+          </div>
+          <div></div>
 
-        <p>
-          Käyttäjäystävällinen käyttöliittymä, tehokkaat ajanhallintatyökalut ja
-          mahdollisuus nauttia jokaisesta hetkestä suunnitelmien toteuttamisen
-          lomassa tekevät PuuhaPlannerista ihanteellisen kumppanin tavoitteidesi
-          saavuttamiseen hymyssä suin.
-        </p>
-      </div>
-      <div className={style.starter}>
-        <p>Järjestele ja ole tuottoisa PuuhaPlannerin avulla</p>
-        <div className="flex flex-col w-fit justify-center mx-auto gap-10">
-          <button onClick={() => navigate("/")} class={style.startButton}>
-            Aloita
-          </button>
-          <a href="#feature" className={style.link}>
-            lisätietoa
-          </a>
-          <div class="w-6 pb-20 self-center transition duration-500 ease-in-out transform hover:-translate-y-1">
-            <a href="#feature" className={style.link} id="down-button">
-              <svg
-                class="w-6 h-6  animate-bounce"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="white"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                />
-              </svg>
+          <p>
+            Käyttäjäystävällinen käyttöliittymä, tehokkaat ajanhallintatyökalut
+            ja mahdollisuus nauttia jokaisesta hetkestä suunnitelmien
+            toteuttamisen lomassa tekevät PuuhaPlannerista ihanteellisen
+            kumppanin tavoitteidesi saavuttamiseen hymyssä suin.
+          </p>
+        </div>
+        <div className={style.starter}>
+          <p>Järjestele ja ole tuottoisa PuuhaPlannerin avulla</p>
+          <div className="flex flex-col w-fit justify-center mx-auto gap-4">
+            <button onClick={() => navigate("/")} class={style.startButton}>
+              Aloita
+            </button>
+            <a href="#feature" className={`${style.link} mt-8 mb-2`}>
+              lisätietoa
             </a>
+            <div class="w-6 self-center transition duration-500 ease-in-out transform hover:-translate-y-1">
+              <a href="#feature" className={style.link} id="down-button">
+                <svg
+                  class="w-6 h-6  animate-bounce"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="white"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                  />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
       <div id="feature" class={style.feature}>
         <div class={style.featureContainer}>
           <Slider {...sliderSettings} className={style.carousel}>
