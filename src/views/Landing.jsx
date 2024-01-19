@@ -1,19 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactModal from "react-modal";
+import Slider from "react-slick";
 import { LandingPoint } from "../components/LandingPoint";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "../utils/landing-parallax.css";
+
 import { useNavigate } from "react-router-dom";
 
 export const Landing = () => {
   const navigate = useNavigate();
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
 
   const images = [
     "https://support.content.office.net/en-us/media/81e79f5a-79d6-4a95-8e23-1a8a1f042092.png",
     "https://support.content.office.net/en-us/media/81e79f5a-79d6-4a95-8e23-1a8a1f042092.png",
     "https://support.content.office.net/en-us/media/81e79f5a-79d6-4a95-8e23-1a8a1f042092.png",
   ]; // Replace with your image URLs
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const openModal = (index) => {
     setSelectedImage(index);
@@ -25,71 +30,165 @@ export const Landing = () => {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    const parallaxContainer = document.getElementById("parallax-container");
+    const layers = document.querySelectorAll(".parallax-layer");
+
+    const handleMouseMove = (e) => {
+      const { clientX, clientY } = e;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      layers.forEach((layer, index) => {
+        const strength = (index + 1) * 0.05;
+        const xOffset = (clientX - centerX) * strength;
+        const yOffset = (clientY - centerY) * strength;
+
+        layer.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+      });
+    };
+
+    parallaxContainer.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      parallaxContainer.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
   const style = {
     container:
       "flex flex-col items-center max-w-[500px] w-full h-full m-auto p-2 font-quicksand",
-    header: "bg-jade text-white py-8 text-center",
-    headerText: "text-4xl font-bold mb-2 flex justify-center items-center",
-    h2: "text-darkblue text-2xl font-bold mb-2",
+    header: "bg-jade text-lg text-white pt-4 pb-8 text-center",
+    headerText: "font-bold mb-2 flex justify-center items-center",
+    h2: "text-white text-2xl font-bold mb-2",
+    h3: "text-white mb-2",
+    slogan: "text-center text-white text-3xl mt-4 font-bold",
     starter:
-      "text-center text-white py-2 px-4 mt-16 rounded-full font-bold transition duration-300 hover:bg-pink-700",
+      "text-center text-white py-2 px-4 my-8 rounded-full  transition duration-300 hover:bg-pink-700",
     startButton:
-      "bg-pink text-white py-2 mt-8 px-4 rounded-full font-bold transition duration-300 hover:bg-pink-700",
+      "bg-pink text-white py-2 mt-4 px-4 rounded-full font-bold transition duration-300 hover:bg-pink-700",
     introduction:
-      "text-lg text-white text-center bg-darkblue rounded-md p-8 mx-auto  mb-8",
-    link: "w-fit self-center mt-2 cursor-pointer bg-pink text-white py-2 px-4 rounded-full font-bold",
+      "text-lg text-white text-center bg-darkblue tracking-wide rounded-md p-8 mx-auto",
+    introHeader: "mb-8",
+    link: "text-pink bg-dogwood font-semibold",
     icon: "transition ease-in-out delay-70 hover:scale-130 duration-70",
     feature: "text-center py-8",
-    featureContainer: "w-24 h-24 mx-auto",
+    featureContainer: "mx-auto",
     footer: "text-center w-full py-8 bg-darkblue text-white",
-    gridImages: " mx-auto gap-4 mt-8 object-cover",
-    modal:
-      "flex flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-md shadow-md",
-    overlay: "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50",
     pointsContainer: "mt-8",
     plusButton: "border p-4 bg-pink text-black",
-    modalImage: "object-cover w-full h-full rounded-md ",
+    carousel: "slick-carousel w-96 mx-auto shadow-md",
+    carouselImage: "cursor-pointer w-full",
+  };
+
+  const customArrowStyle = {
+    customArrow: {
+      background: "pink",
+      color: "white",
+      padding: "10px",
+      marginTop: "8px",
+      borderRadius: "50%",
+      fontWeight: "bold",
+    },
+  };
+
+  const CustomPrevArrow = (props) => (
+    <button
+      {...props}
+      className={`slick-arrow slick-prev custom-arrow ${style.startButton}`}
+    >
+      ⬅️
+    </button>
+  );
+
+  const CustomNextArrow = (props) => (
+    <button
+      {...props}
+      style={customArrowStyle}
+      className={`slick-arrow slick-next custom-arrow ${style.startButton}`}
+    >
+      ➡️
+    </button>
+  );
+
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    prevArrow: <CustomPrevArrow />,
+    nextArrow: <CustomNextArrow />,
   };
 
   return (
-    <div className={style.container}>
+    <div id="parallax-container" className={style.container}>
+      <div class="parallax-layer" id="layer1"></div>
       <header class={style.header}>
         <h1 class={style.headerText}>
           <span className={style.icon}>🍉</span> PuuhaPlanneri
         </h1>
-        <p>
+        <p className={style.slogan}>
           Suunnittele huippuhetket ja tehokas tekeminen – kaikki yhdessä
           paketissa!
         </p>
       </header>
+
       <div className={style.introduction}>
+        <div className={style.introHeader}>
+          <h3 className={style.h3}>
+            PuuhaPlanneri on älykäs ja helppokäyttöinen tehtävälistasovellus,
+            joka tekee arjen järjestämisestä leikkiä.
+          </h3>
+        </div>
+        <div></div>
+
         <p>
-          PuuhaPlanneri on älykäs ja helppokäyttöinen tehtävälistasovellus, joka
-          tekee arjen järjestämisestä leikkiä. Käyttäjäystävällinen
-          käyttöliittymä, tehokkaat ajanhallintatyökalut ja mahdollisuus nauttia
-          jokaisesta hetkestä suunnitelmien toteuttamisen lomassa tekevät
-          PuuhaPlannerista ihanteellisen kumppanin tavoitteidesi saavuttamiseen
-          hymyssä suin.
+          Käyttäjäystävällinen käyttöliittymä , tehokkaat ajanhallintatyökalut
+          ja mahdollisuus nauttia jokaisesta hetkestä suunnitelmien
+          toteuttamisen lomassa tekevät PuuhaPlannerista ihanteellisen kumppanin
+          tavoitteidesi saavuttamiseen hymyssä suin.
         </p>
       </div>
       <div className={style.starter}>
         <p>Järjestele ja ole tuottoisa PuuhaPlannerin avulla</p>
+        <div className="flex flex-col w-fit justify-center mx-auto gap-10">
+          <button onClick={() => navigate("/")} class={style.startButton}>
+            Aloita
+          </button>
 
-        <button onClick={() => navigate("/")} class={style.startButton}>
-          Aloita
-        </button>
+          <div class="w-6 pb-20 self-center transition duration-500 ease-in-out transform hover:-translate-y-1">
+            <a href="#feature" className="" id="down-button">
+              <svg
+                class="w-6 h-6  animate-bounce"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="white"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
       </div>
-      <div class={style.feature}>
-        <div class={style.featureContainer}></div>
-        <div className={style.gridImages}>
-          {images.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Image ${index + 1}`}
-              onClick={() => openModal(index)}
-            />
-          ))}
+      <div id="feature" class={style.feature}>
+        <div class={style.featureContainer}>
+          <Slider {...sliderSettings} className={style.carousel}>
+            {images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Image ${index + 1}`}
+                className={style.carouselImage}
+                onClick={() => openModal(index)}
+              />
+            ))}
+          </Slider>
         </div>
         <div className={style.pointsContainer}>
           <LandingPoint
@@ -100,27 +199,10 @@ export const Landing = () => {
           />
         </div>
       </div>
+
       <footer class={style.footer}>
         <p>&copy; 2023 PuuhaPlanneri</p>
       </footer>
-      <ReactModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        contentLabel="Larger Image Modal"
-        className={style.modal}
-        overlayClassName={style.overlay}
-      >
-        {selectedImage !== null && (
-          <img
-            src={images[selectedImage]}
-            alt={`Large Image ${selectedImage + 1}`}
-            className={style.modalImage}
-          />
-        )}
-        <button onClick={closeModal} className={`${style.link}`}>
-          Sulje
-        </button>
-      </ReactModal>
     </div>
   );
 };
