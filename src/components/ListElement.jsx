@@ -77,11 +77,15 @@ export const ListElement = ({ icon, name, id, fetchUserLists, userId }) => {
   }, [showMembers, id]);
 
   const toggleShowMembers = () => {
-    setShowMembers(!showMembers);
+    if (id != undefined) {
+      setShowMembers(!showMembers);
+    }
   };
 
   const handleClickList = () => {
-    navigate(`/listView/${id}`);
+    if (id !== undefined) {
+      navigate(`/listView/${id}`);
+    }
   };
 
   const listElementRef = useRef(null);

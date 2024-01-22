@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 export const LandingPoint = ({ header, text }) => {
   const style = {
-    point: `flex flex-col gap-4 rounded-md p-4 items-center justify-center mb-8`,
+    point: `flex flex-col shadow-md gap-4 rounded-md p-4 items-center justify-center mb-8`,
     h2: `text-darkblue text-2xl font-bold `,
     checkHeader: `flex text-center`,
     check: `my-auto w-6 h-6`,
