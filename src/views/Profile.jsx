@@ -44,8 +44,8 @@ export const Profile = () => {
     }
   };
 
-  const goToLogin = () => {
-    navigate("/login");
+  const goToLanding = () => {
+    navigate("/landing");
   };
 
   const deleteAccount = async () => {
@@ -61,7 +61,7 @@ export const Profile = () => {
           await deleteDoc(userDocRef);
           await user.delete();
           alert("Tili poistettu");
-          goToLogin();
+          goToLanding();
         }
       } else {
         alert("❌ Käyttäjätunnuksen vahvistaminen epäonnistui");
@@ -105,7 +105,7 @@ export const Profile = () => {
         className={style.button}
         onClick={() => {
           logout();
-          goToLogin();
+          goToLanding();
         }}
       >
         Kirjaudu ulos

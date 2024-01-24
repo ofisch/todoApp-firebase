@@ -31,6 +31,12 @@ export const Home = () => {
   // tai liittyä uuteen listaan
   // headerissa kans logout ja vaik profiili-info (ehk nappi?)
 
+  const firstVisit = localStorage.getItem("firstVisit");
+
+  if (!firstVisit) {
+    localStorage.setItem("firstVisit", "true");
+  }
+
   const [items, setItems] = useState([]);
   const [lists, setLists] = useState([]);
   const [email, setEmail] = useState("");
@@ -121,6 +127,9 @@ export const Home = () => {
   };
 
   useEffect(() => {
+    if (localStorage.getItem("firstVisit") === "true") {
+      navigate("/landing");
+    }
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserId(user.uid);

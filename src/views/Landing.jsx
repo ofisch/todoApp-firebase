@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
-import ReactModal from "react-modal";
-import Slider from "react-slick";
+
 import { LandingPoint } from "../components/LandingPoint";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../utils/landing-parallax.css";
 import "../utils/landing-animation.css";
-import listat from "../img/landing-kuvat/listat.png";
 import { useNavigate } from "react-router-dom";
 import { ListElement } from "../components/ListElement";
-import Todo from "../components/Todo";
 import PreviewTodo from "../components/PreviewTodo";
 import { InviteToListModalPreview } from "../components/InviteToListModalPreview";
 import { useSpring, animated, config } from "react-spring";
@@ -49,20 +46,6 @@ export const Landing = () => {
     config: config.wobbly,
     reset: true, // Reset the animation when the component is unmounted
   });
-  const images = [listat]; // Replace with your image URLs
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  const openModal = (index) => {
-    setSelectedImage(index);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setSelectedImage(null);
-    setIsModalOpen(false);
-  };
 
   useEffect(() => {
     const parallaxContainer = document.getElementById("parallax-container");
@@ -89,19 +72,9 @@ export const Landing = () => {
     };
   }, []);
   const style = {
-    /*
-    container:
-      "flex flex-col items-center max-w-[500px] w-full h-full m-auto p-2 font-quicksand",
-*/
-    /*
-    header: "bg-jade text-lg text-white pt-4 pb-8 text-center",
-    */
     headerText: "font-bold mb-2 flex justify-center items-center",
     h2: "text-white text-2xl font-bold mb-2",
     h3: "text-white mb-2",
-    /*
-    slogan: "text-center text-white text-2xl md:text-3xl mt-4 font-bold",
-    */
     container:
       "flex flex-col items-center max-w-[500px] w-full h-full m-auto p-2 font-quicksand",
     header:
@@ -128,48 +101,14 @@ export const Landing = () => {
     carouselImage: "cursor-pointer w-full",
   };
 
-  const customArrowStyle = {
-    customArrow: {
-      background: "pink",
-      color: "white",
-      padding: "10px",
-      marginTop: "8px",
-      borderRadius: "50%",
-      fontWeight: "bold",
-    },
-  };
+  const scrollToFeature = () => {
+    const featureSection = document.getElementById("feature");
 
-  const CustomPrevArrow = (props) => (
-    <button
-      {...props}
-      className={`slick-arrow slick-prev custom-arrow ${style.startButton}`}
-    >
-      ⬅️
-    </button>
-  );
-
-  const CustomNextArrow = (props) => (
-    <button
-      {...props}
-      style={customArrowStyle}
-      className={`slick-arrow slick-next custom-arrow ${style.startButton}`}
-    >
-      ➡️
-    </button>
-  );
-
-  const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    prevArrow: <CustomPrevArrow />,
-    nextArrow: <CustomNextArrow />,
-  };
-
-  const testTodo = {
-    text: "testi",
+    if (featureSection) {
+      featureSection.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
   };
 
   return (
@@ -212,18 +151,27 @@ export const Landing = () => {
           <div className={style.starter}>
             <p>Järjestele ja ole tuottoisa PuuhaPlannerin avulla</p>
             <div className="flex flex-col w-fit justify-center mx-auto gap-4">
-              <button onClick={() => navigate("/")} class={style.startButton}>
+              <button
+                onClick={() => {
+                  navigate("/");
+                  localStorage.setItem("firstVisit", "false");
+                }}
+                class={style.startButton}
+              >
                 Aloita
               </button>
             </div>
           </div>
         </div>
         <div className={style.learnMore}>
-          <a href="#feature" className={`${style.link} mt-8 mb-2`}>
+          <button
+            onClick={scrollToFeature}
+            className={`${style.link} mt-8 mb-2`}
+          >
             lisätietoa
-          </a>
+          </button>
           <div class="w-6 self-center transition duration-500 ease-in-out transform hover:-translate-y-1">
-            <a href="#feature" className={style.link} id="down-button">
+            <button onClick={scrollToFeature} id="down-button">
               <svg
                 class="w-6 h-6  animate-bounce"
                 xmlns="http://www.w3.org/2000/svg"
@@ -238,7 +186,7 @@ export const Landing = () => {
                   d="M19 14l-7 7m0 0l-7-7m7 7V3"
                 />
               </svg>
-            </a>
+            </button>
           </div>
         </div>
       </main>
@@ -249,6 +197,11 @@ export const Landing = () => {
         <div className={style.pointsContainer}>
           <div className="w-full bg-white rounded-md  mx-auto">
             <div className="p-4 ">
+              <h2
+                className={`flex text-2xl font-bold mb-2 text-left text-black`}
+              >
+                Listat
+              </h2>
               <ListElement icon={"🍉"} name={"ostoslista"}></ListElement>
               <ListElement icon={"📝"} name={"opiskelu"}></ListElement>
               <ListElement icon={"📚"} name={"luettavat kirjat"}></ListElement>

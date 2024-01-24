@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { homeStyle } from "../styles/homeStyle";
 import { loginStyle } from "../styles/loginStyle";
 
@@ -11,6 +12,8 @@ export const LoginForm = (props) => {
     setRegisterMode,
   } = props;
 
+  const navigate = useNavigate();
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     login();
@@ -19,7 +22,10 @@ export const LoginForm = (props) => {
   return (
     <form onSubmit={handleFormSubmit}>
       <div>
-        <h1 className={loginStyle.bigHeader}>
+        <h1
+          onClick={() => navigate("/landing")}
+          className={loginStyle.bigHeader}
+        >
           <span className={loginStyle.icon}>🍉</span>PuuhaPlanneri
         </h1>
         <h2 className={loginStyle.heading}>
