@@ -250,8 +250,9 @@ export const Landing = () => {
           <div className="w-full bg-white rounded-md  mx-auto">
             <div className="p-4 ">
               <ListElement icon={"🍉"} name={"ostoslista"}></ListElement>
-              <ListElement icon={"✏"} name={"opiskelu"}></ListElement>
-              <ListElement icon={"🍉"} name={"moi"}></ListElement>
+              <ListElement icon={"📝"} name={"opiskelu"}></ListElement>
+              <ListElement icon={"📚"} name={"luettavat kirjat"}></ListElement>
+              <ListElement icon={"🗓️"} name={"päivän tehtävät"}></ListElement>
             </div>
             <LandingPoint
               header={"Luo useita listoja"}
@@ -262,8 +263,15 @@ export const Landing = () => {
           </div>
           <div className="w-full bg-white rounded-md mx-auto">
             <div className="p-4">
-              <PreviewTodo text={"tesasffasti"} complete={false}></PreviewTodo>
-              <PreviewTodo text={"moro"} complete={true}></PreviewTodo>
+              <h2
+                className={`flex text-2xl font-bold mb-2 text-left text-black`}
+              >
+                <span className={style.icon}>🍉</span>ostoslista
+              </h2>
+              <PreviewTodo text={"kaurajuoma"} complete={true}></PreviewTodo>
+              <PreviewTodo text={"kurkku"} complete={true}></PreviewTodo>
+              <PreviewTodo text={"vegemakkara"} complete={false}></PreviewTodo>
+              <PreviewTodo text={"juusto"} complete={false}></PreviewTodo>
             </div>
             <LandingPoint
               header={"Järjestele tehtäväsi"}
@@ -305,7 +313,7 @@ export const Landing = () => {
               <animated.div style={animationProps}>
                 <PreviewTodo
                   class="preview-todo"
-                  text={"Aloita Puuhaplannerin käyttö"}
+                  text={"Aloita PuuhaPlannerin käyttö"}
                   complete={false}
                 />
               </animated.div>
@@ -323,10 +331,17 @@ export const Landing = () => {
           </div>
         </div>
       </div>
-
       <footer class={style.footer}>
         <p>&copy; 2023 PuuhaPlanneri</p>
         <p className="text-sm">
+          <p className="text-sm flex flex-col my-4">
+            <a
+              className={`${style.link} w-fit self-center`}
+              href="https://onni.pro"
+            >
+              Onni Fischer
+            </a>{" "}
+          </p>
           Tämän sivun suunnittelussa hyödynnetty{" "}
           <a className="text-blue" href="https://webweave.fi">
             Webweavea
