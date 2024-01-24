@@ -5,13 +5,50 @@ import { LandingPoint } from "../components/LandingPoint";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../utils/landing-parallax.css";
+import "../utils/landing-animation.css";
 import listat from "../img/landing-kuvat/listat.png";
 import { useNavigate } from "react-router-dom";
 import { ListElement } from "../components/ListElement";
+import Todo from "../components/Todo";
+import PreviewTodo from "../components/PreviewTodo";
+import { InviteToListModalPreview } from "../components/InviteToListModalPreview";
+import { useSpring, animated, config } from "react-spring";
+import { useInView } from "react-intersection-observer";
 
 export const Landing = () => {
   const navigate = useNavigate();
 
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.5,
+  });
+
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (inView) {
+      setIsAnimating(true);
+    }
+  }, [inView]);
+
+  const animationProps = useSpring({
+    from: {
+      opacity: 0,
+      transform: "translateX(-150%)",
+    },
+    to: async (next) => {
+      await next({ opacity: 1, transform: "translateX(0%)" });
+      if (!isAnimating) {
+        // Reset the animation when not animating
+        await next({
+          opacity: 0,
+          transform: "translateX(-150%)",
+        });
+      }
+    },
+    config: config.wobbly,
+    reset: true, // Reset the animation when the component is unmounted
+  });
   const images = [listat]; // Replace with your image URLs
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,7 +112,7 @@ export const Landing = () => {
     startButton:
       "bg-pink text-white py-2 mt-4 px-4 rounded-full font-bold transition duration-300 hover:bg-pink-700",
     learnMore:
-      "md:hidden text-center text-white mx-auto p-4 gap-4 flex flex-col w-fit rounded-full transition duration-300 hover:bg-pink-700",
+      "lg:hidden text-center text-white mx-auto p-4 gap-4 flex flex-col w-fit rounded-full transition duration-300 hover:bg-pink-700",
     introduction:
       "text-lg shadow-md text-black text-center bg-dogwood tracking-wide rounded-md p-8 mx-auto",
     introH3: "text-black mb-2",
@@ -131,9 +168,13 @@ export const Landing = () => {
     nextArrow: <CustomNextArrow />,
   };
 
+  const testTodo = {
+    text: "testi",
+  };
+
   return (
     <div className={style.container}>
-      <main className=" flex flex-col min-h-screen flex-grow justify-between">
+      <main className=" flex flex-col lg:min-h-full min-h-screen flex-grow justify-between">
         <div>
           <header class={style.header}>
             <h1 class={style.headerText}>
@@ -206,11 +247,12 @@ export const Landing = () => {
         <h2 class="text-3xl text-white font-bold my-5">Ominaisuudet</h2>
         <div class={style.featureContainer}></div>
         <div className={style.pointsContainer}>
-          <div className="w-full mx-auto">
-            <h2 className="text-2xl text-black text-start font-bold">Listat</h2>
-            <ListElement icon={"🍉"} name={"ostoslista"}></ListElement>
-            <ListElement icon={"✏"} name={"opiskelu"}></ListElement>
-            <ListElement icon={"🍉"} name={"moi"}></ListElement>
+          <div className="w-full bg-white rounded-md  mx-auto">
+            <div className="p-4 ">
+              <ListElement icon={"🍉"} name={"ostoslista"}></ListElement>
+              <ListElement icon={"✏"} name={"opiskelu"}></ListElement>
+              <ListElement icon={"🍉"} name={"moi"}></ListElement>
+            </div>
             <LandingPoint
               header={"Luo useita listoja"}
               text={
@@ -218,19 +260,67 @@ export const Landing = () => {
               }
             />
           </div>
+          <div className="w-full bg-white rounded-md mx-auto">
+            <div className="p-4">
+              <PreviewTodo text={"tesasffasti"} complete={false}></PreviewTodo>
+              <PreviewTodo text={"moro"} complete={true}></PreviewTodo>
+            </div>
+            <LandingPoint
+              header={"Järjestele tehtäväsi"}
+              text={
+                "Luo ja hallitse tehtäväsi helposti pysyäksesi ajan tasalla tehtäväluettelostasi."
+              }
+            />
+          </div>
+          <div className="w-full bg-white rounded-md mx-auto">
+            <InviteToListModalPreview></InviteToListModalPreview>
+            <LandingPoint
+              header={"Kutsu muut listaasi"}
+              text={
+                "Kutsu ystäväsi ja perheesi listaasi, jotta voitte suunnitella yhdessä."
+              }
+            />
+          </div>
+          <div>
+            <h2 className={`flex text-2xl font-bold mb-2 text-left text-black`}>
+              <span className={style.icon}>📜</span>ominaisuudet
+            </h2>
+            <PreviewTodo
+              class="previewTodo"
+              text={"Luo useita listoja"}
+              complete={true}
+            ></PreviewTodo>
+            <PreviewTodo
+              class="previewTodo"
+              text={"Järjestele tehtäväsi"}
+              complete={true}
+            ></PreviewTodo>
+            <PreviewTodo
+              class="previewTodo"
+              text={"Kutsu muut listaasi"}
+              complete={true}
+            ></PreviewTodo>
 
-          <LandingPoint
-            header={"Järjestele tehtäväsi"}
-            text={
-              "Luo ja hallitse tehtäväsi helposti pysyäksesi ajan tasalla tehtäväluettelostasi."
-            }
-          />
-          <LandingPoint
-            header={"Kutsu muut listaasi"}
-            text={
-              "Kutsu ystäväsi ja perheesi listaasi, jotta voitte suunnitella yhdessä."
-            }
-          />
+            <div className="animation-container" ref={ref}>
+              <animated.div style={animationProps}>
+                <PreviewTodo
+                  class="preview-todo"
+                  text={"Aloita Puuhaplannerin käyttö"}
+                  complete={false}
+                />
+              </animated.div>
+
+              {/* Your other content */}
+            </div>
+          </div>
+          <div className="w-fit mx-auto">
+            <button
+              onClick={() => navigate("/")}
+              class="bg-pink text-white py-2 my-4 px-4 rounded-full font-bold transition duration-300 hover:bg-pink-700"
+            >
+              Aloita
+            </button>
+          </div>
         </div>
       </div>
 

@@ -1,0 +1,31 @@
+.animation-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.preview-todo {
+  position: absolute;
+  left: -300px; /* Initial position outside the screen on the left */
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  animation: bounceIn 2s ease-in-out forwards;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: translateX(-300px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(30px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(-15px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
