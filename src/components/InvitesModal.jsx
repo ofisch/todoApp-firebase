@@ -287,7 +287,7 @@ export const InvitesModal = ({
         <div className="flex justify-between items-baseline">
           <h2 className="text-2xl font-bold mb-4 overflow-auto">Kutsut</h2>
         </div>
-        <ul className="flex flex-col gap-4 ">
+        <ul className="flex flex-col gap-4 text-lg">
           {invites ? (
             invites.map((invite) => (
               <li className={style.listItem} key={invite.id}>

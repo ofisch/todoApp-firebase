@@ -13,6 +13,7 @@ import { db } from "../firebase";
 export const InviteToListModal = ({
   ownerId,
   listInfo,
+
   getUserNicknameById,
   getUserIdByNickname,
   toggleShowInviteToListModal,
@@ -25,6 +26,7 @@ export const InviteToListModal = ({
     form: `flex justify-between`,
     input: `border p-2 my-1 w-full text-xl`,
     button: `border p-4 mt-4 bg-pink text-black w-full`,
+    closeButton: `absolute top-2 right-4 text-2xl text-pink font-bold`,
     icon: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
     bottom: `flex flex-col items-center gap-2`,
     count: `text-center p-2`,
@@ -76,7 +78,13 @@ export const InviteToListModal = ({
             Kutsu käyttäjä listaan: <br />
             {listInfo.icon + listInfo.name}
           </h2>
-          <div className="mb-4">
+          <button
+            onClick={toggleShowInviteToListModal}
+            className={style.closeButton}
+          >
+            X
+          </button>
+          <div className="mb-4 text-lg">
             <label className="block text-sm font-semibold text-gray-600 mt-2 mb-2">
               Kutsuttavan käyttäjätunnus <span className="text-red-500">*</span>
             </label>

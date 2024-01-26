@@ -12,7 +12,7 @@ import { MembersModal } from "./MembersModal";
 import { useNavigate } from "react-router-dom";
 
 const style = {
-  li: `flex justify-between border bg-dogwood p-4 my-2`,
+  li: `flex justify-between border bg-dogwood p-4 my-2 cursor-pointer`,
   liComplete: `flex justify-between border bg-blue p-4 my-2`,
   row: `flex`,
   text: `cursor-pointer`,
@@ -111,12 +111,17 @@ export const ListElement = ({ icon, name, id, fetchUserLists, userId }) => {
   }, []);
 
   return (
-    <li className={style.li} ref={listElementRef}>
-      <div onClick={handleClickList} className={style.row}>
+    <li onClick={handleClickList} className={style.li} ref={listElementRef}>
+      <div className={style.row}>
         <p className={style.text}>{icon + name}</p>
       </div>
       <div>
-        <button onClick={toggleShowMembers}>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleShowMembers();
+          }}
+        >
           <p className={style.members}>👥</p>
         </button>
       </div>

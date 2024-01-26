@@ -15,6 +15,9 @@ import { useLocation } from "react-router-dom";
 export const MembersModal = ({
   members,
   ownerId,
+  toggleShowMembers,
+  showMembers,
+  setShowMembers,
   membersMode,
   setMembersMode,
   getListLog,
@@ -31,6 +34,7 @@ export const MembersModal = ({
   const style = {
     link: `text-pink font-bold`,
     button: `bg-pink sticky bottom-0 mt-6 w-full text-white font-bold py-2 px-4 rounded-md`,
+    closeButton: `absolute top-2 right-4 text-2xl text-pink font-bold`,
   };
 
   const getOwnerNickname = async () => {
@@ -95,7 +99,8 @@ export const MembersModal = ({
           <div className="flex justify-between items-baseline">
             <h2 className="text-2xl font-bold mb-4 overflow-auto">Jäsenet</h2>
           </div>
-          <ul>
+
+          <ul className="">
             {sortedMembers.map((member, index) => (
               <li
                 className={`w-fit ${
@@ -118,20 +123,27 @@ export const MembersModal = ({
           {membersMode ? (
             <>
               <div className="flex justify-between items-baseline">
-                <h2 className="text-2xl font-bold mb-4 overflow-auto">
-                  Jäsenet
-                </h2>
-
-                <button onClick={toggleMembersMode} className={style.link}>
-                  Historia
+                <div className="flex gap-4 items-baseline">
+                  <h2 className="text-2xl font-bold mb-4 overflow-auto">
+                    Jäsenet
+                  </h2>
+                  <button onClick={toggleMembersMode} className={style.link}>
+                    Historia
+                  </button>
+                </div>
+                <button
+                  onClick={toggleShowMembers}
+                  className={style.closeButton}
+                >
+                  X
                 </button>
               </div>
               <div>
-                <ul>
+                <ul className="text-lg">
                   {sortedMembers.map((member, index) => (
                     <li
-                      className={`w-fit ${
-                        index % 2 === 0 ? "transparent" : "bg-gray-300"
+                      className={`w-fit my-4 ${
+                        index % 2 === 0 ? "bg-dogwood" : "bg-dogwood"
                       }`}
                       key={member.email}
                     >
@@ -156,27 +168,35 @@ export const MembersModal = ({
           ) : (
             <>
               <div className="flex justify-between items-baseline">
-                <h2 className="text-2xl font-bold mb-4 overflow-auto">
-                  Historia
-                </h2>
+                <div className="flex gap-4 items-baseline">
+                  <h2 className="text-2xl font-bold mb-4 overflow-auto">
+                    Historia
+                  </h2>
+                  <button
+                    onClick={() => {
+                      toggleMembersMode();
+                    }}
+                    className={style.link}
+                  >
+                    Jäsenet
+                  </button>
+                </div>
                 <button
-                  onClick={() => {
-                    toggleMembersMode();
-                  }}
-                  className={style.link}
+                  onClick={toggleShowMembers}
+                  className={style.closeButton}
                 >
-                  Jäsenet
+                  X
                 </button>
               </div>
               {!listLog ? (
                 <p>Ei muokkaushistoriaa</p>
               ) : (
-                <ul className="">
+                <ul className="text-lg">
                   {listLog.map((log, index) => (
                     <li
                       className={
-                        "w-fit p-1 " +
-                        (index % 2 === 0 ? "transparent" : "bg-gray-300")
+                        "w-fit p-1 my-4 " +
+                        (index % 2 === 0 ? "bg-dogwood" : "bg-dogwood")
                       }
                       key={index}
                     >

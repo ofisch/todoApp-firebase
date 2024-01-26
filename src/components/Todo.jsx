@@ -2,8 +2,8 @@ import React from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 const style = {
-  li: `flex justify-between border w-full bg-dogwood p-4 my-2`,
-  liComplete: `flex justify-between border bg-blue p-4 my-2`,
+  li: `flex justify-between border w-full bg-dogwood p-4 my-2 cursor-pointer`,
+  liComplete: `flex justify-between border bg-blue p-4 my-2 cursor-pointer`,
   row: `flex`,
   text: `ml-2 cursor-pointer`,
   textComplete: `ml-2 cursor-pointer line-through`,
@@ -14,7 +14,10 @@ const style = {
 
 export const Todo = ({ todo, toggleComplete, deleteTodo }) => {
   return (
-    <li className={todo.completed ? style.liComplete : style.li}>
+    <li
+      onClick={() => toggleComplete(todo)}
+      className={todo.completed ? style.liComplete : style.li}
+    >
       <div className={style.row}>
         <input
           onChange={() => toggleComplete(todo)}
@@ -29,7 +32,12 @@ export const Todo = ({ todo, toggleComplete, deleteTodo }) => {
           {todo.text}
         </p>
       </div>
-      <button onClick={() => deleteTodo(todo.id)}>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          deleteTodo(todo.id);
+        }}
+      >
         <p className={style.garbage}>🗑️</p>
       </button>
     </li>

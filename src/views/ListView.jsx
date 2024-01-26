@@ -497,6 +497,8 @@ export const ListView = () => {
         <MembersModal
           members={members}
           ownerId={ownerId}
+          toggleShowMembers={toggleShowMembers}
+          showMembers={showMembers}
           membersMode={membersMode}
           setMembersMode={setMembersMode}
           getListLog={getListLog}
@@ -509,6 +511,8 @@ export const ListView = () => {
         <InviteToListModal
           ownerId={ownerId}
           listInfo={listInfo}
+          toggleShowMembers={toggleShowMembers}
+          showMembers={showMembers}
           getUserNicknameById={getUserNicknameById}
           getUserIdByNickname={getUserIdByNickname}
           toggleShowInviteToListModal={toggleShowInviteToListModal}
