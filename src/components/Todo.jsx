@@ -4,7 +4,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 const style = {
   li: `flex justify-between border w-full bg-dogwood p-4 my-2 cursor-pointer`,
   liComplete: `flex justify-between border bg-blue p-4 my-2 cursor-pointer`,
-  row: `flex`,
+  row: `flex overflow-auto`,
   text: `ml-2 cursor-pointer`,
   textComplete: `ml-2 cursor-pointer line-through`,
   button: `cursor-pointer flex items-center`,

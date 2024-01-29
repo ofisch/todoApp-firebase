@@ -80,6 +80,12 @@ export const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if (auth.currentUser) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <>
       <div className={loginStyle.container}>

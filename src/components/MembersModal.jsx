@@ -100,12 +100,10 @@ export const MembersModal = ({
             <h2 className="text-2xl font-bold mb-4 overflow-auto">Jäsenet</h2>
           </div>
 
-          <ul className="">
+          <ul className="text-lg">
             {sortedMembers.map((member, index) => (
               <li
-                className={`w-fit ${
-                  index % 2 === 0 ? "transparent" : "bg-gray-300"
-                }`}
+                className={`w-fit my-4 bg-dogwood rounded-md p-2 overflow-auto`}
                 key={member.email}
               >
                 {member.nickname === ownerNickname ? (
@@ -142,9 +140,7 @@ export const MembersModal = ({
                 <ul className="text-lg">
                   {sortedMembers.map((member, index) => (
                     <li
-                      className={`w-fit my-4 ${
-                        index % 2 === 0 ? "bg-dogwood" : "bg-dogwood"
-                      }`}
+                      className={`w-fit my-4 bg-dogwood rounded-md p-2 overflow-auto `}
                       key={member.email}
                     >
                       {member.nickname === ownerNickname ? (
@@ -194,10 +190,7 @@ export const MembersModal = ({
                 <ul className="text-lg">
                   {listLog.map((log, index) => (
                     <li
-                      className={
-                        "w-fit p-1 my-4 " +
-                        (index % 2 === 0 ? "bg-dogwood" : "bg-dogwood")
-                      }
+                      className={"my-4 overflow-auto bg-dogwood rounded-md p-2"}
                       key={index}
                     >
                       {log}
