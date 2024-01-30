@@ -3,7 +3,7 @@ import { newListStyle } from "../styles/newListStyle";
 import EmojiPicker from "./EmojiPicker";
 
 export const NewList = (props) => {
-  const { addNewList } = props;
+  const { addNewList, toggleNewListMenu } = props;
 
   const [emojiInTitle, setEmojiInTitle] = useState("");
   const [name, setName] = useState("");
@@ -12,6 +12,10 @@ export const NewList = (props) => {
     if (e.key === "Enter") {
       addNewList(emojiInTitle, name);
     }
+  };
+
+  const style = {
+    closeButton: `absolute top-2 right-4 text-2xl text-pink font-bold`,
   };
 
   return (
@@ -23,6 +27,9 @@ export const NewList = (props) => {
               ? `Luo uusi lista - ${emojiInTitle} ${name}`
               : "Luo uusi lista"}
           </h2>
+          <button onClick={toggleNewListMenu} className={style.closeButton}>
+            X
+          </button>
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-600 mb-2">

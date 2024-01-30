@@ -100,6 +100,15 @@ export const MembersModal = ({
         <>
           <div className={style.menu}>
             <h2 className="text-2xl font-bold mb-4 overflow-auto">Jäsenet</h2>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleShowMembers();
+              }}
+              className={style.closeButton}
+            >
+              X
+            </button>
           </div>
 
           <ul className={style.ul}>

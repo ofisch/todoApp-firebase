@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   collection,
   deleteDoc,
@@ -76,15 +76,16 @@ export const ListElement = ({ icon, name, id, fetchUserLists, userId }) => {
     }
   }, [showMembers, id]);
 
-  const toggleShowMembers = () => {
-    if (id != undefined) {
-      setShowMembers(!showMembers);
+  const toggleShowMembers = useCallback(() => {
+    if (id !== undefined) {
+      setShowMembers((prevShowMembers) => !prevShowMembers);
     }
-  };
+  }, [id]);
 
   const handleClickList = () => {
     if (id !== undefined) {
       navigate(`/listView/${id}`);
+      console.log("Clicked list:", id);
     }
   };
 
@@ -125,7 +126,13 @@ export const ListElement = ({ icon, name, id, fetchUserLists, userId }) => {
           <p className={style.members}>👥</p>
         </button>
       </div>
-      {showMembers && <MembersModal members={members} ownerId={ownerId} />}
+      {showMembers && (
+        <MembersModal
+          members={members}
+          ownerId={ownerId}
+          toggleShowMembers={toggleShowMembers}
+        />
+      )}
     </li>
   );
 };

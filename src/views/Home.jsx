@@ -235,7 +235,12 @@ export const Home = () => {
         getCurrentUserNickname={getCurrentUserNickname}
         fetchUserLists={fetchUserLists}
       ></HomeHeader>
-      {newListMenu && <NewList addNewList={addNewList}></NewList>}
+      {newListMenu && (
+        <NewList
+          addNewList={addNewList}
+          toggleNewListMenu={toggleNewListMenu}
+        ></NewList>
+      )}
       <main className={homeStyle.main}>
         <ul className={homeStyle.lists}>
           {items.length > 0 ? (

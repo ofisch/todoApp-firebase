@@ -52,6 +52,7 @@ export const InvitesModal = ({
     container: `font-quicksand max-w-[500px] w-full h-full over m-auto rounded-md p-4 flex flex-col items-center`,
     bigHeader: "text-4xl flex font-bold mb-4 text-black",
     heading: `text-2xl flex font-bold text-black py-2`,
+    menu: "flex justify-between items-baseline px-8 pt-4 sticky top-0 bg-white z-10",
     form: `flex justify-between`,
     input: `border p-2 my-1 w-full text-xl`,
     button: `border p-4 mt-4 bg-pink w-24 text-black w-full`,
@@ -67,6 +68,7 @@ export const InvitesModal = ({
     joinDeclineButtons: "flex items-start self-center gap-2",
     joinDeclineButton:
       "transition ease-in-out delay-70 hover:scale-110 duration-70",
+    closeButton: `absolute top-2 right-4 text-2xl text-pink font-bold`,
   };
 
   const fetchReceivedInvites = async () => {
@@ -282,12 +284,15 @@ export const InvitesModal = ({
   };
 
   return (
-    <div className="fixed top-1/3 lg:top-1/3 left-1/2 w-3/4 md:w-96  max-h-80 overflow-auto transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
+    <div className="fixed top-1/3 lg:top-1/3 left-1/2 w-3/4 md:w-96  max-h-80 overflow-auto transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-md shadow-md">
       <>
-        <div className="flex justify-between items-baseline">
+        <div className={style.menu}>
           <h2 className="text-2xl font-bold mb-4 overflow-auto">Kutsut</h2>
+          <button className={style.closeButton} onClick={toggleInvitesModal}>
+            X
+          </button>
         </div>
-        <ul className="flex flex-col gap-4 text-lg">
+        <ul className="flex flex-col gap-4 text-lg px-8">
           {invites ? (
             invites.map((invite) => (
               <li className={style.listItem} key={invite.id}>
@@ -337,7 +342,7 @@ export const InvitesModal = ({
               </li>
             ))
           ) : (
-            <p>Ei kutsuja</p>
+            <p className="py-2">Ei kutsuja</p>
           )}
         </ul>
       </>
