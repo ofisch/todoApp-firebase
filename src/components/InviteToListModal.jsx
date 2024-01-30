@@ -71,7 +71,7 @@ export const InviteToListModal = ({
   };
 
   return (
-    <div className="font-quicksand fixed top-1/3 left-1/2 w-3/4 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
+    <div className="font-quicksand fixed top-1/2 left-1/2 w-3/4 md:top-1/3 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
       <>
         <div className="flex flex-col justify-between">
           <h2 className="text-2xl font-bold mb-4 overflow-auto">

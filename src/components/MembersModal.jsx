@@ -35,6 +35,8 @@ export const MembersModal = ({
     link: `text-pink font-bold`,
     button: `bg-pink sticky bottom-0 mt-6 w-full text-white font-bold py-2 px-4 rounded-md`,
     closeButton: `absolute top-2 right-4 text-2xl text-pink font-bold`,
+    menu: "flex justify-between items-baseline px-8 pt-4 sticky top-0 bg-white z-10",
+    ul: `text-lg px-8`,
   };
 
   const getOwnerNickname = async () => {
@@ -92,18 +94,18 @@ export const MembersModal = ({
   }, []);
 
   return (
-    <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 max-h-80 transform -translate-x-1/2 -translate-y-1/2 z-50 overflow-auto bg-white p-8 rounded-md shadow-md">
+    <div className="fixed top-1/2 left-1/2 w-3/4 md:top-1/3 md:w-96 max-h-80 transform -translate-x-1/2 -translate-y-1/2 z-50 overflow-auto bg-white rounded-md shadow-md">
       {location.pathname === "/" ? (
         // Content when on the root path
         <>
-          <div className="flex justify-between items-baseline">
+          <div className={style.menu}>
             <h2 className="text-2xl font-bold mb-4 overflow-auto">Jäsenet</h2>
           </div>
 
-          <ul className="text-lg">
+          <ul className={style.ul}>
             {sortedMembers.map((member, index) => (
               <li
-                className={`w-fit my-4 bg-dogwood rounded-md p-2 overflow-auto`}
+                className={`w-fit my-2 bg-dogwood rounded-md p-2 overflow-auto`}
                 key={member.email}
               >
                 {member.nickname === ownerNickname ? (
@@ -120,7 +122,7 @@ export const MembersModal = ({
         <>
           {membersMode ? (
             <>
-              <div className="flex justify-between items-baseline">
+              <div className={style.menu}>
                 <div className="flex gap-4 items-baseline">
                   <h2 className="text-2xl font-bold mb-4 overflow-auto">
                     Jäsenet
@@ -137,10 +139,10 @@ export const MembersModal = ({
                 </button>
               </div>
               <div>
-                <ul className="text-lg">
+                <ul className={style.ul}>
                   {sortedMembers.map((member, index) => (
                     <li
-                      className={`w-fit my-4 bg-dogwood rounded-md p-2 overflow-auto `}
+                      className={`w-fit my-2 bg-dogwood rounded-md p-2 overflow-auto `}
                       key={member.email}
                     >
                       {member.nickname === ownerNickname ? (
@@ -163,7 +165,7 @@ export const MembersModal = ({
             </>
           ) : (
             <>
-              <div className="flex justify-between items-baseline">
+              <div className={style.menu}>
                 <div className="flex gap-4 items-baseline">
                   <h2 className="text-2xl font-bold mb-4 overflow-auto">
                     Historia
@@ -187,7 +189,7 @@ export const MembersModal = ({
               {!listLog ? (
                 <p>Ei muokkaushistoriaa</p>
               ) : (
-                <ul className="text-lg">
+                <ul className={style.ul}>
                   {listLog.map((log, index) => (
                     <li
                       className={"my-4 overflow-auto bg-dogwood rounded-md p-2"}
