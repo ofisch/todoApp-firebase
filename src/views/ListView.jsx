@@ -383,32 +383,34 @@ export const ListView = () => {
   };
 
   const leaveList = async (listId, userId) => {
-    try {
-      // Update the list's "members" collection
-      const listRef = doc(db, "lists", listId);
+    if (window.confirm("Oletko varma?")) {
+      try {
+        // Update the list's "members" collection
+        const listRef = doc(db, "lists", listId);
 
-      const membersCollectionRef = collection(listRef, "members");
+        const membersCollectionRef = collection(listRef, "members");
 
-      // Delete the specific member document with the userId as the key
-      await deleteDoc(doc(membersCollectionRef, userId));
+        // Delete the specific member document with the userId as the key
+        await deleteDoc(doc(membersCollectionRef, userId));
 
-      // Update the user's "lists" field
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
+        // Update the user's "lists" field
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
 
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        if (userData.lists && userData.lists.includes(listId)) {
-          await updateDoc(userRef, {
-            lists: arrayRemove(listId),
-          });
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.lists && userData.lists.includes(listId)) {
+            await updateDoc(userRef, {
+              lists: arrayRemove(listId),
+            });
+          }
         }
-      }
 
-      alert("Poistuit listalta");
-      navigate("/");
-    } catch (error) {
-      console.error("Error: ", error);
+        alert("Poistuit listalta");
+        navigate("/");
+      } catch (error) {
+        console.error("Error: ", error);
+      }
     }
   };
 

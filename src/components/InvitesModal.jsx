@@ -63,8 +63,8 @@ export const InvitesModal = ({
     deleteAllButton: `flex border p-4 bg-pink`,
     info: `mt-5`,
     link: `text-pink flex font-bold cursor-pointer`,
-    listItem: "flex flex-col p-2 gap-4 border bg-dogwood",
-    listItemContent: "flex flex-col items-center gap-2 p-2",
+    listItem: "flex flex-col p-2 gap-4 border bg-dogwood rounded-md",
+    listItemContent: "flex flex-col gap-2 mr-4",
     joinDeclineButtons: "flex items-start self-center gap-2",
     joinDeclineButton:
       "transition ease-in-out delay-70 hover:scale-110 duration-70",
@@ -215,7 +215,9 @@ export const InvitesModal = ({
               fetchReceivedInvites();
               alert("✅ Listaan liitytty!");
               fetchUserLists();
+
               toggleInvitesModal();
+
               console.log("Invite deleted from receivedInvites");
             } else {
               console.log("No matching invite found");
@@ -245,7 +247,9 @@ export const InvitesModal = ({
           fetchReceivedInvites();
           alert("✅ Listaan liitytty!");
           fetchUserLists();
+
           toggleInvitesModal();
+
           console.log("Invite deleted from receivedInvites");
         }
       }
@@ -255,31 +259,34 @@ export const InvitesModal = ({
   };
 
   const declineInvite = async (inviteId) => {
-    try {
-      const receivedInvitesDocRef = doc(
-        db,
-        "users",
-        userId,
-        "receivedInvites",
-        inviteId
-      );
+    if (window.confirm("Oletko varma?")) {
+      try {
+        const receivedInvitesDocRef = doc(
+          db,
+          "users",
+          userId,
+          "receivedInvites",
+          inviteId
+        );
 
-      const invitesSnapshot = await getDoc(receivedInvitesDocRef);
+        const invitesSnapshot = await getDoc(receivedInvitesDocRef);
 
-      console.log("data: ", invitesSnapshot.data());
+        console.log("data: ", invitesSnapshot.data());
 
-      if (invitesSnapshot.exists()) {
-        // poistetaan kutsu käyttäjän kutsut-kokoelmasta
-        await deleteDoc(receivedInvitesDocRef);
-        // päivitetään käyttäjän kutsut sivulla
-        fetchReceivedInvites();
-        alert("❌ Kutsu hylätty!");
-        toggleInvitesModal();
-      } else {
-        console.log("No matching invite found");
+        if (invitesSnapshot.exists()) {
+          // poistetaan kutsu käyttäjän kutsut-kokoelmasta
+          await deleteDoc(receivedInvitesDocRef);
+          // päivitetään käyttäjän kutsut sivulla
+          fetchReceivedInvites();
+          alert("❌ Kutsu hylätty!");
+
+          toggleInvitesModal();
+        } else {
+          console.log("No matching invite found");
+        }
+      } catch (error) {
+        console.log("Error declining invite:", error);
       }
-    } catch (error) {
-      console.log("Error declining invite:", error);
     }
   };
 
@@ -297,46 +304,35 @@ export const InvitesModal = ({
             invites.map((invite) => (
               <li className={style.listItem} key={invite.id}>
                 <div className={style.listItemContent}>
-                  <p className="text-center">
-                    <span
-                      className={`${style.dataLabel} ${style.dogwood} font-bold mb-2`}
-                    >
-                      kutsu käyttäjältä
-                    </span>
-                    <br />
-                    <span className="font-semibold text-xl">
-                      {invite.sender}
-                    </span>
-                  </p>
-                  <p className="text-center">
-                    <span
-                      className={`${style.dataLabel} ${style.dogwood} font-bold mb-2`}
-                    >
-                      listaan
-                    </span>{" "}
-                    <br />
-                    <span className="font-semibold text-xl flex">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-semibold text-2xl flex">
                       <span className={style.icon}>{invite.icon}</span>{" "}
                       {invite.listName}
+                    </h2>
+                  </div>
+
+                  <div className="mb-2 ml-2">
+                    <span className="text-sm">Kutsu käyttäjältä</span>
+                    <br />
+                    <span className="font-semibold text-lg">
+                      {invite.sender}
                     </span>
-                  </p>
+                  </div>
                 </div>
+
                 <div className={style.joinDeclineButtons}>
                   <button
                     onClick={() => joinList(invite.id)}
-                    className={style.button}
+                    className={`${style.link} mr-2`}
                   >
                     <span className={style.icon}>🔗</span> Liity
                   </button>
 
                   <button
                     onClick={() => declineInvite(invite.id)}
-                    className={`${style.button}`}
+                    className={`${style.link} mr-2`}
                   >
-                    {" "}
-                    <p className="">
-                      <span className={style.icon}>❌</span>Hylkää
-                    </p>
+                    <span className={style.icon}>❌</span> Hylkää
                   </button>
                 </div>
               </li>
