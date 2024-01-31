@@ -163,6 +163,25 @@ export const ListView = () => {
     }
   };
 
+  const editTodo = async (itemId, newText) => {
+    try {
+      const itemDocRef = doc(db, "lists", id, "items", itemId);
+      const itemDocSnapshot = await getDoc(itemDocRef);
+
+      if (itemDocSnapshot.exists()) {
+        const itemData = itemDocSnapshot.data();
+        await updateDoc(itemDocRef, {
+          text: newText,
+        });
+        alert("Listaus muokattu");
+      } else {
+        console.error("Item not found");
+      }
+    } catch (error) {
+      console.error("Error toggling complete:", error);
+    }
+  };
+
   const deleteTodo = async (todoId, isBulkDeletion = false) => {
     try {
       const itemDocRef = doc(db, "lists", id, "items", todoId);
@@ -471,6 +490,7 @@ export const ListView = () => {
             key={todo.id}
             todo={todo}
             toggleComplete={() => toggleComplete(todo.id)}
+            editTodo={editTodo}
             deleteTodo={() => deleteTodo(todo.id)}
           />
         ))}
