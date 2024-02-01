@@ -50,6 +50,26 @@ export const ListView = () => {
     }
   };
 
+  const exitIfNotMember = async () => {
+    try {
+      if (!userId || userId === "") {
+        // jos userId ei ole saatavilla, odotetaan
+        return;
+      }
+
+      const membersCollectionRef = collection(db, "lists", id, "members");
+      const memberDocRef = doc(membersCollectionRef, userId);
+      const memberDocSnapshot = await getDoc(memberDocRef);
+
+      if (!memberDocSnapshot.exists()) {
+        // jos käyttäjä ei ole listan jäsen, ohjataan etusivulle
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Error checking membership:", error);
+    }
+  };
+
   const getListInfo = async () => {
     try {
       const listDocRef = doc(db, "lists", id);
@@ -87,6 +107,7 @@ export const ListView = () => {
 
   useEffect(() => {
     checkUserSession();
+    exitIfNotMember();
     getListInfo();
     const unsubscribe = fetchItems(); // kutsutaan funktiota itemien hakemiseen
 
@@ -173,6 +194,15 @@ export const ListView = () => {
         await updateDoc(itemDocRef, {
           text: newText,
         });
+        // lisätään logiin tieto listauksen muokkauksesta
+        addToLog(
+          "✏️ " +
+            userNickname +
+            " muokkasi listauksen: " +
+            itemData.text +
+            " ➡️ " +
+            newText
+        );
       } else {
         console.error("Item not found");
       }
@@ -449,10 +479,15 @@ export const ListView = () => {
       }
     });
 
+    const unsubscribeUserId = () => {
+      exitIfNotMember();
+    };
+
     return () => {
       unsubscribe();
+      unsubscribeUserId();
     };
-  }, []);
+  }, [navigate, id]);
 
   return (
     <div className={listStyle.container} ref={listElementRef}>

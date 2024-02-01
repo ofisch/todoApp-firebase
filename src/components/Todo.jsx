@@ -23,6 +23,7 @@ export const Todo = ({ todo, toggleComplete, editTodo, deleteTodo }) => {
     if (e.key === "Enter") {
       await editTodo(todo.id, todoEditedText);
       setIsEditing(false);
+      setTodoEditedText(todo.text);
     } else if (e.key === "Escape") {
       setIsEditing(false);
       setTodoEditedText(todo.text);
@@ -31,7 +32,9 @@ export const Todo = ({ todo, toggleComplete, editTodo, deleteTodo }) => {
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
-    setTodoEditedText(isEditing ? todo.text : todoEditedText);
+    if (!isEditing) {
+      setTodoEditedText(todo.text);
+    }
   };
 
   useEffect(() => {
