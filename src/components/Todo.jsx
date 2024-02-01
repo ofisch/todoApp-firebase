@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 const style = {
@@ -10,18 +10,53 @@ const style = {
   button: `cursor-pointer flex items-center`,
   check: "my-auto",
   garbage: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
+  input: "ml-2 border w-auto",
 };
 
 export const Todo = ({ todo, toggleComplete, editTodo, deleteTodo }) => {
   const [todoText, setTodoText] = React.useState(todo.text);
+  const [todoEditedText, setTodoEditedText] = React.useState(todo.text);
   const [isEditing, setIsEditing] = React.useState(false);
+  const inputRef = React.useRef(null);
 
   const handleKeyPress = async (e) => {
     if (e.key === "Enter") {
-      await editTodo(todo.id, todoText);
+      await editTodo(todo.id, todoEditedText);
       setIsEditing(false);
+    } else if (e.key === "Escape") {
+      setIsEditing(false);
+      setTodoEditedText(todo.text);
     }
   };
+
+  const toggleEditing = () => {
+    setIsEditing(!isEditing);
+    setTodoEditedText(isEditing ? todo.text : todoEditedText);
+  };
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const isEditButtonClicked = e.target.closest("#edit-button");
+      const isInputClicked = e.target.tagName === "INPUT";
+
+      if (!isEditButtonClicked && !isInputClicked) {
+        setIsEditing(false);
+        setTodoEditedText(todo.text);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <li
@@ -30,18 +65,26 @@ export const Todo = ({ todo, toggleComplete, editTodo, deleteTodo }) => {
     >
       <div className={style.row}>
         <input
-          onChange={() => toggleComplete(todo)}
+          onChange={(e) => {
+            e.stopPropagation();
+            toggleComplete(todo);
+          }}
           type="checkbox"
           checked={todo.completed ? "checked" : ""}
           className={style.check}
         />
         {isEditing ? (
           <input
+            ref={inputRef}
             type="text"
-            value={todoText}
-            onChange={(e) => setTodoText(e.target.value)}
+            className={style.input}
+            value={todoEditedText}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              e.stopPropagation();
+              setTodoEditedText(e.target.value);
+            }}
             onKeyPress={handleKeyPress}
-            className={style.text}
           />
         ) : (
           <p
@@ -53,7 +96,13 @@ export const Todo = ({ todo, toggleComplete, editTodo, deleteTodo }) => {
         )}
       </div>
       <div className="flex gap-4">
-        <button onClick={() => setIsEditing(true)}>
+        <button
+          id="edit-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleEditing();
+          }}
+        >
           <p className={style.garbage}>✍️</p>
         </button>
         <button

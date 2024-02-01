@@ -11,6 +11,11 @@ import React, { useEffect, useState } from "react";
 
 import { auth, db } from "../firebase";
 import { useLocation } from "react-router-dom";
+import { MembersModalHome } from "./MemberSubModals/MembersModalHome";
+
+import { modalStyle } from "../styles/modalStyle";
+import { MembersModalList } from "./MemberSubModals/MembersModalList";
+import { HistoryModalList } from "./MemberSubModals/HistoryModalList";
 
 export const MembersModal = ({
   members,
@@ -30,14 +35,6 @@ export const MembersModal = ({
   const [listLog, setListLog] = useState([]);
 
   const location = useLocation();
-
-  const style = {
-    link: `text-pink font-bold`,
-    button: `bg-pink sticky bottom-0 mt-6 w-full text-white font-bold py-2 px-4`,
-    closeButton: `absolute top-2 right-4 text-2xl text-pink font-bold`,
-    menu: "flex justify-between items-baseline px-8 pt-4 sticky top-0 bg-white z-10",
-    ul: `text-lg px-8`,
-  };
 
   const getOwnerNickname = async () => {
     try {
@@ -97,119 +94,32 @@ export const MembersModal = ({
     <div className="fixed top-1/2 left-1/2 w-3/4 md:top-1/3 md:w-96 max-h-80 transform -translate-x-1/2 -translate-y-1/2 z-50 overflow-auto bg-white rounded-md shadow-md">
       {location.pathname === "/" ? (
         // Content when on the root path
-        <>
-          <div className={style.menu}>
-            <h2 className="text-2xl font-bold mb-4 overflow-auto">Jäsenet</h2>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleShowMembers();
-              }}
-              className={style.closeButton}
-            >
-              X
-            </button>
-          </div>
-
-          <ul className={style.ul}>
-            {sortedMembers.map((member, index) => (
-              <li
-                className={`w-fit my-2 bg-dogwood rounded-md p-2 overflow-auto`}
-                key={member.email}
-              >
-                {member.nickname === ownerNickname ? (
-                  <span>👑{member.nickname}</span>
-                ) : (
-                  <span>{member.nickname}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
+        <MembersModalHome
+          toggleShowMembers={toggleShowMembers}
+          sortedMembers={sortedMembers}
+          ownerNickname={ownerNickname}
+        ></MembersModalHome>
       ) : (
         // Content when not on the root path
         <>
           {membersMode ? (
-            <>
-              <div className={style.menu}>
-                <div className="flex gap-4 items-baseline">
-                  <h2 className="text-2xl font-bold mb-4 overflow-auto">
-                    Jäsenet
-                  </h2>
-                  <button onClick={toggleMembersMode} className={style.link}>
-                    Historia
-                  </button>
-                </div>
-                <button
-                  onClick={toggleShowMembers}
-                  className={style.closeButton}
-                >
-                  X
-                </button>
-              </div>
-              <div>
-                <ul className={style.ul}>
-                  {sortedMembers.map((member, index) => (
-                    <li
-                      className={`w-fit my-2 bg-dogwood rounded-md p-2 overflow-auto `}
-                      key={member.email}
-                    >
-                      {member.nickname === ownerNickname ? (
-                        <span>👑{member.nickname}</span>
-                      ) : (
-                        <span>{member.nickname}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                {ownerId !== auth.currentUser.uid && (
-                  <button
-                    onClick={() => leaveList(listId, userId)}
-                    className={style.button}
-                  >
-                    poistu listalta
-                  </button>
-                )}
-              </div>
-            </>
+            <MembersModalList
+              toggleMembersMode={toggleMembersMode}
+              toggleShowMembers={toggleShowMembers}
+              sortedMembers={sortedMembers}
+              ownerNickname={ownerNickname}
+              ownerId={ownerId}
+              auth={auth}
+              leaveList={leaveList}
+              listId={listId}
+              userId={userId}
+            ></MembersModalList>
           ) : (
-            <>
-              <div className={style.menu}>
-                <div className="flex gap-4 items-baseline">
-                  <h2 className="text-2xl font-bold mb-4 overflow-auto">
-                    Historia
-                  </h2>
-                  <button
-                    onClick={() => {
-                      toggleMembersMode();
-                    }}
-                    className={style.link}
-                  >
-                    Jäsenet
-                  </button>
-                </div>
-                <button
-                  onClick={toggleShowMembers}
-                  className={style.closeButton}
-                >
-                  X
-                </button>
-              </div>
-              {!listLog ? (
-                <p>Ei muokkaushistoriaa</p>
-              ) : (
-                <ul className={style.ul}>
-                  {listLog.map((log, index) => (
-                    <li
-                      className={"my-4 overflow-auto bg-dogwood rounded-md p-2"}
-                      key={index}
-                    >
-                      {log}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </>
+            <HistoryModalList
+              toggleMembersMode={toggleMembersMode}
+              toggleShowMembers={toggleShowMembers}
+              listLog={listLog}
+            ></HistoryModalList>
           )}
         </>
       )}

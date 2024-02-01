@@ -173,7 +173,6 @@ export const ListView = () => {
         await updateDoc(itemDocRef, {
           text: newText,
         });
-        alert("Listaus muokattu");
       } else {
         console.error("Item not found");
       }
