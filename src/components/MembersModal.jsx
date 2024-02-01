@@ -36,6 +36,7 @@ export const MembersModal = ({
 
   const location = useLocation();
 
+  // haetaan omistajan käyttäjätunnus
   const getOwnerNickname = async () => {
     try {
       if (!ownerId) {
@@ -54,6 +55,7 @@ export const MembersModal = ({
     }
   };
 
+  // järjestetään jäsenet niin, että omistaja on ensimmäisenä
   const sortMembers = () => {
     const sorted = members.slice().sort((a, b) => {
       if (a.nickname === ownerNickname) return -1;
@@ -93,14 +95,14 @@ export const MembersModal = ({
   return (
     <div className="fixed top-1/2 left-1/2 w-3/4 md:top-1/3 md:w-96 max-h-80 transform -translate-x-1/2 -translate-y-1/2 z-50 overflow-auto bg-white rounded-md shadow-md">
       {location.pathname === "/" ? (
-        // Content when on the root path
+        // sisältö etusivulla
         <MembersModalHome
           toggleShowMembers={toggleShowMembers}
           sortedMembers={sortedMembers}
           ownerNickname={ownerNickname}
         ></MembersModalHome>
       ) : (
-        // Content when not on the root path
+        // sisältö listanäkymässä
         <>
           {membersMode ? (
             <MembersModalList
