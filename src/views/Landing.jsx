@@ -11,13 +11,16 @@ import PreviewTodo from "../components/PreviewTodo";
 import { InviteToListModalPreview } from "../components/InviteToListModalPreview";
 import { useSpring, animated, config } from "react-spring";
 import { useInView } from "react-intersection-observer";
+import { landingStyle } from "../styles/landingStyle";
+import { BannerDesktop } from "../components/LandingDesktop/BannerDesktop";
+import { FeatureDesktop } from "../components/LandingDesktop/FeatureDesktop";
 
 export const Landing = () => {
   const navigate = useNavigate();
 
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.5,
+    threshold: 0.85,
   });
 
   const [isAnimating, setIsAnimating] = useState(false);
@@ -47,60 +50,6 @@ export const Landing = () => {
     reset: true, // Reset the animation when the component is unmounted
   });
 
-  useEffect(() => {
-    const parallaxContainer = document.getElementById("parallax-container");
-    const layers = document.querySelectorAll(".parallax-layer");
-
-    const handleMouseMove = (e) => {
-      const { clientX, clientY } = e;
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-
-      layers.forEach((layer, index) => {
-        const strength = (index + 1) * 0.05;
-        const xOffset = (clientX - centerX) * strength;
-        const yOffset = (clientY - centerY) * strength;
-
-        layer.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-      });
-    };
-
-    parallaxContainer.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      parallaxContainer.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
-  const style = {
-    headerText: "font-bold mb-2 flex justify-center items-center",
-    h2: "text-white text-2xl font-bold mb-2",
-    h3: "text-white mb-2",
-    container:
-      "flex flex-col items-center max-w-[500px] w-full h-full m-auto p-2 font-quicksand",
-    header:
-      "bg-jade text-lg md:text-xl lg:text-2xl text-white pt-4 pb-8 text-center",
-    slogan: "text-center text-white text-2xl md:text-3xl mt-4 font-bold",
-    starter:
-      "text-center text-white py-2 px-4 mt-4 rounded-full  transition duration-300 hover:bg-pink-700",
-    startButton:
-      "bg-pink text-white py-2 mt-4 px-4 rounded-full font-bold transition duration-300 hover:bg-pink-700",
-    learnMore:
-      "lg:hidden text-center text-white mx-auto p-4 gap-4 flex flex-col w-fit rounded-full transition duration-300 hover:bg-pink-700",
-    introduction:
-      "text-lg shadow-md text-black text-center bg-dogwood tracking-wide rounded-md p-8 mx-auto",
-    introH3: "text-black mb-2",
-    introHeader: "mb-8",
-    link: "text-pink bg-dogwood font-bold",
-    icon: "transition ease-in-out delay-70 hover:scale-130 duration-70",
-    feature: "text-center py-4 md:py-16",
-    featureContainer: "mx-auto",
-    footer: "text-center w-full py-8 px-2 bg-darkblue text-white",
-    pointsContainer: "mt-8",
-    plusButton: "border p-4 bg-pink text-black",
-    carousel: "slick-carousel w-96 mx-auto shadow-md",
-    carouselImage: "cursor-pointer w-full",
-  };
-
   const scrollToFeature = () => {
     const featureSection = document.getElementById("feature");
 
@@ -111,31 +60,68 @@ export const Landing = () => {
     }
   };
 
+  const [isAnimatingDesktop, setIsAnimatingDesktop] = useState(false);
+
+  const [refDesktop, inViewDesktop] = useInView({
+    triggerOnce: true,
+    threshold: 1,
+  });
+
+  useEffect(() => {
+    if (inViewDesktop) {
+      setIsAnimatingDesktop(true);
+    }
+  }, [inViewDesktop]);
+
+  const animationPropsDesktop = useSpring({
+    from: {
+      opacity: 0,
+      transform: "translateY(150%)",
+    },
+    to: async (next) => {
+      await next({ opacity: 1, transform: "translateY(0%)" });
+      if (!isAnimatingDesktop) {
+        // Reset the animation when not animating
+        await next({
+          opacity: 0,
+          transform: "translateY(150%)",
+        });
+      }
+    },
+    config: config.wobbly,
+    reset: true, // Reset the animation when the component is unmounted
+  });
+
   return (
     <>
       {" "}
-      <div className={style.container}>
-        <main className=" flex flex-col lg:min-h-full min-h-screen flex-grow justify-between">
+      <div className={landingStyle.container}>
+        <main className="flex flex-col lg:min-h-full min-h-screen flex-grow justify-between">
           <div>
-            <header class={style.header}>
-              <h1 class={style.headerText}>
-                <span className={style.icon}>🍉</span> PuuhaPlanneri
+            <header class={landingStyle.header}>
+              <h1 class={landingStyle.headerText}>
+                <span className={landingStyle.icon}>🍉</span> PuuhaPlanneri
               </h1>
-              <p className={style.slogan}>
+              <p className={`${landingStyle.slogan} md:hidden`}>
                 Suunnittele huippuhetket ja tehokas tekeminen – kaikki yhdessä
                 paketissa!
               </p>
             </header>
 
-            <div id="parallax-container" className={`${style.introduction}`}>
+            <BannerDesktop navigate={navigate}></BannerDesktop>
+
+            <div
+              id="parallax-container"
+              className={`${landingStyle.introduction} md:hidden`}
+            >
               <div class="parallax-layer" id="layer1">
                 📝
               </div>
               <div class="parallax-layer" id="layer2">
                 📌
               </div>
-              <div className={style.introHeader}>
-                <h3 className={style.introH3}>
+              <div className={landingStyle.introHeader}>
+                <h3 className={landingStyle.introH3}>
                   PuuhaPlanneri on <span className="font-bold">älykäs</span> ja{" "}
                   <span className="font-bold">helppokäyttöinen </span>
                   tehtävälistasovellus, joka tekee arjen järjestämisestä
@@ -152,7 +138,7 @@ export const Landing = () => {
                 suin.
               </p>
             </div>
-            <div className={style.starter}>
+            <div className={`${landingStyle.starter} md:hidden`}>
               <p>Järjestele ja ole tuottoisa PuuhaPlannerin avulla</p>
               <div className="flex flex-col w-fit justify-center mx-auto gap-4">
                 <button
@@ -160,17 +146,17 @@ export const Landing = () => {
                     navigate("/");
                     localStorage.setItem("firstVisit", "false");
                   }}
-                  class={style.startButton}
+                  class={landingStyle.startButton}
                 >
                   Aloita
                 </button>
               </div>
             </div>
           </div>
-          <div className={style.learnMore}>
+          <div className={landingStyle.learnMore}>
             <button
               onClick={scrollToFeature}
-              className={`${style.link} mt-8 mb-2`}
+              className={`${landingStyle.link} mt-8 mb-2`}
             >
               lisätietoa
             </button>
@@ -195,11 +181,18 @@ export const Landing = () => {
           </div>
         </main>
 
-        <div id="feature" class={style.feature}>
+        <FeatureDesktop
+          refDesktop={refDesktop}
+          animationPropsDesktop={animationPropsDesktop}
+          animated={animated}
+          navigate={navigate}
+        ></FeatureDesktop>
+
+        <div id="feature" class={`${landingStyle.feature} md:hidden`}>
           <h2 class="text-3xl text-white font-bold my-5">Ominaisuudet</h2>
-          <div class={style.featureContainer}></div>
-          <div className={style.pointsContainer}>
-            <div className="w-full bg-white rounded-md  mx-auto">
+          <div class={landingStyle.featureContainer}></div>
+          <div className={landingStyle.pointsContainer}>
+            <div className="w-full bg-white rounded-md mx-auto mb-8">
               <div className="p-4 ">
                 <h2
                   className={`flex text-2xl font-bold mb-2 text-left text-black`}
@@ -221,12 +214,12 @@ export const Landing = () => {
                 }
               />
             </div>
-            <div className="w-full bg-white rounded-md mx-auto">
+            <div className="w-full bg-white rounded-md mx-auto mb-8">
               <div className="p-4">
                 <h2
                   className={`flex text-2xl font-bold mb-2 text-left text-black`}
                 >
-                  <span className={style.icon}>🍉</span>ostoslista
+                  <span className={landingStyle.icon}>🍉</span>ostoslista
                 </h2>
                 <PreviewTodo text={"kaurajuoma"} complete={true}></PreviewTodo>
                 <PreviewTodo text={"kurkku"} complete={true}></PreviewTodo>
@@ -243,7 +236,7 @@ export const Landing = () => {
                 }
               />
             </div>
-            <div className="w-full bg-white rounded-md mx-auto">
+            <div className="w-full bg-white rounded-md mx-auto mb-8">
               <InviteToListModalPreview></InviteToListModalPreview>
               <LandingPoint
                 header={"Kutsu muut listaasi"}
@@ -256,7 +249,7 @@ export const Landing = () => {
               <h2
                 className={`flex text-2xl font-bold mb-2 text-left text-black`}
               >
-                <span className={style.icon}>📜</span>ominaisuudet
+                <span className={landingStyle.icon}>📜</span>ominaisuudet
               </h2>
               <PreviewTodo
                 class="previewTodo"
@@ -297,12 +290,12 @@ export const Landing = () => {
           </div>
         </div>
       </div>
-      <footer class={style.footer}>
+      <footer class={landingStyle.footer}>
         <p>&copy; 2023 PuuhaPlanneri</p>
         <p className="text-sm">
           <p className="text-sm flex flex-col my-4">
             <a
-              className={`${style.link} w-fit self-center`}
+              className={`${landingStyle.link} w-fit self-center`}
               href="https://onni.pro"
             >
               Onni Fischer
