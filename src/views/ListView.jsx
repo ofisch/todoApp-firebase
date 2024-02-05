@@ -52,21 +52,33 @@ export const ListView = () => {
 
   const exitIfNotMember = async () => {
     try {
-      if (!userId || userId === "") {
-        // jos userId ei ole saatavilla, odotetaan
-        return;
-      }
+      const listDocRef = doc(db, "lists", id);
+      const listDocSnapshot = await getDoc(listDocRef);
 
-      const membersCollectionRef = collection(db, "lists", id, "members");
-      const memberDocRef = doc(membersCollectionRef, userId);
-      const memberDocSnapshot = await getDoc(memberDocRef);
+      if (listDocSnapshot.exists()) {
+        const membersCollectionRef = collection(db, "lists", id, "members");
+        const membersSnapshot = await getDocs(membersCollectionRef);
 
-      if (!memberDocSnapshot.exists()) {
-        // jos käyttäjä ei ole listan jäsen, ohjataan etusivulle
-        navigate("/");
+        console.log("membersSnapshot: ", membersSnapshot);
+
+        const members = [];
+
+        membersSnapshot.forEach((member) => {
+          members.push(member.id);
+          console.log("member: ", member.id);
+        });
+
+        const user = auth.currentUser;
+
+        console.log("User id: ", user.uid);
+
+        if (!members.includes(user.uid)) {
+          console.log("Not a member");
+          navigate("/");
+        }
       }
     } catch (error) {
-      console.error("Error checking membership:", error);
+      console.error("Error checking user membership:", error);
     }
   };
 
@@ -107,7 +119,6 @@ export const ListView = () => {
 
   useEffect(() => {
     checkUserSession();
-    exitIfNotMember();
     getListInfo();
     const unsubscribe = fetchItems(); // kutsutaan funktiota itemien hakemiseen
 
@@ -116,6 +127,10 @@ export const ListView = () => {
       unsubscribe();
     };
   }, [id]);
+
+  useEffect(() => {
+    exitIfNotMember();
+  }, [userId]);
 
   const addToLog = async (message) => {
     try {
@@ -462,6 +477,37 @@ export const ListView = () => {
     }
   };
 
+  const removeUser = async (listId, userNickname) => {
+    const userId = await getUserIdByNickname(userNickname);
+
+    if (window.confirm("Oletko varma?")) {
+      try {
+        // Update the list's "members" collection
+        const listRef = doc(db, "lists", listId);
+
+        const membersCollectionRef = collection(listRef, "members");
+
+        // Delete the specific member document with the userId as the key
+        await deleteDoc(doc(membersCollectionRef, userId));
+
+        // Update the user's "lists" field
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.lists && userData.lists.includes(listId)) {
+            await updateDoc(userRef, {
+              lists: arrayRemove(listId),
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error: ", error);
+      }
+    }
+  };
+
   useEffect(() => {
     getListOwnerNickname();
   }, []);
@@ -561,6 +607,7 @@ export const ListView = () => {
           listId={id}
           userId={userId}
           leaveList={leaveList}
+          removeUser={removeUser}
         />
       )}
       {showInviteToListModal && (

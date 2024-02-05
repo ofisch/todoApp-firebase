@@ -29,6 +29,7 @@ export const MembersModal = ({
   listId,
   userId,
   leaveList,
+  removeUser,
 }) => {
   const [ownerNickname, setOwnerNickname] = useState("");
   const [sortedMembers, setSortedMembers] = useState([]);
@@ -113,6 +114,7 @@ export const MembersModal = ({
               ownerId={ownerId}
               auth={auth}
               leaveList={leaveList}
+              removeUser={removeUser}
               listId={listId}
               userId={userId}
             ></MembersModalList>

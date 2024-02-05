@@ -9,9 +9,12 @@ export const MembersModalList = ({
   ownerId,
   auth,
   leaveList,
+  removeUser,
   listId,
   userId,
 }) => {
+  const user = auth.currentUser;
+
   return (
     <>
       <div className={modalStyle.menu}>
@@ -35,7 +38,16 @@ export const MembersModalList = ({
               {member.nickname === ownerNickname ? (
                 <span>👑{member.nickname}</span>
               ) : (
-                <span>{member.nickname}</span>
+                <span>
+                  {member.nickname}{" "}
+                  {ownerId === user.uid ? (
+                    <button onClick={() => removeUser(listId, member.nickname)}>
+                      ❌
+                    </button>
+                  ) : (
+                    ""
+                  )}
+                </span>
               )}
             </li>
           ))}
