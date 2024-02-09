@@ -18,6 +18,8 @@ import { FeatureDesktop } from "../components/LandingDesktop/FeatureDesktop";
 export const Landing = () => {
   const navigate = useNavigate();
 
+  document.body.style = "background-color: #04A777;";
+
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.85,
