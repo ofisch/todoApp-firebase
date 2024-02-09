@@ -7,6 +7,7 @@ export const listStyle = {
   button: `border p-4 ml-2 bg-pink text-slate-100`,
   buttons: "flex gap-2 scale-120 ",
   plus: `transition ease-in-out delay-70 hover:scale-130 duration-70`,
+  gear: "transition ease-in-out delay-70 transform scale-175 duration-300",
   bottom: `flex flex-col items-center gap-2`,
   count: `text-center p-2`,
   deleteListIcon:

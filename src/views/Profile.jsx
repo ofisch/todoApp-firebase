@@ -4,6 +4,7 @@ import { deleteDoc, doc, getDoc } from "firebase/firestore";
 
 import { logout } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
+import { ThemeModalHome } from "../components/ThemeModalHome";
 
 export const Profile = () => {
   const [user, setUser] = useState(auth.currentUser);
@@ -13,6 +14,7 @@ export const Profile = () => {
       "font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4 flex flex-col",
     bigHeader: "text-4xl flex font-bold mb-4 text-pink-600",
     icon: "transition ease-in-out delay-70 transform hover:scale-110 duration-300",
+    gear: "transition ease-in-out delay-70 transform scale-175 duration-300",
     userDataContainer: "mt-4",
     userData: "text-xl text-black mb-2",
     dataLabel: "bg-dogwood font-bold p-1 rounded-md inline-block",
@@ -61,6 +63,7 @@ export const Profile = () => {
           await deleteDoc(userDocRef);
           await user.delete();
           alert("Tili poistettu");
+          localStorage.removeItem("nickname");
           goToLanding();
         }
       } else {
@@ -69,6 +72,12 @@ export const Profile = () => {
     } catch (error) {
       console.error("Error deleting user:", error);
     }
+  };
+
+  const [themeModalOpen, setThemeModalOpen] = useState(false);
+
+  const toggleThemeModal = () => {
+    setThemeModalOpen(!themeModalOpen);
   };
 
   useEffect(() => {
@@ -84,9 +93,14 @@ export const Profile = () => {
 
   return (
     <div className={style.container}>
-      <h1 className={style.bigHeader}>
-        <span className={style.icon}>👤</span> Tili
-      </h1>
+      <div className="flex justify-between">
+        <h1 className={style.bigHeader}>
+          <span className={style.icon}>👤</span> Tili
+        </h1>
+        <button onClick={toggleThemeModal} className={style.gear}>
+          🎨
+        </button>
+      </div>
       <div className={style.userDataContainer}>
         <p className={style.userData}>
           <span className={`${style.dataLabel} ${style.dogwood} font-bold`}>
@@ -116,6 +130,7 @@ export const Profile = () => {
       >
         <p className={style.plus}>❌ </p> poista tili
       </button>
+      {themeModalOpen && <ThemeModalHome toggleColorModal={toggleThemeModal} />}
     </div>
   );
 };

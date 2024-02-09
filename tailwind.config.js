@@ -9,6 +9,11 @@ module.exports = {
         blue: "#72A1E5",
         pink: "#EF476F",
         darkblue: "#26547C",
+        // listan kustomointivärit:
+        pictonblue: "#00A7E1",
+        midnightgreen: "#114B5F",
+        lavenderpink: "#E6AACE",
+        mindaro: "#E6F9AF",
       },
       scale: {
         120: "1.20",

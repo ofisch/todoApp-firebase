@@ -22,6 +22,7 @@ import { useAuth } from "../context/AuthContext";
 import { MembersModal } from "../components/MembersModal";
 import { InviteToListModal } from "../components/InviteToListModal";
 import { onAuthStateChanged } from "firebase/auth";
+import { ThemeModalList } from "../components/ThemeModalList";
 
 export const ListView = () => {
   const [items, setItems] = useState([]);
@@ -59,21 +60,15 @@ export const ListView = () => {
         const membersCollectionRef = collection(db, "lists", id, "members");
         const membersSnapshot = await getDocs(membersCollectionRef);
 
-        console.log("membersSnapshot: ", membersSnapshot);
-
         const members = [];
 
         membersSnapshot.forEach((member) => {
           members.push(member.id);
-          console.log("member: ", member.id);
         });
 
         const user = auth.currentUser;
 
-        console.log("User id: ", user.uid);
-
         if (!members.includes(user.uid)) {
-          console.log("Not a member");
           navigate("/");
         }
       }
@@ -100,7 +95,6 @@ export const ListView = () => {
     try {
       const itemsCollectionRef = collection(db, "lists", id, "items");
 
-      // Use onSnapshot to listen for real-time updates
       const unsubscribe = onSnapshot(itemsCollectionRef, (querySnapshot) => {
         const itemsArr = [];
 
@@ -111,7 +105,7 @@ export const ListView = () => {
         setItems(itemsArr);
       });
 
-      return unsubscribe; // This will be used to unsubscribe when the component unmounts
+      return unsubscribe;
     } catch (error) {
       console.error("Error fetching items:", error);
     }
@@ -123,7 +117,6 @@ export const ListView = () => {
     const unsubscribe = fetchItems(); // kutsutaan funktiota itemien hakemiseen
 
     return () => {
-      // Cleanup the subscription when the component unmounts
       unsubscribe();
     };
   }, [id]);
@@ -140,24 +133,22 @@ export const ListView = () => {
       if (listDocSnapshot.exists()) {
         const currentLog = listDocSnapshot.data().log || [];
 
-        // Add the new message to the log array
+        // lisätään uusi viesti lokiin
         const updatedLog = [message, ...currentLog];
 
         const limitedLog = updatedLog.slice(0, 30);
 
-        // Update the document with the new log array
+        // päivitetään loki
         await updateDoc(listDocRef, { log: limitedLog });
       } else {
         await setDoc(listDocRef, { log: [message] });
-
-        console.log("List created with the first log message:", message);
       }
     } catch (error) {
       console.error("Error adding to log:", error);
     }
   };
 
-  // create item
+  // luo uuden listauksen
   const createTodo = async (e) => {
     e.preventDefault();
     if (input === "") {
@@ -167,14 +158,29 @@ export const ListView = () => {
 
     try {
       const itemsCollectionRef = collection(db, "lists", id, "items");
-      await addDoc(itemsCollectionRef, {
+      const newTodoDocRef = await addDoc(itemsCollectionRef, {
         text: input,
         completed: false,
       });
 
+      // uuden listauksen id
+      const newTodoId = newTodoDocRef.id;
+
+      // haetaan olemassa olevat listaukset
+      const existingItems = [...items];
+
+      // lisätään uusi listaus olemassa olevien listauksien eteen
+      const updatedItems = [
+        { id: newTodoId, text: input, completed: false },
+        ...existingItems,
+      ];
+
+      // päivitetään listaukset
+      setItems(updatedItems);
+
       setInput("");
 
-      // lisätään logiin tieto uudesta listauksesta
+      // lisätään lokiin tieto uudesta listauksesta
       addToLog("✅ " + userNickname + " lisäsi listauksen: " + input);
     } catch (error) {
       console.error("Error creating todo:", error);
@@ -209,7 +215,7 @@ export const ListView = () => {
         await updateDoc(itemDocRef, {
           text: newText,
         });
-        // lisätään logiin tieto listauksen muokkauksesta
+        // lisätään lokiin tieto listauksen muokkauksesta
         addToLog(
           "✏️ " +
             userNickname +
@@ -237,7 +243,7 @@ export const ListView = () => {
       if (!isBulkDeletion) {
         addToLog("❌ " + userNickname + " poisti listauksen: " + itemText);
       }
-      // Delete the document in the subcollection
+      // poistetaan listaus
       await deleteDoc(itemDocRef);
     } catch (error) {
       console.error("Error deleting todo:", error);
@@ -253,7 +259,7 @@ export const ListView = () => {
       const itemsCollectionRef = collection(db, "lists", id, "items");
       const itemsSnapshot = await getDocs(itemsCollectionRef);
 
-      // lisätään logiin tieto tyhjennetystä listasta
+      // lisätään lokiin tieto tyhjennetystä listasta
       addToLog("❗ " + userNickname + " tyhjensi listan");
 
       itemsSnapshot.forEach((item) => {
@@ -273,12 +279,12 @@ export const ListView = () => {
       if (userDocSnapshot.exists()) {
         const userData = userDocSnapshot.data();
 
-        // Check if the user has a "lists" field and if it contains the list to be deleted
+        // tarkistetaan, onko käyttäjällä listoja
         if (userData.lists && userData.lists.includes(id)) {
-          // Remove the list from the "lists" field
+          // poistetaan lista käyttäjän listoista
           const updatedLists = userData.lists.filter((listId) => listId !== id);
 
-          // Update the user document with the modified "lists" field
+          // päivitetään käyttäjän listat
           await updateDoc(userDocRef, { lists: updatedLists });
         }
       }
@@ -386,18 +392,15 @@ export const ListView = () => {
         listElementRef.current &&
         !listElementRef.current.contains(event.target)
       ) {
-        // Click outside the modal, close it
         setShowMembers(false);
         setMembersMode(true);
         setShowInviteToListModal(false);
       }
     };
 
-    // Add global click event listener
     document.addEventListener("mousedown", handleClickOutsideModal);
 
     return () => {
-      // Cleanup the event listener when the component unmounts
       document.removeEventListener("mousedown", handleClickOutsideModal);
     };
   }, []);
@@ -413,7 +416,6 @@ export const ListView = () => {
         const userData = userDocSnapshot.data();
         return userData.nickname;
       } else {
-        console.log("User not found");
         return null;
       }
     } catch (error) {
@@ -433,7 +435,6 @@ export const ListView = () => {
       const usersQuerySnapshot = await getDocs(usersQuery);
 
       if (usersQuerySnapshot.empty) {
-        console.log("No matching users");
         return null;
       } else {
         const userId = usersQuerySnapshot.docs[0].id;
@@ -448,15 +449,15 @@ export const ListView = () => {
   const leaveList = async (listId, userId) => {
     if (window.confirm("Oletko varma?")) {
       try {
-        // Update the list's "members" collection
+        // päivitetään listan "members" collection
         const listRef = doc(db, "lists", listId);
 
         const membersCollectionRef = collection(listRef, "members");
 
-        // Delete the specific member document with the userId as the key
+        // poistetaan käyttäjän dokumentti members-collectionista
         await deleteDoc(doc(membersCollectionRef, userId));
 
-        // Update the user's "lists" field
+        // päivitetään käyttäjän "lists" -kenttä
         const userRef = doc(db, "users", userId);
         const userDoc = await getDoc(userRef);
 
@@ -482,12 +483,11 @@ export const ListView = () => {
 
     if (window.confirm("Oletko varma?")) {
       try {
-        // Update the list's "members" collection
         const listRef = doc(db, "lists", listId);
 
         const membersCollectionRef = collection(listRef, "members");
 
-        // Delete the specific member document with the userId as the key
+        // poistetaan käyttäjän dokumentti members-collectionista
         await deleteDoc(doc(membersCollectionRef, userId));
 
         // Update the user's "lists" field
@@ -519,8 +519,6 @@ export const ListView = () => {
         const nickname = await getUserNicknameById(user.uid);
         setUserNickname(nickname);
       } else {
-        // User is signed out
-        // ...
         navigate("/login");
       }
     });
@@ -535,9 +533,63 @@ export const ListView = () => {
     };
   }, [navigate, id]);
 
+  const getListTheme = async () => {
+    try {
+      const listDocRef = doc(db, "lists", id);
+      const listDocSnapshot = await getDoc(listDocRef);
+
+      if (listDocSnapshot.exists()) {
+        const listData = listDocSnapshot.data();
+        return listData.bgColor;
+      }
+    } catch (error) {
+      console.error("Error getting list theme:", error);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const bgColor = await getListTheme();
+        localStorage.setItem("bgColor", bgColor);
+        document.body.style.backgroundColor = bgColor;
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 0;
+      setIsScrolled(scrolled);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const [themeModalOpen, setThemeModalOpen] = useState(false);
+
+  const toggleThemeModal = () => {
+    setThemeModalOpen(!themeModalOpen);
+  };
+
   return (
-    <div className={listStyle.container} ref={listElementRef}>
-      <div className="flex  justify-between items-center sticky top-0 bg-jade z-50">
+    <div className={`${listStyle.container}`} ref={listElementRef}>
+      <div
+        className={`flex  justify-between items-center sticky top-0 z-50`}
+        style={{
+          backgroundColor: isScrolled ? localStorage.getItem("bgColor") : "",
+        }}
+      >
         <h1 className={listStyle.heading}>
           <p className={listStyle.plus}>{listInfo.icon}</p>
           {listInfo.name}
@@ -565,16 +617,32 @@ export const ListView = () => {
         </button>
       </form>
       <ul>
-        {items.map((todo) => (
-          <Todo
-            key={todo.id}
-            todo={todo}
-            toggleComplete={() => toggleComplete(todo.id)}
-            editTodo={editTodo}
-            deleteTodo={() => deleteTodo(todo.id)}
-          />
-        ))}
+        {/* Tulosta tekemättömät ylimmäksi */}
+        {items
+          .filter((todo) => !todo.completed)
+          .map((todo) => (
+            <Todo
+              key={todo.id}
+              todo={todo}
+              toggleComplete={() => toggleComplete(todo.id)}
+              editTodo={editTodo}
+              deleteTodo={() => deleteTodo(todo.id)}
+            />
+          ))}
+        {/* Tulosta tehdyt alimmaksi */}
+        {items
+          .filter((todo) => todo.completed)
+          .map((todo) => (
+            <Todo
+              key={todo.id}
+              todo={todo}
+              toggleComplete={() => toggleComplete(todo.id)}
+              editTodo={editTodo}
+              deleteTodo={() => deleteTodo(todo.id)}
+            />
+          ))}
       </ul>
+
       <div className={listStyle.bottom}>
         {items.length < 1 ? null : (
           <>
@@ -586,14 +654,27 @@ export const ListView = () => {
             <button className={listStyle.deleteAllButton} onClick={deleteAll}>
               <p className={listStyle.plus}>❌ </p> tyhjennä lista
             </button>
+            <button
+              onClick={toggleThemeModal}
+              className={`${listStyle.gear} mt-4`}
+            >
+              🎨
+            </button>
           </>
         )}
-        {ownerId === userId && items.length === 0 && (
-          <button onClick={deleteList} className="absolute bottom-9">
-            <p className={listStyle.deleteListIcon}>🗑️</p>
-            <span className={listStyle.link}> poista lista</span>
-          </button>
-        )}
+        <div className="grid grid-cols-2 absolute bottom-9">
+          {ownerId === userId && items.length === 0 && (
+            <>
+              <button onClick={deleteList} className="">
+                <p className={listStyle.deleteListIcon}>🗑️</p>
+                <span className={listStyle.link}> poista lista</span>
+              </button>
+              <button onClick={toggleThemeModal} className={listStyle.gear}>
+                🎨
+              </button>
+            </>
+          )}
+        </div>
       </div>
       {showMembers && (
         <MembersModal
@@ -620,6 +701,9 @@ export const ListView = () => {
           getUserIdByNickname={getUserIdByNickname}
           toggleShowInviteToListModal={toggleShowInviteToListModal}
         />
+      )}
+      {themeModalOpen && (
+        <ThemeModalList toggleColorModal={toggleThemeModal} id={id} />
       )}
     </div>
   );

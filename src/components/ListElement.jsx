@@ -85,7 +85,6 @@ export const ListElement = ({ icon, name, id, fetchUserLists, userId }) => {
   const handleClickList = () => {
     if (id !== undefined) {
       navigate(`/listView/${id}`);
-      console.log("Clicked list:", id);
     }
   };
 

@@ -41,8 +41,31 @@ export const HomeHeader = (props) => {
     navigate(path);
   };
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 0;
+      setIsScrolled(scrolled);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <header className={homeStyle.header} ref={ref}>
+    <header
+      className={`${homeStyle.header}`}
+      style={{
+        backgroundColor: isScrolled
+          ? localStorage.getItem("color")
+          : "transparent",
+      }}
+      ref={ref}
+    >
       <h1 className={homeStyle.heading}>{`Listat - ${localStorage.getItem(
         "nickname"
       )}`}</h1>

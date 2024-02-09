@@ -56,16 +56,11 @@ export const Home = () => {
     setNewListMenu(!newListMenu);
   };
 
-  // TODO: haetaan vain listat, joissa käyttäjä on jäsenenä
-
   const fetchUserLists = async () => {
     try {
       const user = auth.currentUser;
 
-      console.log("user:", user.uid);
-
       if (!user) {
-        console.log("No user");
         return;
       }
 
@@ -154,6 +149,7 @@ export const Home = () => {
       const newListDocRef = await addDoc(newListRef, {
         icon: icon,
         name: name,
+        bgColor: localStorage.getItem("color") || "#04A777",
         owner: userId,
       });
 
@@ -202,6 +198,45 @@ export const Home = () => {
     }
   };
 
+  const getUserTheme = async () => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.log("No user");
+      return;
+    }
+
+    const userDocRef = doc(db, "users", user.uid);
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data();
+
+      if (userData && "color" in userData) {
+        localStorage.setItem("color", userData.color);
+        return userData.color;
+      }
+    }
+  };
+
+  let color;
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        getUserTheme().then((color) => {
+          if (color) {
+            document.body.style.backgroundColor = color;
+          }
+        });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const homeContainer = useRef(null);
 
   useEffect(() => {
@@ -225,7 +260,7 @@ export const Home = () => {
   }, [newListMenu]);
 
   return (
-    <div className={homeStyle.container} ref={homeContainer}>
+    <div className={`${homeStyle.container} bg-${color}`} ref={homeContainer}>
       <HomeHeader
         newListMenu={newListMenu}
         setNewListMenu={setNewListMenu}

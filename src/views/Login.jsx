@@ -38,6 +38,7 @@ export const Login = () => {
     await setDoc(newUserDocRef, {
       email: userEmail,
       nickname: userNick,
+      color: "#04A777",
     });
   };
 

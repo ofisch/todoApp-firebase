@@ -9,6 +9,7 @@ export const isEmail = (email) => {
 export const logout = async () => {
   try {
     await signOut(auth);
+    localStorage.removeItem("nickname");
   } catch (error) {
     console.log(error);
   }
