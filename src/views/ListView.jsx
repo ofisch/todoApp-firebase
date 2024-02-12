@@ -502,6 +502,9 @@ export const ListView = () => {
             });
           }
         }
+
+        alert(`❗️ Käyttäjä ${userNickname} poistettu listalta.`);
+        toggleShowMembers();
       } catch (error) {
         console.error("Error: ", error);
       }
@@ -552,7 +555,13 @@ export const ListView = () => {
       if (user) {
         const bgColor = await getListTheme();
         localStorage.setItem("bgColor", bgColor);
-        document.body.style.backgroundColor = bgColor;
+        if (bgColor) {
+          if (bgColor.includes("gradient")) {
+            document.body.style.background = bgColor;
+          } else {
+            document.body.style.backgroundColor = bgColor;
+          }
+        }
       }
     });
 

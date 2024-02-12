@@ -30,6 +30,8 @@ export const Login = () => {
 
   const navigate = useNavigate();
 
+  document.body.style = "background-color: #04A777;";
+
   const addUserToDB = async (userEmail, userNick) => {
     const usersCollectionRef = collection(db, "users");
 

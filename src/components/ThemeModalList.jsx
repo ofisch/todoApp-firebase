@@ -25,10 +25,18 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
     midnightgreen: "#114B5F",
     lavenderpink: "#E6AACE",
     mindaro: "#E6F9AF",
+    bluegradient:
+      "linear-gradient(90deg, hsla(217, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);",
+    greengradient:
+      "linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);",
+    yellowgradient:
+      "linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);",
   };
 
   const saveColor = async (color) => {
     const listDocRef = doc(db, "lists", id);
+
+    console.log("color: ", color);
 
     try {
       await updateDoc(listDocRef, { bgColor: color }, { merge: true });
@@ -72,11 +80,13 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
                           : "border-transparent"
                       }`}
                       style={{
-                        backgroundColor: colors[colorName],
                         width: "50px",
                         height: "50px",
                         display: "inline-block",
                         cursor: "pointer", // Add cursor pointer
+                        ...(colorName.includes("gradient")
+                          ? { background: colors[colorName] }
+                          : { backgroundColor: colors[colorName] }),
                       }}
                       onClick={() => setColor(colors[colorName])}
                     ></span>

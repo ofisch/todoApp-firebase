@@ -3,8 +3,16 @@ import { homeStyle } from "../styles/homeStyle";
 import { logout } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
 import { InvitesModal } from "./InvitesModal";
-import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
-import { db } from "../firebase";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  subcollection,
+} from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 export const HomeHeader = (props) => {
   const { toggleNewListMenu, userId, fetchUserLists } = props;
@@ -14,8 +22,29 @@ export const HomeHeader = (props) => {
   const [showInvitesModal, setShowInvitesModal] = useState(false);
   const [invites, setInvites] = useState([]); // [{id: "inviteId", listId: "listId"}
 
+  const [invitesLength, setInvitesLength] = useState(0);
+
   const toggleInvitesModal = () => {
     setShowInvitesModal(!showInvitesModal);
+  };
+
+  const getInvitesLength = async (userId) => {
+    try {
+      console.log("uid: ", userId);
+      const userDocRef = doc(db, "users", userId);
+
+      const receivedInvitesCollectionRef = collection(
+        userDocRef,
+        "receivedInvites"
+      );
+
+      const querySnapshot = await getDocs(receivedInvitesCollectionRef);
+
+      return querySnapshot.size;
+    } catch (error) {
+      console.error("Error: fetching invites: ", error);
+      return 0;
+    }
   };
 
   const ref = useRef(null);
@@ -56,6 +85,28 @@ export const HomeHeader = (props) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (userId) {
+      const userDocRef = doc(db, "users", userId);
+      const receivedInvitesCollectionRef = collection(
+        userDocRef,
+        "receivedInvites"
+      );
+
+      // Create a snapshot listener to listen for real-time updates
+      const unsubscribe = onSnapshot(
+        receivedInvitesCollectionRef,
+        (snapshot) => {
+          // Update the invitesLength state with the new size of the snapshot
+          setInvitesLength(snapshot.size);
+        }
+      );
+
+      // Clean up the listener when the component unmounts or userId changes
+      return () => unsubscribe();
+    }
+  }, [userId]); // Add userId as a dependency
+
   return (
     <header
       className={`${homeStyle.header}`}
@@ -80,10 +131,15 @@ export const HomeHeader = (props) => {
             👤
           </p>
         </button>
-        <button className="scale-125">
-          <p onClick={toggleInvitesModal} className={homeStyle.icon}>
-            🔔
-          </p>
+        <button onClick={toggleInvitesModal} className="scale-125">
+          <div className="relative">
+            <p className={homeStyle.icon}>🔔</p>
+            {invitesLength > 0 ? (
+              <span className="bg-pink text-white font-semibold text-sm w-[20px] h-[20px] rounded-full absolute top-3 right-2">
+                {invitesLength}
+              </span>
+            ) : null}
+          </div>
         </button>
         {showInvitesModal && (
           <InvitesModal
