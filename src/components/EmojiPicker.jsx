@@ -41,7 +41,7 @@ const EmojiPicker = (props) => {
           {emojis.map((emoji, index) => (
             <div
               key={index}
-              className="cursor-pointer m-1"
+              className="cursor-pointer m-2 text-xl"
               onClick={() => handleEmojiClick(emoji)}
             >
               {emoji}

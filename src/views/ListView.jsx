@@ -557,8 +557,10 @@ export const ListView = () => {
         localStorage.setItem("bgColor", bgColor);
         if (bgColor) {
           if (bgColor.includes("gradient")) {
-            document.body.style.background = bgColor;
+            document.body.style = `background: ${bgColor}`; // Set backgroundImage for gradient colors
+            document.body.style.backgroundColor = "transparent";
           } else {
+            document.body.style = ""; // Clear backgroundImage for solid colors
             document.body.style.backgroundColor = bgColor;
           }
         }
@@ -594,9 +596,17 @@ export const ListView = () => {
   return (
     <div className={`${listStyle.container}`} ref={listElementRef}>
       <div
-        className={`flex  justify-between items-center sticky top-0 z-50`}
+        className={`flex justify-between items-center sticky top-0 z-50`}
         style={{
           backgroundColor: isScrolled ? localStorage.getItem("bgColor") : "",
+          ...(isScrolled &&
+          localStorage.getItem("bgColor") &&
+          localStorage.getItem("bgColor").includes("gradient")
+            ? {
+                backgroundImage:
+                  "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))",
+              }
+            : {}),
         }}
       >
         <h1 className={listStyle.heading}>

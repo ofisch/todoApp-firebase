@@ -145,6 +145,11 @@ export const Home = () => {
 
   const addNewList = async (icon, name) => {
     try {
+      if (name === "") {
+        alert("❗️ Listan nimi ei voi olla tyhjä!");
+        return;
+      }
+
       const newListRef = collection(db, "lists");
       const newListDocRef = await addDoc(newListRef, {
         icon: icon,
@@ -226,6 +231,7 @@ export const Home = () => {
       if (user) {
         getUserTheme().then((color) => {
           if (color) {
+            document.body.style = "";
             document.body.style.backgroundColor = color;
           }
         });

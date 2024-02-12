@@ -26,11 +26,11 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
     lavenderpink: "#E6AACE",
     mindaro: "#E6F9AF",
     bluegradient:
-      "linear-gradient(90deg, hsla(217, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);",
+      "linear-gradient(180deg, hsla(217, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%)",
     greengradient:
-      "linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);",
+      "linear-gradient(180deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%)",
     yellowgradient:
-      "linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);",
+      "linear-gradient(180deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%)",
   };
 
   const saveColor = async (color) => {
@@ -41,7 +41,15 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
     try {
       await updateDoc(listDocRef, { bgColor: color }, { merge: true });
       localStorage.setItem("bgColor", color);
-      document.body.style.backgroundColor = color;
+
+      if (color.includes("gradient")) {
+        document.body.style = `background: ${color}`; // Set backgroundImage for gradient colors
+        document.body.style.backgroundColor = "transparent"; // Set backgroundColor to transparent for gradients
+      } else {
+        document.body.style = ""; // Clear backgroundImage for solid colors
+        document.body.style.backgroundColor = color; // Set backgroundColor for solid colors
+      }
+
       alert("✅ Listan taustaväri vaihdettu!");
       toggleColorModal();
     } catch (error) {
@@ -84,9 +92,12 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
                         height: "50px",
                         display: "inline-block",
                         cursor: "pointer", // Add cursor pointer
-                        ...(colorName.includes("gradient")
-                          ? { background: colors[colorName] }
-                          : { backgroundColor: colors[colorName] }),
+                        backgroundImage: colorName.includes("gradient")
+                          ? colors[colorName]
+                          : "none",
+                        backgroundColor: colorName.includes("gradient")
+                          ? "transparent"
+                          : colors[colorName],
                       }}
                       onClick={() => setColor(colors[colorName])}
                     ></span>
