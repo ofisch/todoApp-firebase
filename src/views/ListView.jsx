@@ -611,7 +611,9 @@ export const ListView = () => {
       >
         <h1
           className={`${listStyle.heading} ${
-            isScrolled ? listStyle.whiteHeading : ""
+            isScrolled && localStorage.getItem("bgColor").includes("gradient")
+              ? listStyle.whiteHeading
+              : ""
           }`}
         >
           <p className={listStyle.plus}>{listInfo.icon}</p>
