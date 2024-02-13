@@ -604,12 +604,16 @@ export const ListView = () => {
           localStorage.getItem("bgColor").includes("gradient")
             ? {
                 backgroundImage:
-                  "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))",
+                  "linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8))",
               }
             : {}),
         }}
       >
-        <h1 className={listStyle.heading}>
+        <h1
+          className={`${listStyle.heading} ${
+            isScrolled ? listStyle.whiteHeading : ""
+          }`}
+        >
           <p className={listStyle.plus}>{listInfo.icon}</p>
           {listInfo.name}
         </h1>
