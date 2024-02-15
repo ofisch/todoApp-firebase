@@ -550,6 +550,9 @@ export const ListView = () => {
     }
   };
 
+  const [headerBg, setHeaderBg] = useState("");
+  const [headerStyle, setHeaderStyle] = useState({});
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -558,6 +561,9 @@ export const ListView = () => {
         if (bgColor) {
           if (bgColor.includes("gradient")) {
             document.body.style = `background: ${bgColor}`; // Set backgroundImage for gradient colors
+            document.body.style.backgroundColor = "transparent";
+          } else if (bgColor.includes("https")) {
+            document.body.style = `background-image: url(${bgColor}); background-repeat: round;`; // Set backgroundImage for images
             document.body.style.backgroundColor = "transparent";
           } else {
             document.body.style = ""; // Clear backgroundImage for solid colors
@@ -578,6 +584,20 @@ export const ListView = () => {
     const handleScroll = () => {
       const scrolled = window.scrollY > 0;
       setIsScrolled(scrolled);
+      const bodyStyle = window.getComputedStyle(document.body); // Get computed styles of the body
+      const copiedStyles = {
+        backgroundColor: bodyStyle.backgroundColor,
+        backgroundImage: bodyStyle.backgroundImage,
+        background: bodyStyle.background, // Add other styles you want to copy from the body to the header
+        // Add other styles you want to copy from the body to the header
+        backdropFilter: "blur(10px)",
+      };
+      // Remove background repeat from the backgroundImage property if present
+      copiedStyles.background = copiedStyles.background
+        .replace(/round/g, "")
+        .trim();
+
+      setHeaderStyle(copiedStyles);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -589,28 +609,37 @@ export const ListView = () => {
 
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
+  const updateHeaderBackground = () => {
+    const bodyStyle = window.getComputedStyle(document.body);
+    const headerStyle = {
+      backgroundColor: bodyStyle.backgroundColor,
+      backgroundImage: bodyStyle.backgroundImage,
+      background: bodyStyle.background,
+    };
+
+    headerStyle.background = headerStyle.background
+      .replace(/round/g, "")
+      .trim();
+
+    setHeaderStyle(headerStyle);
+  };
+
   const toggleThemeModal = () => {
     setThemeModalOpen(!themeModalOpen);
+    updateHeaderBackground();
   };
 
   return (
     <div className={`${listStyle.container}`} ref={listElementRef}>
       <div
+        id="header"
         className={`flex justify-between items-center sticky top-0 z-50`}
-        style={{
-          backgroundColor: isScrolled ? localStorage.getItem("bgColor") : "",
-          ...(isScrolled &&
-          localStorage.getItem("bgColor") &&
-          localStorage.getItem("bgColor").includes("gradient")
-            ? {
-                backgroundImage:
-                  "linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8))",
-              }
-            : {}),
-        }}
+        style={isScrolled ? headerStyle : null}
       >
         <h1
-          className={`${listStyle.heading} ${
+          className={`${
+            listStyle.heading
+          } drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)] ${
             isScrolled && localStorage.getItem("bgColor").includes("gradient")
               ? listStyle.whiteHeading
               : ""

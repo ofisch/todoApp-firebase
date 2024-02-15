@@ -1,7 +1,7 @@
 export const listStyle = {
   bg: `w-screen font-quicksand`,
   container: ` font-quicksand max-w-[500px] w-full h-full m-auto rounded-md p-4`,
-  heading: `text-3xl flex font-bold text-black py-2`,
+  heading: `text-3xl flex font-bold text-white py-2`,
   whiteHeading: `text-3xl flex font-bold text-white py-2`,
   form: `flex justify-between`,
   input: `border p-2 w-full text-xl`,

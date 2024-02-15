@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { auth, db } from "../firebase";
 import { modalStyle } from "../styles/modalStyle";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { ImageSearch } from "./ImageSearch";
 
 export const ThemeModalList = ({ toggleColorModal, id }) => {
   const [color, setColor] = useState("#ffffff"); // Initial color
@@ -57,68 +58,99 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
     }
   };
 
+  const [imgSearch, setImgSearch] = useState(false);
+
+  const toggleImgSearch = () => {
+    setImgSearch(!imgSearch);
+  };
+
   return (
     <>
-      <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
-        <h2 className="text-2xl font-bold mb-4 overflow-auto">Listan teema</h2>
-        <button onClick={toggleColorModal} className={modalStyle.closeButton}>
-          X
-        </button>
-        <div>
+      {!imgSearch ? (
+        <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
+          <h2 className="text-2xl font-bold mb-4 overflow-auto">
+            Listan teema
+          </h2>
+          <button onClick={toggleColorModal} className={modalStyle.closeButton}>
+            X
+          </button>
           <div>
-            <h2 className={`font-semibold text-xl my-4 overflow-auto`}>
-              Taustaväri
-            </h2>
-            <ul className="flex overflow-auto rounded-md">
-              {Object.keys(colors).map((colorName) => (
-                <li key={colorName}>
-                  <label>
-                    <input
-                      type="radio"
-                      name="color"
-                      value={colors[colorName]}
-                      checked={color === colors[colorName]}
-                      onChange={handleChangeColor}
-                      style={{ display: "none" }} // Hide the radio button
-                    />
-                    <span
-                      className={`ml-2 rounded-full border-4 ${
-                        color === colors[colorName]
-                          ? "border-blue-500"
-                          : "border-transparent"
-                      }`}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        display: "inline-block",
-                        cursor: "pointer", // Add cursor pointer
-                        backgroundImage: colorName.includes("gradient")
-                          ? colors[colorName]
-                          : "none",
-                        backgroundColor: colorName.includes("gradient")
-                          ? "transparent"
-                          : colors[colorName],
-                      }}
-                      onClick={() => setColor(colors[colorName])}
-                    ></span>
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="flex justify-end">
-            <button
-              onClick={() => saveColor(color)}
-              className={`${modalStyle.button} mr-2`}
-            >
-              Tallenna
-            </button>
-            <button onClick={toggleColorModal} className={modalStyle.button}>
-              Peruuta
-            </button>
+            <div>
+              <h2 className={`font-semibold text-xl my-4 overflow-auto`}>
+                Taustaväri
+              </h2>
+              <ul className="flex overflow-auto rounded-md">
+                {Object.keys(colors).map((colorName) => (
+                  <li key={colorName}>
+                    <label>
+                      <input
+                        type="radio"
+                        name="color"
+                        value={colors[colorName]}
+                        checked={color === colors[colorName]}
+                        onChange={handleChangeColor}
+                        style={{ display: "none" }} // Hide the radio button
+                      />
+                      <span
+                        className={`ml-2 rounded-full border-4 ${
+                          color === colors[colorName]
+                            ? "border-blue-500"
+                            : "border-transparent"
+                        }`}
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          display: "inline-block",
+                          cursor: "pointer", // Add cursor pointer
+                          backgroundImage: colorName.includes("gradient")
+                            ? colors[colorName]
+                            : "none",
+                          backgroundColor: colorName.includes("gradient")
+                            ? "transparent"
+                            : colors[colorName],
+                        }}
+                        onClick={() => setColor(colors[colorName])}
+                      ></span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+              <h2 className={`font-semibold text-xl my-4 overflow-auto`}>
+                Taustakuva
+              </h2>
+              <div
+                className="ml-2 rounded-full flex justify-center items-center" // Flexbox centering
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  cursor: "pointer", // Add cursor pointer
+                  backgroundColor: "gray",
+                }}
+                onClick={toggleImgSearch}
+              >
+                <span className="text-white text-2xl">🔎</span>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={() => saveColor(color)}
+                className={`${modalStyle.button} mr-2`}
+              >
+                Tallenna
+              </button>
+              <button onClick={toggleColorModal} className={modalStyle.button}>
+                Peruuta
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <ImageSearch
+          toggleImgSearch={toggleImgSearch}
+          toggleColorModal={toggleColorModal}
+          id={id}
+        />
+      )}
     </>
   );
 };
