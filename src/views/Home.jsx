@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "../firebase";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import { useNavigate } from "react-router-dom";
 
@@ -80,13 +81,21 @@ export const Home = () => {
           );
           const listsSnapshot = await getDocs(listsQuery);
 
-          const listsData = listsSnapshot.docs.map((listDoc) => ({
-            id: listDoc.id,
-            ...listDoc.data(),
-          }));
+          // Create a map for quick access to list data by ID
+          const listsDataMap = new Map(
+            listsSnapshot.docs.map((listDoc) => [
+              listDoc.id,
+              { id: listDoc.id, ...listDoc.data() },
+            ])
+          );
 
           // Set lists to items state
-          setItems(listsData);
+
+          const sortedListsData = userLists.map((listId) =>
+            listsDataMap.get(listId)
+          );
+
+          setItems(sortedListsData);
         }
       }
     } catch (error) {
@@ -271,6 +280,42 @@ export const Home = () => {
     };
   }, [newListMenu]);
 
+  const saveReorderedList = async (reorderedItems) => {
+    try {
+      const user = auth.currentUser;
+
+      if (!user) {
+        return;
+      }
+
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        // Construct an array of list IDs in the new order
+        const reorderedListIds = reorderedItems.map((item) => item.id);
+
+        // Update user's document with the reordered list
+        await updateDoc(userDocRef, {
+          lists: reorderedListIds,
+        });
+      }
+    } catch (error) {
+      console.log("Error saving reordered list:", error);
+    }
+  };
+
+  // Function to handle drag-and-drop reorder
+  const onDragEnd = (result) => {
+    if (!result.destination) return; // dropped outside the list
+    const reorderedItems = Array.from(items);
+    const [reorderedItem] = reorderedItems.splice(result.source.index, 1);
+    reorderedItems.splice(result.destination.index, 0, reorderedItem);
+    setItems(reorderedItems);
+    // Call function to save reordered list to Firestore
+    saveReorderedList(reorderedItems);
+  };
+
   return (
     <div className={`${homeStyle.container} bg-${color}`} ref={homeContainer}>
       <HomeHeader
@@ -289,27 +334,45 @@ export const Home = () => {
         ></NewList>
       )}
       <main className={homeStyle.main}>
-        <ul className={homeStyle.lists}>
-          {items.length > 0 ? (
-            items.map((list) => (
-              <ListElement
-                key={list.id}
-                icon={list.icon}
-                name={list.name}
-                id={list.id}
-                fetchUserLists={fetchUserLists}
-                userId={userId}
-              />
-            ))
-          ) : (
-            <p>
-              Ei listoja -{" "}
-              <button onClick={toggleNewListMenu} className={homeStyle.link}>
-                lisää uusi
-              </button>{" "}
-            </p>
-          )}
-        </ul>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <ul className={homeStyle.lists}>
+            <Droppable droppableId="lists">
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {items.length > 0 ? (
+                    items.map((list, index) => (
+                      <Draggable
+                        key={list.id}
+                        draggableId={list.id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <ListElement
+                              key={list.id}
+                              icon={list.icon}
+                              name={list.name}
+                              id={list.id}
+                              fetchUserLists={fetchUserLists}
+                              userId={userId}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))
+                  ) : (
+                    <p>No items</p>
+                  )}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </ul>
+        </DragDropContext>
       </main>
     </div>
   );
