@@ -217,6 +217,12 @@ export const Home = () => {
     if (userDocSnapshot.exists()) {
       const userData = userDocSnapshot.data();
 
+      // jos käyttäjällä on väri tallennettuna, käytetään sitä
+      if (userData && "color" in userData === localStorage.getItem("color")) {
+        return localStorage.getItem("color");
+      }
+
+      // jos ei, käytetään firestoresta haettua väriä
       if (userData && "color" in userData) {
         localStorage.setItem("color", userData.color);
         return userData.color;
