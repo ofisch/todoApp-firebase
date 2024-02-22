@@ -582,7 +582,7 @@ export const ListView = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrolled = window.scrollY > 0;
+      const scrolled = window.scrollY > 40;
       setIsScrolled(scrolled);
       const bodyStyle = window.getComputedStyle(document.body); // Get computed styles of the body
       const copiedStyles = {
@@ -646,13 +646,7 @@ export const ListView = () => {
             : null
         }
       >
-        <h1
-          className={`${listStyle.heading} text-black ${
-            isScrolled && localStorage.getItem("bgColor").includes("gradient")
-              ? listStyle.whiteHeading
-              : ""
-          }`}
-        >
+        <h1 className={`${listStyle.heading} text-black`}>
           <p className={listStyle.plus}>{listInfo.icon}</p>
           {listInfo.name}
         </h1>
