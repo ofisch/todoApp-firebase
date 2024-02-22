@@ -633,13 +633,21 @@ export const ListView = () => {
     <div className={`${listStyle.container}`} ref={listElementRef}>
       <div
         id="header"
-        className={`flex justify-between items-center sticky top-0 z-50`}
-        style={isScrolled ? headerStyle : null}
+        className={`flex justify-between items-center bg-transparent sticky top-0 z-50`}
+        style={
+          isScrolled
+            ? {
+                backgroundColor: "transparent",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+
+                zIndex: "999",
+              }
+            : null
+        }
       >
         <h1
-          className={`${
-            listStyle.heading
-          } drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)] ${
+          className={`${listStyle.heading} text-black ${
             isScrolled && localStorage.getItem("bgColor").includes("gradient")
               ? listStyle.whiteHeading
               : ""
