@@ -641,7 +641,7 @@ export const ListView = () => {
                 backdropFilter: "blur(10px)",
                 WebkitBackdropFilter: "blur(10px)",
 
-                zIndex: "999",
+                zIndex: "100",
               }
             : null
         }

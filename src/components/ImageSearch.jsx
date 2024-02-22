@@ -78,7 +78,9 @@ export const ImageSearch = ({ toggleImgSearch, toggleColorModal, id }) => {
   }, []);
 
   return (
-    <div className="fixed top-1/3 left-1/2 w-3/4 max-w-[500px] max-h-[500px] md:w-96 overflow-auto transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-md shadow-md">
+    <div
+      className={`fixed top-1/3 left-1/2 w-3/4 max-w-[500px] max-h-[500px] md:w-96 overflow-auto transform -translate-x-1/2 -translate-y-1/2 z-[101] bg-white rounded-md shadow-md`}
+    >
       <div className="flex justify-between items-baseline px-8 pt-4 sticky top-0 bg-white z-10">
         <h2 className="text-2xl font-bold mb-4 overflow-auto">
           <button onClick={toggleImgSearch} className=" text-pink">
