@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { modalStyle } from "../styles/modalStyle";
-import { API_KEY } from "../secret";
+import { API_KEY, DEEPL_API_KEY } from "../secret";
 import axios from "axios";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 const API_URL = "https://api.unsplash.com/search/photos";
 const IMAGES_PER_PAGE = 10;
+
+const DEEPL_API_URL = "https://api-free.deepl.com/v2/translate";
 
 export const ImageSearch = ({ toggleImgSearch, toggleColorModal, id }) => {
   const searchInput = useRef(null);
@@ -18,10 +20,10 @@ export const ImageSearch = ({ toggleImgSearch, toggleColorModal, id }) => {
 
   const [bgColor, setBgColor] = useState(localStorage.getItem("bgColor") || "");
 
-  const fetchImages = async () => {
+  const fetchImages = async (search) => {
     try {
       const { data } = await axios.get(
-        `${API_URL}?query=${searchInput.current.value}&page=1&per_page=${IMAGES_PER_PAGE}&client_id=${API_KEY}`
+        `${API_URL}?query=${search}&page=1&per_page=${IMAGES_PER_PAGE}&client_id=${API_KEY}`
       );
       setImages(data.results);
       setTotalPages(data.total_pages);
@@ -30,12 +32,22 @@ export const ImageSearch = ({ toggleImgSearch, toggleColorModal, id }) => {
     }
   };
 
-  console.log(API_KEY);
+  const translateText = async (text) => {
+    try {
+      const { data } = await axios.post(
+        `${DEEPL_API_URL}?auth_key=${DEEPL_API_KEY}&text=${text}&target_lang=EN`
+      );
+      return data.translations[0].text;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleSearch = (event) => {
     event.preventDefault();
-    console.log(searchInput.current.value);
-    fetchImages();
+    translateText(searchInput.current.value).then((translatedText) => {
+      fetchImages(translatedText);
+    });
   };
 
   const saveBgImage = async (image) => {
@@ -59,7 +71,6 @@ export const ImageSearch = ({ toggleImgSearch, toggleColorModal, id }) => {
   const selectImage = (image) => {
     setSelectedImage(image);
     saveBgImage(image);
-    console.log("Selected image:", image);
   };
 
   useEffect(() => {
