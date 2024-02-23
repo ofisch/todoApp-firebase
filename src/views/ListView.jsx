@@ -36,6 +36,10 @@ export const ListView = () => {
 
   const navigate = useNavigate();
 
+  if (localStorage.getItem("textColor") === undefined) {
+    localStorage.setItem("textColor", "#000000");
+  }
+
   // tarkistetaan käyttäjän sessio, jotta url-osoitteen kautta ei pääse katsomaan listaa
   const checkUserSession = async () => {
     const user = auth.currentUser;
@@ -543,7 +547,11 @@ export const ListView = () => {
 
       if (listDocSnapshot.exists()) {
         const listData = listDocSnapshot.data();
-        return listData.bgColor;
+        const theme = {
+          bgColor: listData.bgColor,
+          textColor: listData.textColor,
+        };
+        return theme;
       }
     } catch (error) {
       console.error("Error getting list theme:", error);
@@ -556,18 +564,23 @@ export const ListView = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const bgColor = await getListTheme();
-        localStorage.setItem("bgColor", bgColor);
-        if (bgColor) {
-          if (bgColor.includes("gradient")) {
-            document.body.style = `background: ${bgColor}`; // Set backgroundImage for gradient colors
+        const theme = await getListTheme();
+
+        // tekstin väri
+        localStorage.setItem("textColor", theme.textColor);
+
+        // tausta
+        localStorage.setItem("bgColor", theme.bgColor);
+        if (theme.bgColor) {
+          if (theme.bgColor.includes("gradient")) {
+            document.body.style = `background: ${theme.bgColor}`; // Set backgroundImage for gradient colors
             document.body.style.backgroundColor = "transparent";
-          } else if (bgColor.includes("https")) {
-            document.body.style = `background-image: url(${bgColor}); background-repeat: round;`; // Set backgroundImage for images
+          } else if (theme.bgColor.includes("https")) {
+            document.body.style = `background-image: url(${theme.bgColor}); background-repeat: round;`; // Set backgroundImage for images
             document.body.style.backgroundColor = "transparent";
           } else {
             document.body.style = ""; // Clear backgroundImage for solid colors
-            document.body.style.backgroundColor = bgColor;
+            document.body.style.backgroundColor = theme.bgColor;
           }
         }
       }
@@ -635,18 +648,27 @@ export const ListView = () => {
         id="header"
         className={`flex justify-between items-center bg-transparent sticky top-0 z-50`}
         style={
-          isScrolled
-            ? {
-                backgroundColor: "transparent",
-                backdropFilter: "blur(10px)",
-                WebkitBackdropFilter: "blur(10px)",
-
-                zIndex: "100",
+          localStorage.getItem("bgColor").includes("gradient") ||
+          localStorage.getItem("bgColor").includes("https")
+            ? isScrolled
+              ? {
+                  backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
+                  zIndex: "100",
+                  backgroundColor: "transparent",
+                }
+              : {
+                  backgroundColor: "transparent",
+                }
+            : {
+                backgroundColor: `${localStorage.getItem("bgColor")}`,
               }
-            : null
         }
       >
-        <h1 className={`${listStyle.heading} text-black`}>
+        <h1
+          style={{ color: `${localStorage.getItem("textColor")}` }}
+          className={`${listStyle.heading}`}
+        >
           <p className={listStyle.plus}>{listInfo.icon}</p>
           {listInfo.name}
         </h1>

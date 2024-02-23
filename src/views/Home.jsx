@@ -34,6 +34,9 @@ export const Home = () => {
 
   const firstVisit = localStorage.getItem("firstVisit");
 
+  // nollataan listan tausta
+  localStorage.setItem("bgColor", "transparent");
+
   if (!firstVisit) {
     localStorage.setItem("firstVisit", "true");
   }

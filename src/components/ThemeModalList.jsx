@@ -5,7 +5,12 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { ImageSearch } from "./ImageSearch";
 
 export const ThemeModalList = ({ toggleColorModal, id }) => {
-  const [color, setColor] = useState("#ffffff"); // Initial color
+  const [color, setColor] = useState(
+    localStorage.getItem("bgColor")?.includes("#") ||
+      localStorage.getItem("bgColor")?.includes("gradient")
+      ? localStorage.getItem("bgColor")
+      : "#ffffff"
+  ); // Initial color
 
   const user = auth.currentUser;
 
@@ -51,11 +56,53 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
         document.body.style.backgroundColor = color; // Set backgroundColor for solid colors
       }
 
-      alert("✅ Listan taustaväri vaihdettu!");
       toggleColorModal();
     } catch (error) {
       console.error("Error updating document:", error);
     }
+  };
+
+  const saveTextColor = async (color) => {
+    const listDocRef = doc(db, "lists", id);
+
+    console.log("color: ", color);
+
+    try {
+      await updateDoc(listDocRef, { textColor: color }, { merge: true });
+      localStorage.setItem("textColor", color);
+
+      toggleColorModal();
+    } catch (error) {
+      console.error("Error updating document:", error);
+    }
+  };
+
+  const saveChanges = async (bg, textColor) => {
+    try {
+      alert("✅ Muutokset tallennettu!");
+      if (bg !== "#ffffff") {
+        await saveColor(bg);
+      }
+      await saveTextColor(textColor);
+    } catch (error) {
+      console.error("Error updating document:", error);
+    }
+  };
+
+  const [textColor, setTextColor] = useState(
+    localStorage.getItem("textColor") || "#000000"
+  ); // Initial color
+
+  const textColors = {
+    white: "#ffffff",
+    black: "#000000",
+    pictonblue: "#00A7E1",
+    midnightgreen: "#114B5F",
+    lavenderpink: "#E6AACE",
+  };
+
+  const handleChangeTextColor = (event) => {
+    setTextColor(event.target.value);
   };
 
   const [imgSearch, setImgSearch] = useState(false);
@@ -94,7 +141,7 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
                       <span
                         className={`ml-2 rounded-full border-4 ${
                           color === colors[colorName]
-                            ? "border-blue-500"
+                            ? "border-gray-400"
                             : "border-transparent"
                         }`}
                         style={{
@@ -130,10 +177,54 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
               >
                 <span className="text-white text-2xl">🔎</span>
               </div>
+              <div>
+                <h2 className={`font-semibold text-xl my-4 overflow-auto`}>
+                  Otsikon väri
+                </h2>
+                <ul className="flex overflow-auto rounded-md py-2">
+                  {Object.keys(textColors).map((colorName) => (
+                    <li key={colorName} className="">
+                      <label>
+                        <input
+                          type="radio"
+                          name="textColor"
+                          value={textColors[colorName]}
+                          checked={textColor === textColors[colorName]}
+                          onChange={handleChangeTextColor}
+                          style={{ display: "none" }} // Hide the radio button
+                        />
+                        <span
+                          className={`ml-2 rounded-full border-4 ${
+                            textColor === textColors[colorName]
+                              ? "border-gray-400"
+                              : "border-transparent"
+                          } ${
+                            colorName === "white" && textColor === "#ffffff"
+                              ? "border-gray-400 border-5"
+                              : colorName === "white" && textColor !== "#ffffff"
+                              ? "border-gray-800 border-2"
+                              : ""
+                          } `}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            display: "inline-block",
+                            cursor: "pointer", // Add cursor pointer
+                            backgroundColor: textColors[colorName],
+                          }}
+                          onClick={() => setTextColor(textColors[colorName])}
+                        ></span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
             <div className="flex justify-end">
               <button
-                onClick={() => saveColor(color)}
+                onClick={() => {
+                  saveChanges(color, textColor);
+                }}
                 className={`${modalStyle.button} mr-2`}
               >
                 Tallenna
