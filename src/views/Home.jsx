@@ -368,7 +368,16 @@ export const Home = () => {
                       </Draggable>
                     ))
                   ) : (
-                    <p>No items</p>
+                    <p>
+                      {" "}
+                      Ei listoja -{" "}
+                      <button
+                        onClick={toggleNewListMenu}
+                        className={homeStyle.link}
+                      >
+                        lisää uusi
+                      </button>{" "}
+                    </p>
                   )}
                   {provided.placeholder}
                 </div>

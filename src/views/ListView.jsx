@@ -646,7 +646,7 @@ export const ListView = () => {
     <div className={`${listStyle.container}`} ref={listElementRef}>
       <div
         id="header"
-        className={`flex justify-between items-center bg-transparent sticky top-0 z-50`}
+        className={`flex justify-between items-center bg-transparent sticky top-0 z-30`}
         style={
           localStorage.getItem("bgColor").includes("gradient") ||
           localStorage.getItem("bgColor").includes("https")
@@ -654,7 +654,7 @@ export const ListView = () => {
               ? {
                   backdropFilter: "blur(10px)",
                   WebkitBackdropFilter: "blur(10px)",
-                  zIndex: "100",
+                  zIndex: "30",
                   backgroundColor: "transparent",
                 }
               : {
