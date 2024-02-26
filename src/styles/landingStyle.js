@@ -14,9 +14,9 @@ export const landingStyle = {
   learnMore:
     "lg:hidden text-center text-white mx-auto p-4 gap-4 flex flex-col w-fit rounded-full transition duration-300 hover:bg-pink-700",
   introduction:
-    "text-lg shadow-md text-black text-center bg-dogwood tracking-wide rounded-md p-8 mx-auto",
+    "w-[400px] mx-auto mt-6 text-lg shadow-md text-black text-center bg-dogwood tracking-wide rounded-md p-8",
   introH3: "text-black mb-2",
-  introHeader: "mb-8",
+  introHeader: "",
   link: "text-pink bg-dogwood font-bold",
   icon: "transition ease-in-out delay-70 hover:scale-130 duration-70",
   feature: "text-center py-4 md:py-16",
