@@ -100,7 +100,7 @@ export const Landing = () => {
       <div className={landingStyle.container}>
         <main className="flex flex-col lg:min-h-full min-h-screen flex-grow justify-between">
           <div>
-            <header class={landingStyle.header}>
+            <header class={`${landingStyle.header} md:hidden`}>
               <h1 class={landingStyle.headerText}>
                 <span className={landingStyle.icon}>🍉</span> PuuhaPlanneri
               </h1>
@@ -108,6 +108,15 @@ export const Landing = () => {
                 Suunnittele huippuhetket ja tehokas tekeminen – kaikki yhdessä
                 paketissa!
               </p>
+            </header>
+
+            <header
+              className={`${landingStyle.headerDesktop} hidden md:flex gap-4`}
+            >
+              <h1 class={landingStyle.headerTextDesktop}>
+                <span className={landingStyle.icon}>🍉</span> PuuhaPlanneri
+              </h1>
+              <h2 className={`text-lg font-semibold`}>Ominaisuudet</h2>
             </header>
 
             <BannerDesktop navigate={navigate}></BannerDesktop>

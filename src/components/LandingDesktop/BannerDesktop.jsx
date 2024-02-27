@@ -1,14 +1,13 @@
 import React from "react";
 import { landingStyle } from "../../styles/landingStyle";
 import { landingPhone } from "../../styles/landingPhone.css";
+import PreviewTodo from "../PreviewTodo";
+import "../../utils/landing-animation.css";
 
 export const BannerDesktop = ({ navigate }) => {
   return (
-    <div
-      id="desktop-banner"
-      className="hidden md:flex gap-8 mt-4 max-w-[1200px]"
-    >
-      <div>
+    <div id="desktop-banner" className="hidden md:flex gap-8 max-w-[1200px]">
+      <div className="">
         <p
           className={`text-center text-white text-2xl md:text-4xl mt-4 font-bold`}
         >
@@ -16,7 +15,10 @@ export const BannerDesktop = ({ navigate }) => {
           paketissa!
         </p>
 
-        <div id="parallax-container" className={`${landingStyle.introduction}`}>
+        <div
+          id="parallax-container"
+          className={`${landingStyle.introductionDesktop}`}
+        >
           <div class="parallax-layer" id="layer1">
             📝
           </div>
@@ -25,17 +27,35 @@ export const BannerDesktop = ({ navigate }) => {
           </div>
           <div className={landingStyle.introHeader}>
             <h3 className={"text-black text-2xl"}>
-              PuuhaPlanneri on <span className="font-bold">älykäs</span> ja{" "}
+              PuuhaPlanneri on <span className="font-bold">älykäs </span> ja{" "}
               <span className="font-bold">helppokäyttöinen </span>
               tehtävälistasovellus, joka tekee arjen järjestämisestä leikkiä.
             </h3>
           </div>
 
-          <p className="mt-10">
-            Käyttäjäystävällinen käyttöliittymä, tehokkaat ajanhallintatyökalut
-            ja mahdollisuus nauttia jokaisesta hetkestä suunnitelmien
-            toteuttamisen lomassa tekevät PuuhaPlannerista ihanteellisen
-            kumppanin tavoitteidesi saavuttamiseen hymyssä suin.
+          <p className="mt-4">
+            <div id="todo1">
+              <PreviewTodo
+                text={"Helppokäyttöisyys,"}
+                complete={false}
+              ></PreviewTodo>
+            </div>
+            <div id="todo2">
+              <PreviewTodo
+                text={"tehokkuus ja"}
+                complete={false}
+                id="todo2"
+              ></PreviewTodo>
+            </div>
+            <div id="todo3">
+              <PreviewTodo
+                text={"listojen jakaminen"}
+                complete={false}
+                id="todo3"
+              ></PreviewTodo>
+            </div>
+            tekevät PuuhaPlannerista ihanteellisen kumppanin tavoitteidesi
+            saavuttamiseen hymyssä suin.
           </p>
         </div>
         <div className={landingStyle.starter}>
@@ -53,7 +73,7 @@ export const BannerDesktop = ({ navigate }) => {
           </div>
         </div>
       </div>
-      <div class="container">
+      <div class="container self-center">
         <div class="row">
           <div class="col-sm-12">
             <div className="mobile-frame">
