@@ -1,16 +1,14 @@
 export const landingStyle = {
-  headerText:
-    "font-bold mb-2 flex md:justify-start justify-center items-center",
+  headerText: "font-bold mb-2 flex justify-center items-center",
   headerTextDesktop:
     "font-bold flex md:justify-start justify-center items-center",
   h2: "text-white text-2xl font-bold mb-2",
   h3: "text-white mb-2",
   container:
     "flex flex-col items-center max-w-[500px] md:w-screen md:max-w-[1200px] w-full h-full m-auto p-2 font-quicksand",
-  header:
-    "bg-jade text-lg md:text-xl lg:text-2xl text-white pt-4 pb-4 text-center",
+  header: "bg-jade text-lg md:text-xl lg:text-2xl text-white pt-4  text-center",
   headerDesktop:
-    "bg-jade text-lg md:text-xl lg:text-2xl text-white pt-4 pb-4 items-baseline",
+    "bg-jade w-full text-lg md:text-xl lg:text-2xl text-white pt-4 pb-4 items-baseline",
   slogan: "text-center text-white text-2xl md:text-3xl mt-4 font-bold",
   starter:
     "text-center text-white py-2 px-4 mt-4 rounded-full  transition duration-300 hover:bg-pink-700",

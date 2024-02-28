@@ -12,12 +12,12 @@ export const FeatureDesktop = ({
   animated,
 }) => {
   return (
-    <div id="feature-desktop" className="hidden md:block mt-24 mb-16">
-      <h2 class="text-left text-3xl text-white font-bold my-5">Ominaisuudet</h2>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="h-[500px] w-[500px] flex flex-col">
-          <div className="h-2/3 bg-white rounded-t-md">
-            <div className="p-4 ">
+    <div id="feature-desktop" className="hidden md:block mb-16 w-full">
+      <div className="flex flex-col gap-4">
+        <div style={{ borderRadius: "5px" }} className="flex w-full bg-white">
+          <div className="w-1/2 flex flex-col">
+            <div className="bg-white w-full"></div>
+            <div className="p-4">
               <h2
                 className={`flex text-2xl font-bold mb-2 text-left text-black`}
               >
@@ -29,7 +29,7 @@ export const FeatureDesktop = ({
               <ListElement icon={"🗓️"} name={"päivän tehtävät"}></ListElement>
             </div>
           </div>
-          <div className="h-1/3 bg-dogwood rounded-b-md">
+          <div style={{ borderRadius: "5px" }} className="w-1/2 bg-dogwood">
             <LandingPoint
               header={"Luo useita listoja"}
               text={
@@ -38,8 +38,18 @@ export const FeatureDesktop = ({
             />
           </div>
         </div>
-        <div className="h-[500px] w-[500px] flex flex-col">
-          <div className="h-2/3 bg-white rounded-t-md">
+
+        <div className="flex w-full bg-white">
+          <div className="w-1/2 bg-dogwood">
+            <LandingPoint
+              header={"Järjestele tehtäväsi"}
+              text={
+                "Luo ja hallitse tehtäväsi helposti pysyäksesi ajan tasalla tehtäväluettelostasi."
+              }
+            />
+          </div>
+          <div className="w-1/2 flex flex-col">
+            <div className="bg-white w-full"></div>
             <div className="p-4">
               <h2
                 className={`flex text-2xl font-bold mb-2 text-left text-black`}
@@ -52,20 +62,13 @@ export const FeatureDesktop = ({
               <PreviewTodo text={"juusto"} complete={false}></PreviewTodo>
             </div>
           </div>
-          <div className="h-1/3 bg-dogwood rounded-b-md">
-            <LandingPoint
-              header={"Järjestele tehtäväsi"}
-              text={
-                "Luo ja hallitse tehtäväsi helposti pysyäksesi ajan tasalla tehtäväluettelostasi."
-              }
-            />
-          </div>
         </div>
-        <div className="h-[500px] w-[500px] flex flex-col">
-          <div className="h-2/3 bg-white rounded-t-md">
+
+        <div className="flex w-full bg-white">
+          <div className="w-1/2 flex flex-col">
             <InviteToListModalPreview></InviteToListModalPreview>
           </div>
-          <div className="h-1/3 bg-dogwood rounded-b-md">
+          <div className="w-1/2 bg-dogwood">
             <LandingPoint
               header={"Kutsu muut listaasi"}
               text={
@@ -74,8 +77,18 @@ export const FeatureDesktop = ({
             />
           </div>
         </div>
-        <div className="h-[500px] w-[500px] flex flex-col">
-          <div className="h-2/3 bg-white rounded-t-md">
+
+        <div className="flex w-full bg-white">
+          <div
+            onClick={() => navigate("/")}
+            className="w-1/2 bg-pink cursor-pointer shadow-md flex justify-center items-center"
+          >
+            <p className="text-white text-3xl font-bold py-16 cursor-pointer">
+              Aloita
+            </p>
+          </div>
+
+          <div className="w-1/2 bg-white">
             <div className="p-4">
               <h2
                 className={`flex text-2xl font-bold mb-2 text-left text-black`}
@@ -102,21 +115,12 @@ export const FeatureDesktop = ({
                 <animated.div style={animationPropsDesktop}>
                   <PreviewTodo
                     class="preview-todo"
-                    text={"Aloita PuuhaPlannerin käyttö"}
+                    text={"Aloita PuuhaPlannerin käyttö!"}
                     complete={false}
                   />
                 </animated.div>
               </div>
             </div>
-          </div>
-
-          <div
-            onClick={() => navigate("/")}
-            className="h-1/3 bg-pink cursor-pointer rounded-b-md shadow-md text-center"
-          >
-            <p className={`text-white text-3xl font-bold py-16 cursor-pointer`}>
-              Aloita
-            </p>
           </div>
         </div>
       </div>

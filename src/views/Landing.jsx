@@ -62,6 +62,27 @@ export const Landing = () => {
     }
   };
 
+  const scrollToFeatureDesktop = () => {
+    const featureSection = document.getElementById("feature-desktop");
+
+    if (featureSection) {
+      featureSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  const scrollToStart = () => {
+    const startSection = document.getElementById("start");
+
+    if (startSection) {
+      startSection.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
+
   const [isAnimatingDesktop, setIsAnimatingDesktop] = useState(false);
 
   const [refDesktop, inViewDesktop] = useInView({
@@ -94,13 +115,53 @@ export const Landing = () => {
     reset: true, // Reset the animation when the component is unmounted
   });
 
+  const [desktopHeaderScrolled, setDesktopHeaderScrolled] = useState(false);
+
+  const desktopHeaderIsScrolled = () => {
+    const header = document.getElementById("header-desktop");
+    if (header) {
+      if (window.scrollY > 100) {
+        setDesktopHeaderScrolled(true);
+      } else {
+        setDesktopHeaderScrolled(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", desktopHeaderIsScrolled);
+    return () => {
+      window.removeEventListener("scroll", desktopHeaderIsScrolled);
+    };
+  }, [desktopHeaderScrolled]);
+
   return (
     <>
       {" "}
-      <div className={landingStyle.container}>
+      <div id="start" className={landingStyle.container}>
+        <header
+          id="header-desktop"
+          className={`${landingStyle.headerDesktop} hidden ${
+            desktopHeaderScrolled ? "md:flex sticky top-0 z-30 gap-4" : ""
+          }`}
+        >
+          <h1
+            onClick={scrollToStart}
+            class={`${landingStyle.headerTextDesktop} cursor-pointer`}
+          >
+            <span className={landingStyle.icon}>🍉</span> PuuhaPlanneri
+          </h1>
+          <h2 className={`text-lg font-semibold cursor-pointer`}>
+            <button onClick={scrollToFeatureDesktop}>Ominaisuudet</button>
+          </h2>
+        </header>
         <main className="flex flex-col lg:min-h-full min-h-screen flex-grow justify-between">
           <div>
-            <header class={`${landingStyle.header} md:hidden`}>
+            <header
+              class={`${landingStyle.header} ${
+                !desktopHeaderIsScrolled ? "hidden" : ""
+              }`}
+            >
               <h1 class={landingStyle.headerText}>
                 <span className={landingStyle.icon}>🍉</span> PuuhaPlanneri
               </h1>
@@ -108,15 +169,6 @@ export const Landing = () => {
                 Suunnittele huippuhetket ja tehokas tekeminen – kaikki yhdessä
                 paketissa!
               </p>
-            </header>
-
-            <header
-              className={`${landingStyle.headerDesktop} hidden md:flex gap-4`}
-            >
-              <h1 class={landingStyle.headerTextDesktop}>
-                <span className={landingStyle.icon}>🍉</span> PuuhaPlanneri
-              </h1>
-              <h2 className={`text-lg font-semibold`}>Ominaisuudet</h2>
             </header>
 
             <BannerDesktop navigate={navigate}></BannerDesktop>
@@ -141,12 +193,29 @@ export const Landing = () => {
               </div>
               <div></div>
 
-              <p>
-                Käyttäjäystävällinen käyttöliittymä, tehokkaat
-                ajanhallintatyökalut ja mahdollisuus nauttia jokaisesta hetkestä
-                suunnitelmien toteuttamisen lomassa tekevät PuuhaPlannerista
-                ihanteellisen kumppanin tavoitteidesi saavuttamiseen hymyssä
-                suin.
+              <p className="mt-4">
+                <div id="todo1">
+                  <PreviewTodo
+                    text={"Helppokäyttöisyys,"}
+                    complete={false}
+                  ></PreviewTodo>
+                </div>
+                <div id="todo2">
+                  <PreviewTodo
+                    text={"tehokkuus ja"}
+                    complete={false}
+                    id="todo2"
+                  ></PreviewTodo>
+                </div>
+                <div id="todo3">
+                  <PreviewTodo
+                    text={"listojen jakaminen"}
+                    complete={false}
+                    id="todo3"
+                  ></PreviewTodo>
+                </div>
+                tekevät PuuhaPlannerista ihanteellisen kumppanin tavoitteidesi
+                saavuttamiseen hymyssä suin.
               </p>
             </div>
             <div className={`${landingStyle.starter} md:hidden`}>
@@ -200,7 +269,32 @@ export const Landing = () => {
         ></FeatureDesktop>
 
         <div id="feature" class={`${landingStyle.feature} md:hidden`}>
-          <h2 class="text-3xl text-white font-bold my-5">Ominaisuudet</h2>
+          <div class="container self-center">
+            <div class="row">
+              <div class="col-sm-12">
+                <div className="mobile-frame">
+                  <div class="mobile-wrapper">
+                    <iframe
+                      width="560"
+                      height="315"
+                      src="https://www.youtube.com/embed/1GXB1KTzDps?si=8x18__B6-2e0Oy06&amp;controls=0&loop=1&mute=1&autoplay=1"
+                      title="YouTube video player"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                      muted="true"
+                    ></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p>
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci
+              doloribus aperiam sequi fugiat illo earum nobis a magni nisi
+              explicabo voluptate aut, mollitia omnis corrupti nostrum, velit ab
+              corporis optio?
+            </p>
+          </div>
           <div class={landingStyle.featureContainer}></div>
           <div className={landingStyle.pointsContainer}>
             <div className="w-full bg-white rounded-md mx-auto mb-8">
@@ -282,7 +376,7 @@ export const Landing = () => {
                 <animated.div style={animationProps}>
                   <PreviewTodo
                     class="preview-todo"
-                    text={"Aloita PuuhaPlannerin käyttö"}
+                    text={"Aloita PuuhaPlannerin käyttö!"}
                     complete={false}
                   />
                 </animated.div>
