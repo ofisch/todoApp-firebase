@@ -36,6 +36,8 @@ export const Home = () => {
 
   // nollataan listan tausta
   localStorage.setItem("bgColor", "transparent");
+  // nollataan otsikon väri
+  localStorage.setItem("textColor", "#000000");
   // nollataan listauksen väri
   localStorage.setItem("listingColor", "#D3BDB0");
 

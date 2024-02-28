@@ -551,6 +551,7 @@ export const ListView = () => {
           bgColor: listData.bgColor,
           textColor: listData.textColor,
           listingColor: listData.listingColor,
+          paragraphColor: listData.paragraphColor,
         };
         return theme;
       }
@@ -587,6 +588,10 @@ export const ListView = () => {
 
         // listauksen väri
         localStorage.setItem("listingColor", theme.listingColor);
+
+        // tekstin väri
+        localStorage.setItem("paragraphColor", theme.paragraphColor);
+        document.body.style.color = theme.paragraphColor;
       }
     });
 
@@ -647,7 +652,11 @@ export const ListView = () => {
   };
 
   return (
-    <div className={`${listStyle.container}`} ref={listElementRef}>
+    <div
+      style={{ color: localStorage.getItem("paragraphColor") }}
+      className={`${listStyle.container}`}
+      ref={listElementRef}
+    >
       <div
         id="header"
         className={`flex justify-between items-center bg-transparent sticky top-0 z-30`}
@@ -728,7 +737,28 @@ export const ListView = () => {
       <div className={listStyle.bottom}>
         {items.length < 1 ? null : (
           <>
-            <p className={listStyle.count}>
+            <p
+              style={{
+                backgroundColor: localStorage
+                  .getItem("bgColor")
+                  .includes("https")
+                  ? localStorage.getItem("listingColor")
+                  : "transparent",
+                backdropFilter: localStorage
+                  .getItem("bgColor")
+                  .includes("https")
+                  ? "blur(10px)"
+                  : "none",
+                WebkitBackdropFilter: localStorage
+                  .getItem("bgColor")
+                  .includes("https")
+                  ? "blur(10px)"
+                  : "none",
+
+                zIndex: "30",
+              }}
+              className={listStyle.count}
+            >
               {items.length > 1
                 ? `${items.length} listausta`
                 : `${items.length} listaus`}

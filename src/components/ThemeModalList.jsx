@@ -85,6 +85,7 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
       }
       await saveTextColor(textColor);
       await saveListingColor(listingColor);
+      await saveParagraphColor(paragraphColor);
     } catch (error) {
       console.error("Error updating document:", error);
     }
@@ -99,9 +100,11 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
   const textColors = {
     white: "#ffffff",
     black: "#000000",
+    jade: "#04A777",
     pictonblue: "#00A7E1",
     midnightgreen: "#114B5F",
     lavenderpink: "#E6AACE",
+    mindaro: "#E6F9AF",
   };
 
   const handleChangeTextColor = (event) => {
@@ -121,11 +124,12 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
   );
 
   const listingColors = {
-    jade: "#04A777",
     dogwood: "#D3BDB0",
+    jade: "#04A777",
     pictonblue: "#00A7E1",
     midnightgreen: "#114B5F",
     lavenderpink: "#E6AACE",
+    mindaro: "#E6F9AF",
   };
 
   const handleChangeListingColor = (event) => {
@@ -147,10 +151,45 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
     }
   };
 
+  // tekstin väri
+
+  const [paragraphColor, setParagraphColor] = useState(
+    localStorage.getItem("paragraphColor") || "#000000"
+  );
+
+  const paragraphColors = {
+    black: "#000000",
+    dogwood: "#D3BDB0",
+    jade: "#04A777",
+    pictonblue: "#00A7E1",
+    midnightgreen: "#114B5F",
+    lavenderpink: "#E6AACE",
+    mindaro: "#E6F9AF",
+  };
+
+  const handleChangeParagraphColor = (event) => {
+    setParagraphColor(event.target.value);
+  };
+
+  const saveParagraphColor = async (color) => {
+    const listDocRef = doc(db, "lists", id);
+
+    console.log("color: ", color);
+
+    try {
+      await updateDoc(listDocRef, { paragraphColor: color }, { merge: true });
+      localStorage.setItem("paragraphColor", color);
+
+      toggleColorModal();
+    } catch (error) {
+      console.error("Error updating document:", error);
+    }
+  };
+
   return (
     <>
       {!imgSearch ? (
-        <div className="fixed top-1/3 left-1/2 w-3/4 md:w-96 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-8 rounded-md shadow-md">
+        <div className="fixed top-1/3 left-1/2 w-3/4 h-[500px] md:w-96 overflow-auto transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white pt-8 px-8 rounded-md shadow-md">
           <h2 className="text-2xl font-bold mb-4 overflow-auto">
             Listan teema
           </h2>
@@ -302,17 +341,60 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
                   ))}
                 </ul>
               </div>
+              <div>
+                <h2 className={`font-semibold text-xl my-4 overflow-auto`}>
+                  Tekstin väri
+                </h2>
+                <ul className="flex overflow-auto rounded-md py-2">
+                  {Object.keys(paragraphColors).map((colorName) => (
+                    <li key={colorName} className="">
+                      <label>
+                        <input
+                          type="radio"
+                          name="paragraphColor"
+                          value={paragraphColor[colorName]}
+                          checked={
+                            paragraphColor === paragraphColors[colorName]
+                          }
+                          onChange={handleChangeParagraphColor}
+                          style={{ display: "none" }} // Hide the radio button
+                        />
+                        <span
+                          className={`ml-2 rounded-full border-4 ${
+                            paragraphColor === paragraphColors[colorName]
+                              ? "border-gray-400"
+                              : "border-transparent"
+                          } `}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            display: "inline-block",
+                            cursor: "pointer", // Add cursor pointer
+                            backgroundColor: paragraphColors[colorName],
+                          }}
+                          onClick={() =>
+                            setParagraphColor(paragraphColors[colorName])
+                          }
+                        ></span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex sticky bottom-0 bg-white z-10">
               <button
                 onClick={() => {
-                  saveChanges(color, textColor);
+                  saveChanges(color, textColor, listingColor, paragraphColor);
                 }}
-                className={`${modalStyle.button} mr-2`}
+                className={`bg-pink sticky bottom-0 my-4 w-full text-white font-bold py-2 px-4 mr-2`}
               >
                 Tallenna
               </button>
-              <button onClick={toggleColorModal} className={modalStyle.button}>
+              <button
+                onClick={toggleColorModal}
+                className={`bg-pink sticky bottom-0 my-4 w-full text-white font-bold py-2 px-4`}
+              >
                 Peruuta
               </button>
             </div>
