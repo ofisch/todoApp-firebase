@@ -189,7 +189,7 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
   return (
     <>
       {!imgSearch ? (
-        <div className="fixed top-1/3 left-1/2 w-3/4 h-[500px] md:w-96 overflow-auto transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white pt-8 px-8 rounded-md shadow-md">
+        <div className="fixed top-80 left-1/2 w-3/4 h-[500px] md:w-96 overflow-auto transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white pt-8 px-8 rounded-md shadow-md">
           <h2 className="text-2xl font-bold mb-4 overflow-auto">
             Listan teema
           </h2>
