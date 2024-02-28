@@ -17,7 +17,7 @@ export const landingStyle = {
   learnMore:
     "lg:hidden text-center text-white mx-auto p-4 gap-4 flex flex-col w-fit rounded-full transition duration-300 hover:bg-pink-700",
   introduction:
-    "max-w-[400px] mx-auto mt-6 text-lg shadow-md text-black text-center bg-dogwood tracking-wide rounded-md p-8",
+    "max-w-[400px] mx-auto mt-6 text-lg shadow-md text-black text-center bg-dogwood tracking-wide rounded-md p-4",
   introductionDesktop:
     "max-w-[400px] mx-auto mt-6 text-lg shadow-md text-black text-center bg-dogwood tracking-wide rounded-md p-4",
   introH3: "text-black mb-2",

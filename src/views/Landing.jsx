@@ -68,7 +68,6 @@ export const Landing = () => {
     if (featureSection) {
       featureSection.scrollIntoView({
         behavior: "smooth",
-        block: "start",
       });
     }
   };
@@ -235,7 +234,10 @@ export const Landing = () => {
           </div>
           <div className={landingStyle.learnMore}>
             <button
-              onClick={scrollToFeature}
+              onClick={() => {
+                scrollToFeature();
+                scrollToFeatureDesktop();
+              }}
               className={`${landingStyle.link} mt-8 mb-2`}
             >
               lisätietoa
