@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 const style = {
-  li: `flex justify-between border w-full bg-dogwood p-4 my-2 cursor-pointer`,
+  li: `flex justify-between border w-full p-4 my-2 cursor-pointer`,
   liComplete: `flex justify-between border bg-blue p-4 my-2 cursor-pointer`,
   row: `flex overflow-auto`,
   text: `ml-2 cursor-pointer`,
@@ -18,6 +18,13 @@ export const Todo = ({ todo, toggleComplete, editTodo, deleteTodo }) => {
   const [todoEditedText, setTodoEditedText] = React.useState(todo.text);
   const [isEditing, setIsEditing] = React.useState(false);
   const inputRef = React.useRef(null);
+
+  if (
+    localStorage.getItem("listingColor") === null ||
+    localStorage.getItem("listingColor") === "undefined"
+  ) {
+    localStorage.setItem("listingColor", "#D3BDB0");
+  }
 
   const handleKeyPress = async (e) => {
     if (e.key === "Enter") {
@@ -65,6 +72,11 @@ export const Todo = ({ todo, toggleComplete, editTodo, deleteTodo }) => {
     <li
       onClick={() => toggleComplete(todo)}
       className={todo.completed ? style.liComplete : style.li}
+      style={{
+        backgroundColor: todo.completed
+          ? "#72A1E5"
+          : localStorage.getItem("listingColor"),
+      }}
     >
       <div className={style.row}>
         <input

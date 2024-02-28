@@ -550,6 +550,7 @@ export const ListView = () => {
         const theme = {
           bgColor: listData.bgColor,
           textColor: listData.textColor,
+          listingColor: listData.listingColor,
         };
         return theme;
       }
@@ -583,6 +584,9 @@ export const ListView = () => {
             document.body.style.backgroundColor = theme.bgColor;
           }
         }
+
+        // listauksen väri
+        localStorage.setItem("listingColor", theme.listingColor);
       }
     });
 

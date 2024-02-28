@@ -84,10 +84,13 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
         await saveColor(bg);
       }
       await saveTextColor(textColor);
+      await saveListingColor(listingColor);
     } catch (error) {
       console.error("Error updating document:", error);
     }
   };
+
+  // otsikkoväri
 
   const [textColor, setTextColor] = useState(
     localStorage.getItem("textColor") || "#000000"
@@ -109,6 +112,39 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
 
   const toggleImgSearch = () => {
     setImgSearch(!imgSearch);
+  };
+
+  // listauksen väri
+
+  const [listingColor, setListingColor] = useState(
+    localStorage.getItem("listingColor") || "#D3BDB0"
+  );
+
+  const listingColors = {
+    jade: "#04A777",
+    dogwood: "#D3BDB0",
+    pictonblue: "#00A7E1",
+    midnightgreen: "#114B5F",
+    lavenderpink: "#E6AACE",
+  };
+
+  const handleChangeListingColor = (event) => {
+    setListingColor(event.target.value);
+  };
+
+  const saveListingColor = async (color) => {
+    const listDocRef = doc(db, "lists", id);
+
+    console.log("color: ", color);
+
+    try {
+      await updateDoc(listDocRef, { listingColor: color }, { merge: true });
+      localStorage.setItem("listingColor", color);
+
+      toggleColorModal();
+    } catch (error) {
+      console.error("Error updating document:", error);
+    }
   };
 
   return (
@@ -166,12 +202,15 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
                 Taustakuva
               </h2>
               <div
-                className="ml-2 rounded-full flex justify-center items-center" // Flexbox centering
+                className={`ml-2 rounded-full flex bg-sky-400 justify-center border-4 items-center ${
+                  localStorage.getItem("bgColor").includes("https")
+                    ? "border-gray-400"
+                    : "border-transparent"
+                }`} // Flexbox centering
                 style={{
                   width: "50px",
                   height: "50px",
                   cursor: "pointer", // Add cursor pointer
-                  backgroundColor: "gray",
                 }}
                 onClick={toggleImgSearch}
               >
@@ -194,8 +233,50 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
                           style={{ display: "none" }} // Hide the radio button
                         />
                         <span
-                          className={`ml-2 rounded-full border-4 ${
+                          className={`ml-2 rounded-full ${
                             textColor === textColors[colorName]
+                              ? "border-gray-400 border-4"
+                              : ""
+                          } ${
+                            colorName === "white" && textColor === "#ffffff"
+                              ? "border-gray-400 border-5"
+                              : colorName === "white" && textColor !== "#ffffff"
+                              ? "border-gray-700 border-4"
+                              : ""
+                          } `}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            display: "inline-block",
+                            cursor: "pointer", // Add cursor pointer
+                            backgroundColor: textColors[colorName],
+                          }}
+                          onClick={() => setTextColor(textColors[colorName])}
+                        ></span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h2 className={`font-semibold text-xl my-4 overflow-auto`}>
+                  Listauksen väri
+                </h2>
+                <ul className="flex overflow-auto rounded-md py-2">
+                  {Object.keys(listingColors).map((colorName) => (
+                    <li key={colorName} className="">
+                      <label>
+                        <input
+                          type="radio"
+                          name="listingColor"
+                          value={listingColors[colorName]}
+                          checked={listingColor === listingColors[colorName]}
+                          onChange={handleChangeListingColor}
+                          style={{ display: "none" }} // Hide the radio button
+                        />
+                        <span
+                          className={`ml-2 rounded-full border-4 ${
+                            listingColor === listingColors[colorName]
                               ? "border-gray-400"
                               : "border-transparent"
                           } ${
@@ -210,9 +291,11 @@ export const ThemeModalList = ({ toggleColorModal, id }) => {
                             height: "50px",
                             display: "inline-block",
                             cursor: "pointer", // Add cursor pointer
-                            backgroundColor: textColors[colorName],
+                            backgroundColor: listingColors[colorName],
                           }}
-                          onClick={() => setTextColor(textColors[colorName])}
+                          onClick={() =>
+                            setListingColor(listingColors[colorName])
+                          }
                         ></span>
                       </label>
                     </li>
