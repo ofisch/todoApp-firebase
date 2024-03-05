@@ -3,6 +3,7 @@ div.mobile-wrapper {
   padding-top: 25px;
   padding-bottom: 145%;
   height: 0;
+  margin-bottom: -45px;
 }
 
 div.mobile-frame {

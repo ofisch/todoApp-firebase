@@ -273,14 +273,14 @@ export const Landing = () => {
         <div id="feature" class={`${landingStyle.feature} md:hidden`}>
           <div class="container self-center">
             <div class="row">
-              <div class="col-sm-12">
+              <div class="col-sm-10">
                 <div className="mobile-frame">
                   <div class="mobile-wrapper">
                     <iframe
                       width="560"
                       height="315"
                       src="https://www.youtube.com/embed/1GXB1KTzDps?si=8x18__B6-2e0Oy06&amp;controls=0&loop=1&mute=1&autoplay=1"
-                      title="YouTube video player"
+                      title="puuhaplanneri"
                       frameborder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowfullscreen
@@ -291,12 +291,17 @@ export const Landing = () => {
               </div>
             </div>
             <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci
-              doloribus aperiam sequi fugiat illo earum nobis a magni nisi
-              explicabo voluptate aut, mollitia omnis corrupti nostrum, velit ab
-              corporis optio?
+              Luo useita listoja, kutsu muut mukaan ja personoi jokainen lista
+              omannäköiseksesi. <br />
+            </p>
+            <p className="mt-4">
+              <span className="font-semibold tracking-wide">
+                Tutustu ominaisuuksiin tarkemmin
+              </span>
+              <br /> ⬇️
             </p>
           </div>
+
           <div class={landingStyle.featureContainer}></div>
           <div className={landingStyle.pointsContainer}>
             <div className="w-full bg-white rounded-md mx-auto mb-8">
@@ -328,13 +333,13 @@ export const Landing = () => {
                 >
                   <span className={landingStyle.icon}>🍉</span>ostoslista
                 </h2>
-                <PreviewTodo text={"kaurajuoma"} complete={true}></PreviewTodo>
-                <PreviewTodo text={"kurkku"} complete={true}></PreviewTodo>
                 <PreviewTodo
                   text={"vegemakkara"}
                   complete={false}
                 ></PreviewTodo>
                 <PreviewTodo text={"juusto"} complete={false}></PreviewTodo>
+                <PreviewTodo text={"kaurajuoma"} complete={true}></PreviewTodo>
+                <PreviewTodo text={"kurkku"} complete={true}></PreviewTodo>
               </div>
               <LandingPoint
                 header={"Järjestele tehtäväsi"}
