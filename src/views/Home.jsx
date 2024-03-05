@@ -64,6 +64,8 @@ export const Home = () => {
     setNewListMenu(!newListMenu);
   };
 
+  const [fetchComplete, setFetchComplete] = useState(false);
+
   const fetchUserLists = async () => {
     try {
       const user = auth.currentUser;
@@ -103,6 +105,7 @@ export const Home = () => {
           );
 
           setItems(sortedListsData);
+          setFetchComplete(true);
         }
       }
     } catch (error) {
@@ -346,7 +349,18 @@ export const Home = () => {
             <Droppable droppableId="lists">
               {(provided) => (
                 <div ref={provided.innerRef} {...provided.droppableProps}>
-                  {items.length > 0 ? (
+                  {!fetchComplete ? (
+                    <>
+                      <div
+                        class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                        role="status"
+                      >
+                        <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                          Loading...
+                        </span>
+                      </div>
+                    </>
+                  ) : items.length > 0 ? (
                     items.map((list, index) => (
                       <Draggable
                         key={list.id}
@@ -373,7 +387,6 @@ export const Home = () => {
                     ))
                   ) : (
                     <p>
-                      {" "}
                       Ei listoja -{" "}
                       <button
                         onClick={toggleNewListMenu}
@@ -383,6 +396,7 @@ export const Home = () => {
                       </button>{" "}
                     </p>
                   )}
+
                   {provided.placeholder}
                 </div>
               )}
